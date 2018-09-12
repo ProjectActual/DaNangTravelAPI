@@ -20,6 +20,10 @@ class Url extends Model implements Transformable
      *
      * @var array
      */
-    protected $fillable = [];
+    protected $table     = 'urls';
+
+    protected $fillable  = [
+        'url_category', 'url_title', 'uri',
+    ];
 
 }

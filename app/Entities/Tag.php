@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
+use App\Entities\Post;
+
 /**
 * Class Tag.
 *
@@ -20,5 +22,15 @@ class Tag extends Model implements Transformable
      *
      * @var array
      */
-    protected $fillable = [];
+    protected $table     = 'tags';
+
+    protected $fillable  = [
+        'tag',
+    ];
+
+    public function posts()
+    {
+        return $this->belongsToMany(Post::class, 'post_tag', 'tag_id', 'post_id')
+            ->withTimestamps();
+    }
 }
