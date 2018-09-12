@@ -10,6 +10,7 @@ use App\Entities\Tag;
 use App\Entities\User;
 use App\Entities\Comment;
 use App\Entities\Category;
+use App\Entities\PostImage;
 
 /**
  * Class Post.
@@ -20,9 +21,9 @@ class Post extends Model implements Transformable
 {
     use TransformableTrait;
 
-    CONST DISPLAY = [
-        'YES'    => 'YES',
-        'NO'     => 'NO',
+    CONST STATUS = [
+        'ACTIVE'    => 'ACTIVE',
+        'INACTIVE'  => 'INACTIVE',
     ];
 
     /**
@@ -33,7 +34,8 @@ class Post extends Model implements Transformable
     protected $table     = 'posts';
 
     protected $fillable  = [
-        'title', 'uri_post', 'content', 'display', 'count_view', 'user_id',
+        'title', 'uri_post', 'content', 'display', 'count_view',
+        'avatar_post', 'user_id', 'category_id',
     ];
 
     public function comments()
@@ -46,16 +48,20 @@ class Post extends Model implements Transformable
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
+    public function post_images()
+    {
+        return $this->hasMany(PostImage::class, 'post_id', 'id');
+    }
+
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'post_tag', 'post_id', 'tag_id')
             ->withTimestamps();
     }
 
-    public function categories()
+    public function categorie()
     {
-        return $this->belongsToMany(Tag::class, 'post_category', 'post_id', 'category_id')
-            >withTimestamps();
+        return $this->belongsTo(Category::class, 'category_id', 'id');
     }
 
 }

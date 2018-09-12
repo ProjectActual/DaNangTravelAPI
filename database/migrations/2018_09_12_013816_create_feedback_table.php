@@ -21,10 +21,8 @@ class CreateFeedbackTable extends Migration
             $table->text('content');
             $table->string('email');
             $table->unsignedInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
 
-            $table->index('user_id');
             $table->index('email');
         });
     }

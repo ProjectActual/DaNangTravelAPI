@@ -6,15 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
-use App\Entities\User;
-use App\Entities\Post;
+use App\Entities\Role;
 
 /**
- * Class Category.
+ * Class Permission.
  *
  * @package namespace App\Entities;
  */
-class Category extends Model implements Transformable
+class Permission extends Model implements Transformable
 {
     use TransformableTrait;
 
@@ -23,20 +22,15 @@ class Category extends Model implements Transformable
      *
      * @var array
      */
-    protected $table     = 'categories';
+    protected $table     = 'permissions';
 
     protected $fillable  = [
-        'name_category', 'description', 'user_id',
+        'name', 'display_name', 'description',
     ];
 
-    public function user()
+    public function roles()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
-    }
-
-    public function posts()
-    {
-        return $this->hasMany(Post::class, 'category_id', 'id')
+        return $this->belongsToMany(Role::class, 'permission_role', 'permission_id', 'role_id')
             ->withTimestamps();
     }
 

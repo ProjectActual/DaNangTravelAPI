@@ -2,6 +2,8 @@
 
 use Faker\Generator as Faker;
 
+use App\Entities\User;
+
 /*
 |--------------------------------------------------------------------------
 | Model Factories
@@ -13,11 +15,12 @@ use Faker\Generator as Faker;
 |
 */
 
-$factory->define(App\User::class, function (Faker $faker) {
+$factory->define(User::class, function (Faker $faker) {
     return [
-        'name' => $faker->name,
-        'email' => $faker->unique()->safeEmail,
-        'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
-        'remember_token' => str_random(10),
+        'email'             => $faker->unique()->safeEmail,
+        'password'          => bcrypt('123123123'),
+        'remember_token'    => str_random(10),
+        'first_name'        => $faker->firstName,
+        'last_name'         => $faker->lastName,
     ];
 });

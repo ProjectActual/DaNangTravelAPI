@@ -20,11 +20,13 @@ class CreatePostsTable extends Migration
             $table->increments('id');
             $table->string('title');
             $table->text('content');
-            $table->string('display')->default(Post::DISPLAY['YES']);
+            $table->string('status')->default(Post::STATUS['INACTIVE']);
             $table->integer('count_view')->default(0);
             $table->string('uri_post');
+            $table->string('avatar_post')->nullable();
             $table->unsignedInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
 
             $table->index('user_id');

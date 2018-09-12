@@ -2,11 +2,13 @@
 
 namespace App\Entities;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 use App\Entities\Post;
+use App\Entities\Role;
 use App\Entities\Comment;
 use App\Entities\Category;
 use App\Entities\Feedback;
@@ -16,8 +18,9 @@ use App\Entities\Feedback;
  *
  * @package namespace App\Entities;
  */
-class User extends Model implements Transformable
+class User extends Authenticatable implements Transformable
 {
+    use Notifiable;
     use TransformableTrait;
 
     CONST GENDER = [
@@ -55,6 +58,12 @@ class User extends Model implements Transformable
     public function comments()
     {
         return $this->hasMany(Comment::class, 'user_id', 'id');
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id')
+        ->withTimestamps();
     }
 
 }

@@ -14,15 +14,16 @@ class CreateTablePostTag extends Migration
     public function up()
     {
         Schema::create('post_tag', function (Blueprint $table) {
-            $table->increments('id');
+            $table->primary(['tag_id', 'post_id']);
             $table->unsignedInteger('tag_id');
-            $table->foreign('tag_id')->references('id')->on('tags');
+            $table->foreign('tag_id')->references('id')->on('tags')
+                ->onUpdate('cascade')->onDelete('cascade');
             $table->unsignedInteger('post_id');
-            $table->foreign('post_id')->references('id')->on('posts');
+            $table->foreign('post_id')->references('id')->on('posts')
+                ->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
 
-            $table->index('tag_id');
-            $table->index('post_id');
+            $table->index(['tag_id', 'post_id']);
         });
     }
 
