@@ -16,18 +16,19 @@ class CreatePostsTable extends Migration
      */
     public function up()
     {
-       Schema::create('posts', function(Blueprint $table) {
+        Schema::create('posts', function(Blueprint $table) {
             $table->increments('id');
             $table->string('title');
             $table->text('content');
             $table->string('display')->default(Post::DISPLAY['YES']);
             $table->integer('count_view')->default(0);
+            $table->string('uri_post');
             $table->unsignedInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
+            $table->timestamps();
 
             $table->index('user_id');
-            $table->timestamps();
-       });
+        });
     }
 
     /**
@@ -37,6 +38,6 @@ class CreatePostsTable extends Migration
      */
     public function down()
     {
-       Schema::drop('posts');
+        Schema::drop('posts');
     }
 }

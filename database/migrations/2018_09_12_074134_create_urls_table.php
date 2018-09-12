@@ -4,9 +4,9 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 /**
- * Class CreateTagsTable.
+ * Class CreateUrlsTable.
  */
-class CreateTagsTable extends Migration
+class CreateUrlsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,12 +15,14 @@ class CreateTagsTable extends Migration
      */
     public function up()
     {
-       Schema::create('tags', function(Blueprint $table) {
+       Schema::create('urls', function(Blueprint $table) {
             $table->increments('id');
-            $table->string('tag')->nullable();
+            $table->string('url_category')->default('category')->nullable();
+            $table->string('url_title')->nullable();
+            $table->string('uri');
             $table->timestamps();
 
-            $table->index('tag');
+            $table->index('uri');
        });
     }
 
@@ -31,6 +33,6 @@ class CreateTagsTable extends Migration
      */
     public function down()
     {
-       Schema::drop('tags');
+       Schema::drop('urls');
     }
 }

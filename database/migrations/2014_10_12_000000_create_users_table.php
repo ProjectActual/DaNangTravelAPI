@@ -23,9 +23,8 @@ class CreateUsersTable extends Migration
             $table->integer('cmnd')->nullable();
             $table->integer('phone')->nullable();
             $table->string('avatar')->nullable();
-            $table->enum('gender', ['MALE', 'FEMALE'])->nullable();
+            $table->string('gender')->nullable();
             $table->date('date_of_birth')->nullable();
-
             $table->timestamps();
         });
     }

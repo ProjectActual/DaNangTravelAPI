@@ -19,9 +19,9 @@ class CreateCategoriesTable extends Migration
             $table->increments('id');
             $table->string('name_category');
             $table->string('description')->default('No description')->nullable();
+            $table->string('uri_category');
             $table->unsignedInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
-
             $table->timestamps();
        });
     }

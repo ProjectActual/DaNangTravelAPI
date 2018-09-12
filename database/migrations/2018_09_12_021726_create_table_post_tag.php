@@ -19,10 +19,10 @@ class CreateTablePostTag extends Migration
             $table->foreign('tag_id')->references('id')->on('tags');
             $table->unsignedInteger('post_id');
             $table->foreign('post_id')->references('id')->on('posts');
+            $table->timestamps();
 
             $table->index('tag_id');
             $table->index('post_id');
-            $table->timestamps();
         });
     }
 
