@@ -23,7 +23,7 @@ class Url extends Model implements Transformable
     protected $table     = 'urls';
 
     protected $fillable  = [
-        'url_category', 'url_title', 'uri',
+        'url_title', 'uri',
     ];
 
 }

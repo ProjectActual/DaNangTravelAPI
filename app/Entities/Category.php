@@ -36,8 +36,7 @@ class Category extends Model implements Transformable
 
     public function posts()
     {
-        return $this->hasMany(Post::class, 'category_id', 'id')
-            ->withTimestamps();
+        return $this->hasMany(Post::class, 'category_id', 'id');
     }
 
 }
