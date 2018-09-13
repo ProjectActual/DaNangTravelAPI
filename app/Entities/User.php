@@ -10,8 +10,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Entities\Post;
 use App\Entities\Role;
 use App\Entities\Comment;
-use App\Entities\Category;
-use App\Entities\Feedback;
 
 /**
  * Class User.
@@ -39,16 +37,6 @@ class User extends Authenticatable implements Transformable
         'email', 'password', 'first_name', 'last_name', 'cmnd',
         'phone', 'avatar', 'gender', 'date_of_birth',
     ];
-
-    public function categories()
-    {
-        return $this->hasMany(Category::class, 'user_id', 'id');
-    }
-
-    public function feedbacks()
-    {
-        return $this->hasMany(Feedback::class, 'user_id', 'id');
-    }
 
     public function posts()
     {

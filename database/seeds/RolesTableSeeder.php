@@ -15,7 +15,7 @@ class RolesTableSeeder extends Seeder
     {
         Role::truncate();
 
-        Role::create([
+        Role::insert([
             [
                 'name'          => Role::NAME['ADMINISTRATOR'],
                 'display_name'  => 'Quản trị viên',
@@ -30,7 +30,20 @@ class RolesTableSeeder extends Seeder
                 'name'          => Role::NAME['VIEWER'],
                 'display_name'  => 'Người sử dụng',
                 'description'   => 'Người sử dụng là người trực tiếp tham gia vào website',
-            ]
+            ],
         ]);
+
+        // $this->addDataRelation();
+    }
+
+    public function addDataRelation($role)
+    {
+        User::all()->each(function ($user) {
+            if(strpos($user->email, 'congtacvien') != false) {
+                $user->roles()->attach(ROLE::NAME['CONGTACVIEN']);
+            } else {
+                $user->roles()->attach(ROLE::NAME['ADMINISTRATOR']);
+            }
+        });
     }
 }

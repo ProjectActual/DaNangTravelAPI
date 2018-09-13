@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
-use App\Entities\User;
 
 /**
  * Class Feedback.
@@ -25,12 +24,7 @@ class Feedback extends Model implements Transformable
     protected $table     = 'feedbacks';
 
     protected $fillable  = [
-        'title', 'content', 'email', 'user_id',
+        'title', 'content', 'email',
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id', 'id');
-    }
 
 }

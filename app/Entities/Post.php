@@ -59,7 +59,7 @@ class Post extends Model implements Transformable
             ->withTimestamps();
     }
 
-    public function categorie()
+    public function category()
     {
         return $this->belongsTo(Category::class, 'category_id', 'id');
     }

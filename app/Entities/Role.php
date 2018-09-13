@@ -24,6 +24,12 @@ class Role extends Model implements Transformable
         'VIEWER'        => 'VIEWER',
     ];
 
+    CONST CODE_NAME = [
+        1         => 'ADMINISTRATOR',
+        2         => 'CONGTACVIEN',
+        3         => 'VIEWER',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
