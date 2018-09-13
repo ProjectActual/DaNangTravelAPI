@@ -24,7 +24,8 @@ class CreateUsersTable extends Migration
             $table->string('avatar')->default('/images/users/default-user.png')->nullable();
             $table->string('gender')->nullable();
             $table->date('birthday')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 
