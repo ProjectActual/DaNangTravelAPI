@@ -3,7 +3,9 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Http\Response;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
 
 class Handler extends ExceptionHandler
 {
@@ -13,7 +15,6 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        //
     ];
 
     /**
@@ -44,8 +45,43 @@ class Handler extends ExceptionHandler
      * @param  \Exception  $exception
      * @return \Illuminate\Http\Response
      */
-    public function render($request, Exception $exception)
+    public function render($request, Exception $e)
     {
-        return parent::render($request, $exception);
+        if ($request->expectsJson()) {
+            if($e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
+                return $this->errorsException('Incorect route', Response::HTTP_NOT_FOUND);
+            }
+
+            if($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+                return $this->errorsException('Model not found', Response::HTTP_NOT_FOUND);
+            }
+
+            if ($e instanceof \Prettus\Validator\Exceptions\ValidatorException) {
+                $message = 'Failed';
+                $errors  = $e->getMessageBag();
+                $status  = Response::HTTP_UNPROCESSABLE_ENTITY;
+                return response()->json(
+                    compact('message', 'errors', 'status'),
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+            }
+
+            if($e instanceof \Illuminate\Auth\AuthenticationException) {
+                return $this->errorsException('Unauthentication', Response::HTTP_UNAUTHORIZED);
+            }
+
+        }
+
+        return parent::render($request, $e);
+    }
+
+    public function errorsException($message, $status)
+    {
+        return response()->json([
+            'errors' => [
+                'message'     => $message,
+                'status'      => $status
+            ]
+        ], $status);
     }
 }

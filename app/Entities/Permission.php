@@ -2,7 +2,7 @@
 
 namespace App\Entities;
 
-use Illuminate\Database\Eloquent\Model;
+use Zizaco\Entrust\EntrustPermission;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
@@ -13,7 +13,7 @@ use App\Entities\Role;
  *
  * @package namespace App\Entities;
  */
-class Permission extends Model implements Transformable
+class Permission extends EntrustPermission implements Transformable
 {
     use TransformableTrait;
 
