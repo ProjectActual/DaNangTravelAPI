@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Auth;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,9 +26,7 @@ class AuthController extends Controller
 
         if (!Auth::attempt($credentials))
         {
-            return response()->json([
-                'message' => 'Unauthorized'
-            ], 401);
+            return responses('Unauthorized', Response::HTTP_UNAUTHORIZED);
         }
 
         $user   = $request->user();
@@ -40,11 +39,13 @@ class AuthController extends Controller
             $token->expires_at
         )->toDateTimeString();
 
-        return response()->json([
+        $data = [
             'access_token' => 'Bearer ' . $accessToken->accessToken,
             'token_type' => 'Bearer',
             'expires_at' => $expires_at,
-        ]);
+        ];
+
+        return responses('login successfully', Response::HTTP_OK, $data);
     }
 
     public function logout(Request $request)
