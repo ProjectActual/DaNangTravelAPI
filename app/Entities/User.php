@@ -2,7 +2,9 @@
 
 namespace App\Entities;
 
+use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
+use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -19,7 +21,9 @@ use App\Entities\Comment;
 class User extends Authenticatable implements Transformable
 {
     use Notifiable;
+    use HasApiTokens;
     use TransformableTrait;
+    use EntrustUserTrait;
 
     CONST GENDER = [
         'MALE'    => 'MALE',

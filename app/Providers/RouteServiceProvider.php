@@ -39,6 +39,10 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapWebRoutes();
 
+        $this->mapAdminApiRoutes();
+
+        $this->mapCongTacVienApiRoutes();
+
         //
     }
 
@@ -69,5 +73,21 @@ class RouteServiceProvider extends ServiceProvider
              ->middleware('api')
              ->namespace($this->namespace)
              ->group(base_path('routes/api.php'));
+    }
+
+    protected function mapAdminApiRoutes()
+    {
+        Route::prefix('api/admin')
+             ->middleware('api')
+             ->namespace($this->namespace . '\Admin')
+             ->group(base_path('routes/AdminApi.php'));
+    }
+
+    protected function mapCongTacVienApiRoutes()
+    {
+        Route::prefix('api/congtacvien')
+             ->middleware('api')
+             ->namespace($this->namespace . '\CongTacVien')
+             ->group(base_path('routes/CongTacVienApi.php'));
     }
 }

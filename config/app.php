@@ -152,6 +152,7 @@ return [
          */
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
+        Laravel\Passport\PassportServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -161,7 +162,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        // App\Providers\RepositoryServiceProvider::class,
+        App\Providers\RepositoryServiceProvider::class,
 
     ],
 
