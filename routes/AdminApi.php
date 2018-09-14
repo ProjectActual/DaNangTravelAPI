@@ -12,10 +12,11 @@
 */
 
 Route::group(['namespace' => 'Auth\\'], function () {
-    Route::post('login', 'AuthController@login');
+    // Route::post('login', 'AuthController@login')->name('login');
 
     Route::group(['middleware' => 'auth:api'], function() {
-        Route::get('logout', 'AuthController@logout');
-        Route::get('user', 'AuthController@user');
+        Route::get('logout', 'AuthController@logout')->name('logout');
+        Route::get('user', 'AuthController@user')->name('user');
+        Route::post('change-password', 'AuthController@changePassword')->name('change_password');
     });
 });
