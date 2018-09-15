@@ -22,6 +22,18 @@ class PostController extends Controller
             ->latest()
             ->get();
 
-        dd($posts);
+        return response()->json($posts);
+    }
+
+    public function show($id)
+    {
+        $post = $this->post->find($id);
+
+        return response()->json($post);
+    }
+
+    public function store()
+    {
+
     }
 }
