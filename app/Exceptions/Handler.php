@@ -70,6 +70,9 @@ class Handler extends ExceptionHandler
                 return $this->errorsException('Unauthentication', Response::HTTP_UNAUTHORIZED);
             }
 
+            if($e instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException) {
+                return $this->errorsException('Method is not defined', Response::HTTP_METHOD_NOT_ALLOWED);
+            }
         }
 
         return parent::render($request, $e);
@@ -78,10 +81,9 @@ class Handler extends ExceptionHandler
     public function errorsException($message, $status)
     {
         return response()->json([
-            'errors' => [
-                'message'     => $message,
-                'status'      => $status
-            ]
+            'error'      => true,
+            'message'     => $message,
+            'status'      => $status
         ], $status);
     }
 }
