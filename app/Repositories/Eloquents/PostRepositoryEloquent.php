@@ -25,7 +25,7 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
         return Post::class;
     }
 
-    
+
 
     /**
      * Boot up the repository, pushing criteria
@@ -34,5 +34,18 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
     {
         $this->pushCriteria(app(RequestCriteria::class));
     }
-    
+
+    public function latest()
+    {
+        return $this->model
+            ->orderBy('created_at', 'desc')
+            ->orderBy('updated_at', 'desc');
+    }
+
+    public function oldest()
+    {
+        return $this->model
+            ->orderBy('created_at', 'asc')
+            ->orderBy('updated_at', 'asc');
+    }
 }

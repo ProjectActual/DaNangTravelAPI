@@ -20,3 +20,7 @@ Route::group(['namespace' => 'Auth\\'], function () {
         Route::post('change-password', 'AuthController@changePassword')->name('change_password');
     });
 });
+
+Route::group(['prefix' => 'posts', 'as' => 'posts.', 'middleware' => 'auth:api'], function () {
+    Route::get('/', 'PostController@index')->name('index');
+});
