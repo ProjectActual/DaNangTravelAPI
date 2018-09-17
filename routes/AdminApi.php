@@ -17,6 +17,18 @@ Route::group(['namespace' => 'Auth\\'], function () {
     Route::group(['middleware' => 'auth:api'], function() {
         Route::get('logout', 'AuthController@logout')->name('logout');
         Route::get('user', 'AuthController@user')->name('user');
+
         Route::post('change-password', 'AuthController@changePassword')->name('change_password');
     });
+});
+
+Route::group(['prefix' => 'posts', 'as' => 'posts.', 'middleware' => ['admin', 'auth:api']], function () {
+    Route::get('/', 'PostController@index')->name('index');
+    Route::get('/show/{id}', 'PostController@show')->name('show');
+
+    Route::post('create', 'PostController@store')->name('store');
+
+    Route::put('update/{id}', 'PostController@update')->name('update');
+
+    Route::delete('destroy/{id}', 'PostController@destroy')->name('destroy');
 });

@@ -3,6 +3,7 @@
 use Illuminate\Database\Seeder;
 
 use App\Entities\Role;
+use App\Entities\User;
 
 class RolesTableSeeder extends Seeder
 {
@@ -14,6 +15,7 @@ class RolesTableSeeder extends Seeder
     public function run()
     {
         Role::truncate();
+        DB::table('role_user')->truncate();
 
         Role::insert([
             [
@@ -33,16 +35,16 @@ class RolesTableSeeder extends Seeder
             ],
         ]);
 
-        // $this->addDataRelation();
+        $this->addDataRelation();
     }
 
-    public function addDataRelation($role)
+    public function addDataRelation()
     {
         User::all()->each(function ($user) {
-            if(strpos($user->email, 'congtacvien') != false) {
-                $user->roles()->attach(ROLE::NAME['CONGTACVIEN']);
+            if(substr($user->email, 0, 5) == 'admin') {
+                $user->roles()->attach(ROLE::CODE_NAME['ADMINISTRATOR']);
             } else {
-                $user->roles()->attach(ROLE::NAME['ADMINISTRATOR']);
+                $user->roles()->attach(ROLE::CODE_NAME['CONGTACVIEN']);
             }
         });
     }

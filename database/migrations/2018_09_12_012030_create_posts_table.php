@@ -21,7 +21,7 @@ class CreatePostsTable extends Migration
             $table->string('title');
             $table->text('content');
             $table->string('status')->default(Post::STATUS['INACTIVE']);
-            $table->integer('count_view')->default(0);
+            $table->integer('count_view')->default(0)->nullable();
             $table->string('uri_post');
             $table->string('avatar_post')->nullable();
             $table->integer('user_id')->unsigned();
