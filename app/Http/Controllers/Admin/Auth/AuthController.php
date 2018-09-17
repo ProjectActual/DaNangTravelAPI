@@ -9,10 +9,11 @@ use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
+use App\Http\Controllers\BaseController;
 use App\Http\Requests\Admin\LoginRequest;
 use App\Http\Requests\Admin\ChangePasswordRequest;
 
-class AuthController extends Controller
+class AuthController extends BaseController
 {
     // public function login(LoginRequest $request)
     // {
@@ -46,7 +47,7 @@ class AuthController extends Controller
     {
         $request->user()->token()->revoke();
 
-        return responses('Successfully logged out', Response::HTTP_OK);
+        return $this->responses('Successfully logged out', Response::HTTP_OK);
     }
 
     public function user(Request $request)
@@ -64,7 +65,7 @@ class AuthController extends Controller
         $old_password = $user->password;
 
         if(!Hash::check($request->old_password, $old_password)) {
-            return responses('password do not match', Response::HTTP_NOT_FOUND);
+            return $this->responses('password do not match', Response::HTTP_NOT_FOUND);
         }
 
         $user->password = bcrypt($request->new_password);
@@ -82,6 +83,6 @@ class AuthController extends Controller
             'expires_at'   => $expires_at
         ];
 
-        return responses(trans('notication.edit.change'), Response::HTTP_OK, $data);
+        return $this->responses(trans('notication.edit.change'), Response::HTTP_OK, $data);
     }
 }

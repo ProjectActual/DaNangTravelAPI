@@ -6,12 +6,13 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 
+use App\Http\Controllers\BaseController;
 use App\Repositories\Contracts\UrlRepository;
 use App\Repositories\Contracts\CategoryRepository;
 use App\Http\Requests\Admin\Category\CreateCategoryRequest;
 use App\Http\Requests\Admin\Category\UpdateCategoryRequest;
 
-class CategoryController extends Controller
+class CategoryController extends BaseController
 {
     protected $url;
     protected $category;
@@ -44,7 +45,7 @@ class CategoryController extends Controller
             'description'       => $request->description
         ]);
 
-        return responses(trans('notication.create.success'), Response::HTTP_OK);
+        return $this->responses(trans('notication.create.success'), Response::HTTP_OK);
     }
 
     public function update(UpdateCategoryRequest $request, $id)
@@ -52,7 +53,7 @@ class CategoryController extends Controller
         $category = $this->category->find($id);
 
         if($this->url->findByUri($request->uri_category) && $request->uri_category != $category->uri_category) {
-            throw \Illuminate\Validation\ValidationException::withMessages(['loi']);
+            return $this->responseErrors('uri_category', 'The uri category has already been taken.');
         }
 
         $url = $this->url->findByUri($category->uri_category);
@@ -65,6 +66,6 @@ class CategoryController extends Controller
         $category->description       = $request->description;
         $category->save();
 
-        return responses(trans('notication.edit.success'), Response::HTTP_OK);
+        return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
     }
 }

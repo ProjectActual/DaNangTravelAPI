@@ -56,16 +56,6 @@ class Handler extends ExceptionHandler
                 return $this->errorsException('Model not found', Response::HTTP_NOT_FOUND);
             }
 
-            if ($e instanceof \Prettus\Validator\Exceptions\ValidatorException) {
-                $message = 'Failed';
-                $errors  = $e->getMessageBag();
-                $status  = Response::HTTP_UNPROCESSABLE_ENTITY;
-                return response()->json(
-                    compact('message', 'errors', 'status'),
-                    Response::HTTP_UNPROCESSABLE_ENTITY
-                );
-            }
-
             if($e instanceof \Illuminate\Auth\AuthenticationException) {
                 return $this->errorsException('Unauthentication', Response::HTTP_UNAUTHORIZED);
             }
@@ -81,7 +71,6 @@ class Handler extends ExceptionHandler
     public function errorsException($message, $status)
     {
         return response()->json([
-            'error'      => true,
             'message'     => $message,
             'status'      => $status
         ], $status);
