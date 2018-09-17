@@ -25,9 +25,9 @@ class Role extends EntrustRole implements Transformable
     ];
 
     CONST CODE_NAME = [
-        1         => 'ADMINISTRATOR',
-        2         => 'CONGTACVIEN',
-        3         => 'VIEWER',
+        'ADMINISTRATOR'     => 1,
+        'CONGTACVIEN'       => 2,
+        'VIEWER'            => 3,
     ];
 
     /**

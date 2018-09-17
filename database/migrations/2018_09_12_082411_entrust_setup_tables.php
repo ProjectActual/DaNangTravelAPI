@@ -31,6 +31,8 @@ class EntrustSetupTables extends Migration
                 ->onUpdate('cascade')->onDelete('cascade');
 
             $table->primary(['user_id', 'role_id']);
+
+            $table->timestamps();
         });
 
         // Create table for storing permissions
@@ -53,6 +55,8 @@ class EntrustSetupTables extends Migration
                 ->onUpdate('cascade')->onDelete('cascade');
 
             $table->primary(['permission_id', 'role_id']);
+
+            $table->timestamps();
         });
     }
 

@@ -25,7 +25,7 @@ class UrlRepositoryEloquent extends BaseRepository implements UrlRepository
         return Url::class;
     }
 
-    
+
 
     /**
      * Boot up the repository, pushing criteria
@@ -34,5 +34,11 @@ class UrlRepositoryEloquent extends BaseRepository implements UrlRepository
     {
         $this->pushCriteria(app(RequestCriteria::class));
     }
-    
+
+    public function findWithUri($uri)
+    {
+        return $this->model
+            ->where('uri', $uri)
+            ->first();
+    }
 }

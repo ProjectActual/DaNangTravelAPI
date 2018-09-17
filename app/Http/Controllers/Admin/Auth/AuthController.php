@@ -9,14 +9,6 @@ use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
-use Illuminate\Events\Dispatcher;
-use Laravel\Passport\Bridge\AccessToken;
-use Laravel\Passport\Bridge\AccessTokenRepository;
-use Laravel\Passport\Bridge\Client;
-use Laravel\Passport\Bridge\Scope;
-use Laravel\Passport\TokenRepository;
-use League\OAuth2\Server\CryptKey;
-
 use App\Http\Requests\Admin\LoginRequest;
 use App\Http\Requests\Admin\ChangePasswordRequest;
 
@@ -67,7 +59,7 @@ class AuthController extends Controller
     public function changePassword(ChangePasswordRequest $request)
     {
 
-        $user = Auth::guard('api')->user();
+        $user = $request->user();
 
         $old_password = $user->password;
 

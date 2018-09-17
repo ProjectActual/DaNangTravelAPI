@@ -22,7 +22,13 @@ Route::group(['namespace' => 'Auth\\'], function () {
     });
 });
 
-Route::group(['prefix' => 'posts', 'as' => 'posts.', 'middleware' => 'auth:api'], function () {
+Route::group(['prefix' => 'posts', 'as' => 'posts.', 'middleware' => ['admin', 'auth:api']], function () {
     Route::get('/', 'PostController@index')->name('index');
     Route::get('/show/{id}', 'PostController@show')->name('show');
+
+    Route::post('create', 'PostController@store')->name('store');
+
+    Route::put('update/{id}', 'PostController@update')->name('update');
+
+    Route::delete('destroy/{id}', 'PostController@destroy')->name('destroy');
 });
