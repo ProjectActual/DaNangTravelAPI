@@ -8,21 +8,25 @@ use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 
 use App\Repositories\Contracts\UrlRepository;
+use App\Repositories\Contracts\TagRepository;
 use App\Repositories\Contracts\PostRepository;
 use App\Http\Requests\Admin\Post\CreatePostRequest;
 use App\Http\Requests\Admin\Post\UpdatePostRequest;
 
 class PostController extends Controller
 {
+    protected $tag;
     protected $url;
     protected $post;
 
     public function __construct(
+        TagRepository $tag,
         UrlRepository $url,
         PostRepository $post
     ){
         $this->url         = $url;
         $this->post        = $post;
+        $this->tag        = $tag;
     }
 
     public function index(Request $request)
@@ -45,6 +49,10 @@ class PostController extends Controller
     {
         $user = $request->user();
 
+        if(count($request->tag) > 10) {
+            throw \Illuminate\Validation\ValidationException::withMessages(['loi']);
+        }
+
         $this->url->create([
             'url_title'     => $request->title,
             'uri'           => $request->uri_post,
@@ -60,7 +68,9 @@ class PostController extends Controller
             'user_id'       => $user->id,
         ]);
 
-        return responses('Create article successfully', Response::HTTP_OK, $post);
+        $this->checkAndGenerateTag($request->tag, $post->id);
+
+        return responses(trans('notication.create.success'), Response::HTTP_OK, $post);
     }
 
     public function update(UpdatePostRequest $request, $id)
@@ -68,11 +78,15 @@ class PostController extends Controller
         $user = $request->user();
         $post = $this->post->find($id);
 
-        if($this->url->findWithUri($request->uri_post) && $request->uri_post != $post->uri_post) {
+        if($this->url->findByUri($request->uri_post) && $request->uri_post != $post->uri_post) {
             throw \Illuminate\Validation\ValidationException::withMessages(['loi']);
         }
 
-        $url = $this->url->findWithUri($post->uri_post);
+        if(count($request->tag) > 10) {
+            throw \Illuminate\Validation\ValidationException::withMessages(['loi_1']);
+        }
+
+        $url = $this->url->findByUri($post->uri_post);
         $url->url_title     = $request->title;
         $url->uri           = $request->uri_post;
         $url->save();
@@ -87,7 +101,25 @@ class PostController extends Controller
 
         $post->save();
 
-        return responses('Update article successfully', Response::HTTP_OK, $post);
+        $post->tags()->detach();
+        $this->checkAndGenerateTag($request->tag, $post->id);
+
+        return responses(trans('notication.edit.success'), Response::HTTP_OK, $post);
+    }
+
+    public function checkAndGenerateTag($tag, $post_id) {
+        $tags = $this->tag->all();
+
+        //check tag exist
+        foreach($tag as $item) {
+            if(!$tags->contains('tag', $item)) {
+                $this->tag->create(['tag' => $item]);
+            }
+
+            $this->tag->findByTag($item)
+                ->posts()
+                ->attach($post_id);
+        }
     }
 
     public function destroy($id)
@@ -97,11 +129,11 @@ class PostController extends Controller
             throw \Illuminate\Validation\ValidationException::withMessages(['loi']);
         }
 
-        $this->url->findWithUri($post->uri_post)->delete();
+        $this->url->findByUri($post->uri_post)->delete();
 
         $post->delete();
 
-        return responses('Delete article successfully', Response::HTTP_OK);
+        return responses(trans('notication.delete.success'), Response::HTTP_OK);
     }
 
 }

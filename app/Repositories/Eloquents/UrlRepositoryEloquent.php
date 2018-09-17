@@ -35,7 +35,7 @@ class UrlRepositoryEloquent extends BaseRepository implements UrlRepository
         $this->pushCriteria(app(RequestCriteria::class));
     }
 
-    public function findWithUri($uri)
+    public function findByUri($uri)
     {
         return $this->model
             ->where('uri', $uri)
