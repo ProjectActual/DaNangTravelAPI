@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;

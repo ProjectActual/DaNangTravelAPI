@@ -14,7 +14,7 @@
 Route::group(['namespace' => 'Auth\\'], function () {
     // Route::post('login', 'AuthController@login')->name('login');
 
-    Route::group(['middleware' => 'auth:api'], function() {
+    Route::group(['middleware' => 'auth:api'], function () {
         Route::get('logout', 'AuthController@logout')->name('logout');
         Route::get('user', 'AuthController@user')->name('user');
 
@@ -22,13 +22,25 @@ Route::group(['namespace' => 'Auth\\'], function () {
     });
 });
 
-Route::group(['prefix' => 'posts', 'as' => 'posts.', 'middleware' => ['admin', 'auth:api']], function () {
-    Route::get('/', 'PostController@index')->name('index');
-    Route::get('/show/{id}', 'PostController@show')->name('show');
+Route::group(['middleware' => ['admin', 'auth:api']], function () {
 
-    Route::post('create', 'PostController@store')->name('store');
+    Route::group(['prefix' => 'posts', 'as' => 'posts.'], function () {
+        Route::get('/', 'PostController@index')->name('index');
+        Route::get('/show/{id}', 'PostController@show')->name('show');
 
-    Route::put('update/{id}', 'PostController@update')->name('update');
+        Route::post('create', 'PostController@store')->name('store');
 
-    Route::delete('destroy/{id}', 'PostController@destroy')->name('destroy');
+        Route::put('update/{id}', 'PostController@update')->name('update');
+
+        Route::delete('destroy/{id}', 'PostController@destroy')->name('destroy');
+    });
+
+    Route::group(['prefix' => 'categories', 'as' => 'categories.'], function () {
+        Route::get('/', 'CategoryController@index')->name('index');
+
+        Route::post('/create', 'CategoryController@store')->name('store');
+
+        Route::put('/update/{id}', 'CategoryController@update')->name('update');
+    });
 });
+
