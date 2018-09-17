@@ -25,7 +25,7 @@ class TagRepositoryEloquent extends BaseRepository implements TagRepository
         return Tag::class;
     }
 
-    
+
 
     /**
      * Boot up the repository, pushing criteria
@@ -34,5 +34,12 @@ class TagRepositoryEloquent extends BaseRepository implements TagRepository
     {
         $this->pushCriteria(app(RequestCriteria::class));
     }
-    
+
+    public function findByTag($tag)
+    {
+        return $this->model
+            ->where('tag', $tag)
+            ->first();
+    }
+
 }

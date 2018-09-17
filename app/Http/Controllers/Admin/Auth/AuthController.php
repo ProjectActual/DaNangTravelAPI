@@ -82,6 +82,6 @@ class AuthController extends Controller
             'expires_at'   => $expires_at
         ];
 
-        return responses('Change password successfully', Response::HTTP_OK, $data);
+        return responses(trans('notication.edit.change'), Response::HTTP_OK, $data);
     }
 }
