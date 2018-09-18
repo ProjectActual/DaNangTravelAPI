@@ -26,13 +26,8 @@ class Category extends Model implements Transformable
     protected $table     = 'categories';
 
     protected $fillable  = [
-        'name_category', 'description', 'user_id',
+        'name_category', 'description', 'uri_category',
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id', 'id');
-    }
 
     public function posts()
     {

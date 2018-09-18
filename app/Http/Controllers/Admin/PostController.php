@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 
+use App\Http\Controllers\BaseController;
 use App\Repositories\Contracts\UrlRepository;
 use App\Repositories\Contracts\TagRepository;
 use App\Repositories\Contracts\PostRepository;
 use App\Http\Requests\Admin\Post\CreatePostRequest;
 use App\Http\Requests\Admin\Post\UpdatePostRequest;
 
-class PostController extends Controller
+class PostController extends BaseController
 {
     protected $tag;
     protected $url;
@@ -50,7 +50,7 @@ class PostController extends Controller
         $user = $request->user();
 
         if(count($request->tag) > 10) {
-            throw \Illuminate\Validation\ValidationException::withMessages(['loi']);
+            return $this->responseErrors('tag', 'The tag may not be greater than 10.');
         }
 
         $this->url->create([
@@ -70,7 +70,7 @@ class PostController extends Controller
 
         $this->checkAndGenerateTag($request->tag, $post->id);
 
-        return responses(trans('notication.create.success'), Response::HTTP_OK, $post);
+        return $this->responses(trans('notication.create.success'), Response::HTTP_OK, $post);
     }
 
     public function update(UpdatePostRequest $request, $id)
@@ -78,12 +78,13 @@ class PostController extends Controller
         $user = $request->user();
         $post = $this->post->find($id);
 
+        //check url exists
         if($this->url->findByUri($request->uri_post) && $request->uri_post != $post->uri_post) {
-            throw \Illuminate\Validation\ValidationException::withMessages(['loi']);
+            return $this->responseErrors('uri_post', 'The uri post has already been taken.');
         }
 
         if(count($request->tag) > 10) {
-            throw \Illuminate\Validation\ValidationException::withMessages(['loi_1']);
+            return $this->responseErrors('tag', 'The tag may not be greater than 10.');
         }
 
         $url = $this->url->findByUri($post->uri_post);
@@ -104,7 +105,7 @@ class PostController extends Controller
         $post->tags()->detach();
         $this->checkAndGenerateTag($request->tag, $post->id);
 
-        return responses(trans('notication.edit.success'), Response::HTTP_OK, $post);
+        return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
     }
 
     public function checkAndGenerateTag($tag, $post_id) {
@@ -133,7 +134,7 @@ class PostController extends Controller
 
         $post->delete();
 
-        return responses(trans('notication.delete.success'), Response::HTTP_OK);
+        return $this->responses(trans('notication.delete.success'), Response::HTTP_OK);
     }
 
 }
