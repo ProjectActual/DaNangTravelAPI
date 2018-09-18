@@ -12,6 +12,8 @@ use App\Repositories\Contracts\TagRepository;
 use App\Repositories\Contracts\PostRepository;
 use App\Http\Requests\Admin\Post\CreatePostRequest;
 use App\Http\Requests\Admin\Post\UpdatePostRequest;
+use App\Notifications\PasswordResetRequest;
+use App\Services\SendMail;
 
 class PostController extends BaseController
 {
@@ -118,8 +120,8 @@ class PostController extends BaseController
             }
 
             $this->tag->findByTag($item)
-                ->posts()
-                ->attach($post_id);
+            ->posts()
+            ->attach($post_id);
         }
     }
 

@@ -13,6 +13,9 @@
 
 Route::group(['namespace' => 'Auth\\'], function () {
     // Route::post('login', 'AuthController@login')->name('login');
+    Route::post('create', 'PasswordResetController@create')->name('create');
+    Route::get('authenticate-token/{token}', 'PasswordResetController@authenticateToken')->name('authenticate_token');
+    Route::put('reset', 'PasswordResetController@reset')->name('reset');
 
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('logout', 'AuthController@logout')->name('logout');
