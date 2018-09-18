@@ -42,5 +42,13 @@ Route::group(['middleware' => ['admin', 'auth:api']], function () {
 
         Route::put('/update/{id}', 'CategoryController@update')->name('update');
     });
+
+    Route::group(['prefix' => 'tags', 'as' => 'tags.'], function () {
+        Route::get('/', 'TagController@index')->name('index');
+
+        Route::put('/update/{id}', 'TagController@update')->name('update');
+
+        Route::delete('destroy/{id}', 'TagController@destroy')->name('destroy');
+    });
 });
 
