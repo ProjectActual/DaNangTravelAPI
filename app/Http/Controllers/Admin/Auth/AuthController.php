@@ -65,7 +65,7 @@ class AuthController extends BaseController
         $old_password = $user->password;
 
         if(!Hash::check($request->old_password, $old_password)) {
-            return $this->responses('password do not match', Response::HTTP_NOT_FOUND);
+            return $this->responseErrors('password', 'password do not match.');
         }
 
         $user->password = bcrypt($request->new_password);
