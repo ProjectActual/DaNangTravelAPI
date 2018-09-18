@@ -23,7 +23,6 @@ Route::group(['namespace' => 'Auth\\'], function () {
 });
 
 Route::group(['middleware' => ['admin', 'auth:api']], function () {
-
     Route::group(['prefix' => 'posts', 'as' => 'posts.'], function () {
         Route::get('/', 'PostController@index')->name('index');
         Route::get('/show/{id}', 'PostController@show')->name('show');
@@ -41,6 +40,12 @@ Route::group(['middleware' => ['admin', 'auth:api']], function () {
         Route::post('/create', 'CategoryController@store')->name('store');
 
         Route::put('/update/{id}', 'CategoryController@update')->name('update');
+    });
+
+    Route::group(['prefix' => 'feedbacks', 'as' => 'feedbacks.'], function () {
+        Route::get('/', 'FeedbackController@index')->name('index');
+
+        Route::get('/show/{id}', 'FeedbackController@show')->name('show');
     });
 });
 

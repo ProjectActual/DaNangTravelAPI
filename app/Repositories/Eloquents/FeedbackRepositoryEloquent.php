@@ -25,7 +25,7 @@ class FeedbackRepositoryEloquent extends BaseRepository implements FeedbackRepos
         return Feedback::class;
     }
 
-    
+
 
     /**
      * Boot up the repository, pushing criteria
@@ -34,5 +34,11 @@ class FeedbackRepositoryEloquent extends BaseRepository implements FeedbackRepos
     {
         $this->pushCriteria(app(RequestCriteria::class));
     }
-    
+
+    public function latest()
+    {
+        return $this->model
+            ->orderBy('created_at', 'desc')
+            ->orderBy('updated_at', 'desc');
+    }
 }
