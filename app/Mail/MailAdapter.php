@@ -36,7 +36,6 @@ class MailAdapter extends Mailable implements ShouldQueue
     {
         return $this
             ->subject($this->subject)
-            ->view($this->view)
-            ->with($this->info);
+            ->view($this->view);
     }
 }

@@ -59,7 +59,6 @@ class PasswordResetController extends BaseController
         ];
 
         if(!empty($passwordReset) && !empty($user)) {
-            // Mail::to($request->email)->send(new MailAdapter('reset password', 'email.password_reset',$info));
             SendMail::send($request->email, 'Reset password', 'email.password_reset', $info);
         }
 
