@@ -6,38 +6,42 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 
+use App\Services\SendMail;
 use App\Http\Controllers\BaseController;
+use App\Notifications\PasswordResetRequest;
 use App\Repositories\Contracts\UrlRepository;
 use App\Repositories\Contracts\TagRepository;
 use App\Repositories\Contracts\PostRepository;
+use App\Repositories\Contracts\CategoryRepository;
 use App\Http\Requests\Admin\Post\CreatePostRequest;
 use App\Http\Requests\Admin\Post\UpdatePostRequest;
-use App\Notifications\PasswordResetRequest;
-use App\Services\SendMail;
 
 class PostController extends BaseController
 {
     protected $tag;
     protected $url;
     protected $post;
+    protected $paginate = 10;
 
     public function __construct(
         TagRepository $tag,
         UrlRepository $url,
-        PostRepository $post
+        PostRepository $post,
+        CategoryRepository $category
     ){
+        $this->tag        = $tag;
         $this->url         = $url;
         $this->post        = $post;
-        $this->tag        = $tag;
+        $this->category   = $category;
     }
 
     public function index(Request $request)
     {
         $posts = $this->post
         ->latest()
-        ->get();
+        ->paginate(10);
 
-        return response()->json($posts);
+        return response()->json($paginate);
     }
 
     public function show($id)

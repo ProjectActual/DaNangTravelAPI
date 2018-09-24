@@ -11,6 +11,7 @@ use App\Repositories\Contracts\TagRepository;
 class TagController extends BaseController
 {
     protected $tag;
+    protected $paginate = 10;
 
     public function __construct(TagRepository $tag)
     {
@@ -19,7 +20,7 @@ class TagController extends BaseController
 
     public function index(Request $request)
     {
-        $tags = $this->tag->withCount('posts')->get();
+        $tags = $this->tag->withCount('posts')->paginate($paginate);
 
         return response()->json($tags);
     }
