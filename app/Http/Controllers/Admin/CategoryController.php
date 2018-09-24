@@ -21,13 +21,13 @@ class CategoryController extends BaseController
         UrlRepository $url,
         CategoryRepository $category
     ){
-        $this->url  = $url;
+        $this->url       = $url;
         $this->category  = $category;
     }
 
     public function index(Request $request)
     {
-        $category = $this->category->all();
+        $category = $this->category->withCount('posts')->all();
 
         return response()->json($category);
     }

@@ -52,7 +52,7 @@ class AuthController extends BaseController
 
     public function user(Request $request)
     {
-        $user = $request->user();
+        $user = $request->user()->load(['roles', 'posts']);
 
         return response()->json($user);
     }
