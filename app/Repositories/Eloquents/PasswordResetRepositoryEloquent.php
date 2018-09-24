@@ -4,16 +4,16 @@ namespace App\Repositories\Eloquents;
 
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
-use App\Repositories\Contracts\UserRepository;
-use App\Entities\User;
-use App\Validators\UserValidator;
+use App\Repositories\Contracts\PasswordResetRepository;
+use App\Entities\PasswordReset;
+use App\Validators\PasswordResetValidator;
 
 /**
- * Class UserRepositoryEloquent.
+ * Class PasswordResetRepositoryEloquent.
  *
  * @package namespace App\Repositories\Eloquents;
  */
-class UserRepositoryEloquent extends BaseRepository implements UserRepository
+class PasswordResetRepositoryEloquent extends BaseRepository implements PasswordResetRepository
 {
     /**
      * Specify Model class name
@@ -22,7 +22,7 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
      */
     public function model()
     {
-        return User::class;
+        return PasswordReset::class;
     }
 
 
@@ -35,9 +35,21 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
         $this->pushCriteria(app(RequestCriteria::class));
     }
 
+
     public function findByEmail($email)
     {
+        return $this->model->where('email', $email)->first();
+    }
+
+    public function findByToken($token)
+    {
+        return $this->model->where('token', $token)->first();
+    }
+
+    public function findByEmailToken($token, $email)
+    {
         return $this->model
+            ->where('token', $token)
             ->where('email', $email)
             ->first();
     }
