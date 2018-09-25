@@ -31,9 +31,12 @@ Route::group(['middleware' => ['admin', 'auth:api']], function () {
         Route::get('/', 'PostController@index')->name('index');
         Route::get('/{id}', 'PostController@show')->name('show');
 
+        Route::post('/uploadFile', 'PostController@uploadFile')->name('upload_file');
+
         Route::post('/', 'PostController@store')->name('store');
 
         Route::put('/{id}', 'PostController@update')->name('update');
+        Route::post('/edit/{id}', 'PostController@edit')->name('edit');
 
         Route::delete('/{id}', 'PostController@destroy')->name('destroy');
     });
