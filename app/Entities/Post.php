@@ -35,7 +35,7 @@ class Post extends Model implements Transformable
 
     protected $fillable  = [
         'title', 'uri_post', 'content', 'display', 'count_view',
-        'avatar_post', 'user_id', 'category_id',
+        'avatar_post', 'user_id', 'category_id', 'status',
     ];
 
     public function comments()
