@@ -172,11 +172,12 @@ class PostController extends BaseController
     {
         $post = $this->post->find($id);
         if (empty($post)) {
-            throw \Illuminate\Validation\ValidationException::withMessages(['loi']);
+            return $this->responseErrors('article', 'The article was not found');
         }
 
         $this->url->findByUri($post->uri_post)->delete();
 
+        Storage::delete($post->avatar_post);
         $post->delete();
 
         return $this->responses(trans('notication.delete.success'), Response::HTTP_OK);
