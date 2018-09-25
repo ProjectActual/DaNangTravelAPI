@@ -90,10 +90,9 @@ class PostController extends BaseController
             $url = '';
         } else {
             $path = $request->avatar_post->store('public/images/avatar_post');
-            $url = Storage::url($path);
         }
 
-        return response()->json($url, 200);
+        return response()->json($path, 200);
     }
 
     public function update(UpdatePostRequest $request, $id)
