@@ -27,7 +27,7 @@
                           <tbody>
                             <tr style="background:#2e3291">
                               <td style="line-height:25px;padding:10px 20px;text-align:center">
-                                <h1 style="color:#fff;font-size:30px;text-align:center">Reset Password</h1>
+                                <h1 style="color:#fff;font-size:30px;text-align:center"Đặt lại mật khẩu</h1>
                               </td>
                             </tr>
                           </tbody>
@@ -38,8 +38,8 @@
                               <td colspan="2">
                                 <div style="line-height:1.6">
                                   <div style="font-size:16px; display:block;">
-                                    <p style="text-align: justify;">You are receiving this email because we received a password reset request for your account <a href="{{route('admin.authenticate_token', $info['token']) }}" style="font-size: 25px"><b>Reset Password</b></a></p>
-                                    <p style="text-align: justify;">If you did not request a password reset, no further action is required.</p>
+                                    <p style="text-align: justify;">Bạn nhận được email này vì chúng tôi đã nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn hãy <a href="{{route('admin.authenticate_token', $info['token']) }}" style="font-size: 25px"><b>BẤM VÀO ĐÂY</b></a> để đặt lại mật khẩu</p>
+                                    <p style="text-align: justify;">Nếu bạn không yêu cầu đặt lại mật khẩu, bạn không cần thực hiện thêm hành động nào.</p>
                                   </div>
                                 </div>
                               </td>

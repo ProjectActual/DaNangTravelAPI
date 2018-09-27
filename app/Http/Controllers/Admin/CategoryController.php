@@ -53,7 +53,7 @@ class CategoryController extends BaseController
         $category = $this->category->find($id);
 
         if($this->url->findByUri($request->uri_category) && $request->uri_category != $category->uri_category) {
-            return $this->responseErrors('uri_category', 'The uri category has already been taken.');
+            return $this->responseErrors('uri_category', 'Link đã tồn tại trong hồ sơ dữ liệu.');
         }
 
         $url = $this->url->findByUri($category->uri_category);

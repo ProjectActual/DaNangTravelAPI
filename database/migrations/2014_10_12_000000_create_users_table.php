@@ -21,7 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('phone')->nullable();
-            $table->string('avatar')->default('/images/users/default-user.png')->nullable();
+            $table->string('avatar')->nullable();
             $table->string('gender')->nullable();
             $table->date('birthday')->nullable();
             $table->timestamp('created_at')->useCurrent();

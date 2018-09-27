@@ -35,6 +35,8 @@ class User extends Authenticatable implements Transformable
      *
      * @var array
      */
+    protected $appends = array('full_name');
+
     protected $table     = 'users';
 
     protected $hidden = [
@@ -42,7 +44,7 @@ class User extends Authenticatable implements Transformable
     ];
 
     protected $fillable  = [
-        'email', 'password', 'first_name', 'last_name', 'cmnd',
+        'email', 'password', 'first_name', 'last_name',
         'phone', 'avatar', 'gender', 'date_of_birth',
     ];
 
@@ -62,4 +64,18 @@ class User extends Authenticatable implements Transformable
         ->withTimestamps();
     }
 
+
+    public function getAvatarAttribute($value)
+    {
+        if (empty($value)) {
+            return '/images/users/default-avatar.png';
+        }
+
+        return $value;
+    }
+
+    public function getFullNameAttribute()
+    {
+        return trim("{$this->first_name}, {$this->last_name}");
+    }
 }
