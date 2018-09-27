@@ -12,9 +12,16 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Admin\LoginRequest;
 use App\Http\Requests\Admin\ChangePasswordRequest;
+use App\Repositories\Eloquents\UserRepositoryEloquent;
 
 class AuthController extends BaseController
 {
+    protected $user;
+
+    public function __construct(UserRepositoryEloquent $user)
+    {
+        $this->user = $user;
+    }
     // public function login(LoginRequest $request)
     // {
     //     $credentials = $request->all();
@@ -52,7 +59,9 @@ class AuthController extends BaseController
 
     public function user(Request $request)
     {
-        $user = $request->user()->load(['roles', 'posts']);
+        $user = $this->user->with(['roles'])
+            ->withCount('posts')
+            ->find($request->user()->id);
 
         return response()->json($user);
     }
@@ -65,7 +74,7 @@ class AuthController extends BaseController
         $old_password = $user->password;
 
         if(!Hash::check($request->old_password, $old_password)) {
-            return $this->responseErrors('password', 'password do not match.');
+            return $this->responseErrors('password', 'Mật khẩu hiện tại không khớp.');
         }
 
         $user->password = bcrypt($request->new_password);

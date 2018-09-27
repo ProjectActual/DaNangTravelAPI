@@ -11,7 +11,7 @@ use App\Repositories\Contracts\TagRepository;
 class TagController extends BaseController
 {
     protected $tag;
-    protected $paginate = 10;
+    protected $paginate = 15;
 
     public function __construct(TagRepository $tag)
     {
@@ -20,7 +20,7 @@ class TagController extends BaseController
 
     public function index(Request $request)
     {
-        $tags = $this->tag->withCount('posts')->paginate($paginate);
+        $tags = $this->tag->withCount('posts')->paginate($this->paginate);
 
         return response()->json($tags);
     }
@@ -28,9 +28,12 @@ class TagController extends BaseController
     public function update(Request $request, $id)
     {
         $tag = $this->tag->find($id);
+        if($request->tag == $tag->tag) {
+            return $this->responseErrors('tag', 'Bạn không thay đổi gì.');
+        }
 
         if($request->tag != $tag->tag && $this->tag->all()->contains('tag', $request->tag)) {
-            return $this->responseErrors('tag', 'The tag has already been taken.');
+            return $this->responseErrors('tag', 'Tag đã tồn tại trong hồ sơ dữ liệu.');
         }
 
         $tag->tag = $request->tag;

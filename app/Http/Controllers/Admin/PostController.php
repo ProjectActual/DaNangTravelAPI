@@ -24,7 +24,7 @@ class PostController extends BaseController
     protected $tag;
     protected $url;
     protected $post;
-    protected $paginate = 10;
+    protected $paginate = 15;
 
     public function __construct(
         TagRepository $tag,
@@ -42,7 +42,7 @@ class PostController extends BaseController
     {
         $posts = $this->post
         ->latest()
-        ->paginate(10);
+        ->paginate($this->paginate);
 
         return response()->json($posts);
     }
@@ -60,7 +60,7 @@ class PostController extends BaseController
         $request->tag = explode(",",$request->tag);
 
         if(count($request->tag) > 10) {
-            return $this->responseErrors('tag', 'The tag may not be greater than 10.');
+            return $this->responseErrors('tag', 'Không được vượt quá 10 tag.');
         }
 
         $this->url->create([
@@ -87,7 +87,7 @@ class PostController extends BaseController
     public function uploadFile(UploadFileRequest $request)
     {
         if(empty($request->avatar_post)) {
-            $url = '';
+            $path = '';
         } else {
             $path = $request->avatar_post->store('public/images/avatar_post');
         }
@@ -101,12 +101,12 @@ class PostController extends BaseController
         $post = $this->post->find($id);
 
         if(empty($post)) {
-            return $this->responseErrors('Not found', 'Server Not Found.');
+            return $this->responseErrors('article', 'Bài viết không được tìm thấy');
         }
 
         //check url exists
         if($this->url->findByUri($request->uri_post) && $request->uri_post != $post->uri_post) {
-            return $this->responseErrors('uri_post', 'The uri post has already been taken.');
+            return $this->responseErrors('uri_post', 'Liên kết đã tồn tại trong hồ sơ dữ liệu.');
         }
 
         if(!empty($request->avatar_post)) {
@@ -116,7 +116,7 @@ class PostController extends BaseController
         }
 
         if(count($request->tag) > 10) {
-            return $this->responseErrors('tag', 'The tag may not be greater than 10.');
+            return $this->responseErrors('tag', 'Không được vượt quá 10 tag.');
         }
 
         $url = $this->url->findByUri($post->uri_post);
@@ -172,7 +172,7 @@ class PostController extends BaseController
     {
         $post = $this->post->find($id);
         if (empty($post)) {
-            return $this->responseErrors('article', 'The article was not found');
+            return $this->responseErrors('article', 'Bài viết không được tìm thấy');
         }
 
         $this->url->findByUri($post->uri_post)->delete();

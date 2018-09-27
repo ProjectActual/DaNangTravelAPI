@@ -35,7 +35,7 @@ class PasswordResetController extends BaseController
         $user = $this->user->findByEmail($request->email);
 
         if(empty($user)) {
-            return $this->responseErrors('email', 'Email does not exist in our records.');
+            return $this->responseErrors('email', trans('passwords.user'));
         }
 
         $token = Uuid::generate(4)->string;
@@ -59,10 +59,10 @@ class PasswordResetController extends BaseController
         ];
 
         if(!empty($passwordReset) && !empty($user)) {
-            SendMail::send($request->email, 'Reset password', 'email.password_reset', $info);
+            SendMail::send($request->email, 'Đặt lại mật khẩu mới', 'email.password_reset', $info);
         }
 
-        return $this->responses('We have e-mailed your password reset link!', Response::HTTP_OK);
+        return $this->responses(trans('passwords.sent'), Response::HTTP_OK);
     }
 
     public function authenticateToken($token)
@@ -70,12 +70,12 @@ class PasswordResetController extends BaseController
         $passwordReset = $this->passwordReset->findByToken($token);
 
         if(empty($passwordReset)) {
-            return $this->responses('This password reset token is invalid', Response::HTTP_NOT_FOUND);
+            return $this->responses(trans('passwords.token'), Response::HTTP_NOT_FOUND);
         }
 
         if (Carbon::parse($passwordReset->updated_at)->addMinutes(720)->isPast()) {
             $passwordReset->delete();
-            return $this->responses('This password reset token is invalid', Response::HTTP_NOT_FOUND);
+            return $this->responses(trans('passwords.token'), Response::HTTP_NOT_FOUND);
         }
 
         return response()->json($passwordReset, 200);
@@ -87,13 +87,13 @@ class PasswordResetController extends BaseController
             ->findByEmailToken($request->tokenReset, $request->email);
 
         if(empty($passwordReset)) {
-            return $this->responses('This password reset token is invalid', Response::HTTP_NOT_FOUND);
+            return $this->responses(trans('passwords.token'), Response::HTTP_NOT_FOUND);
         }
 
         $user = $this->user->findByEmail($request->email);
 
         if(empty($user)) {
-            return $this->responses('Email does not exist in our records.', Response::HTTP_NOT_FOUND);
+            return $this->responses(trans('passwords.user'), Response::HTTP_NOT_FOUND);
         }
 
         $user->password = bcrypt($request->password);
@@ -101,7 +101,7 @@ class PasswordResetController extends BaseController
 
         $passwordReset->delete();
 
-        SendMail::send($request->email, 'Reset password successfully', 'email.password_reset_success');
+        SendMail::send($request->email, trans('passwords.reset'), 'email.password_reset_success');
 
         return response()->json($user);
     }

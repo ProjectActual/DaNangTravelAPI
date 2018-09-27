@@ -27,7 +27,7 @@
                           <tbody>
                             <tr style="background:#2e3291">
                               <td style="line-height:25px;padding:10px 20px;text-align:center">
-                                <h1 style="color:#fff;font-size:30px;text-align:center">Reset Password Successfully</h1>
+                                <h1 style="color:#fff;font-size:30px;text-align:center">Thay đổi mật khẩu thành công</h1>
                               </td>
                             </tr>
                           </tbody>
@@ -38,7 +38,7 @@
                               <td colspan="2">
                                 <div style="line-height:1.6">
                                   <div style="font-size:16px; display:block;">
-                                    <p style="text-align: justify;">You are changed your password succeful. </p>
+                                    <p style="text-align: justify;">Bạn đã Thay đổi mật khẩu thành công, hãy đăng nhập bằng mật khẩu mới của bạn. </p>
                                   </div>
                                 </div>
                               </td>
