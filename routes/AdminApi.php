@@ -46,7 +46,10 @@ Route::group(['middleware' => ['admin', 'auth:api']], function () {
 
         Route::post('/', 'CategoryController@store')->name('store');
 
+        Route::get('/edit/{id}', 'CategoryController@edit')->name('edit');
         Route::put('/{id}', 'CategoryController@update')->name('update');
+
+        Route::delete('/{id}', 'CategoryController@destroy')->name('destroy');
     });
 
     Route::group(['prefix' => 'tags', 'as' => 'tags.'], function () {

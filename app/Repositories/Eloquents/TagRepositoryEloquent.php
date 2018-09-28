@@ -42,4 +42,11 @@ class TagRepositoryEloquent extends BaseRepository implements TagRepository
             ->first();
     }
 
+    public function searchWithTag($search = '')
+    {
+        return $this->model->where(function ($query) use ($search) {
+            $query
+                ->orWhere('tag', 'LIKE', "%{$search}%");
+        });
+    }
 }

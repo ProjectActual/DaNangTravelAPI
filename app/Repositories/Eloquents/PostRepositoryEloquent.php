@@ -48,4 +48,13 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
             ->orderBy('created_at', 'asc')
             ->orderBy('updated_at', 'asc');
     }
+
+    public function searchWithPost($search)
+    {
+        return $this->model
+            ->where(function ($query) use ($search) {
+                $query
+                ->orWhere('title', 'LIKE', "%{$search}%");
+            });
+    }
 }
