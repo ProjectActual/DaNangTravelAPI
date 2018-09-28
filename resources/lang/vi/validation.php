@@ -75,9 +75,9 @@ return [
         'array'   => 'Trường :attribute must not have more than :value items.',
     ],
     'max'                  => [
-        'numeric' => 'Trường :attribute may not be greater than :max.',
-        'file'    => 'Trường :attribute may not be greater than :max kilobytes.',
-        'string'  => 'Trường :attribute may not be greater than :max characters.',
+        'numeric' => 'Trường :attribute không thể lớn hơn :max.',
+        'file'    => 'Trường :attribute không thể lớn hơn :max kg.',
+        'string'  => 'Trường :attribute không thể lớn hơn :max kí tự.',
         'array'   => 'Trường :attribute may not have more than :max items.',
     ],
     'mimes'                => 'Trường :attribute must be a file of type: :values.',
@@ -112,6 +112,7 @@ return [
     'unique'               => 'Trường :attribute đã tồn tại trong hồ sơ dữ liệu.',
     'uploaded'             => 'Trường :attribute failed to upload.',
     'url'                  => 'Trường :attribute format is invalid.',
+    'not_found'            => ':attribute không được tìm thấy trong hồ sơ dữ liệu',
 
     /*
     |--------------------------------------------------------------------------
@@ -142,11 +143,14 @@ return [
     */
 
     'attributes' => [
-        'uri_post'                               => 'liên kết',
+        'uri_post'                               => 'liên kết bài viết',
         'title'                                  => 'tiêu đề',
         'avatar_post'                            => 'ảnh bài viết',
         'content'                                => 'nội dung bài viết',
-        'category_id'                            => 'danh mục'
+        'category_id'                            => 'danh mục',
+        'name_category'                          => 'tên danh mục',
+        'uri_category'                           => 'liên kết danh mục',
+        'category'                               => 'danh mục',
     ],
 
 ];

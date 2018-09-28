@@ -41,8 +41,9 @@ class PostController extends BaseController
     public function index(Request $request)
     {
         $posts = $this->post
-        ->latest()
-        ->paginate($this->paginate);
+            ->searchWithPost($request->search)
+            ->latest()
+            ->paginate($this->paginate);
 
         return response()->json($posts);
     }
@@ -60,7 +61,7 @@ class PostController extends BaseController
         $request->tag = explode(",",$request->tag);
 
         if(count($request->tag) > 10) {
-            return $this->responseErrors('tag', 'Không được vượt quá 10 tag.');
+            return $this->responseErrors('tag', trans('validation.max.numeric', ['attribute' => 'tag', 'max' => 10]));
         }
 
         $this->url->create([
@@ -101,12 +102,12 @@ class PostController extends BaseController
         $post = $this->post->find($id);
 
         if(empty($post)) {
-            return $this->responseErrors('article', 'Bài viết không được tìm thấy');
+            return $this->responseErrors('post', trans('validation.not_found', ['attribute' => 'Bài viết']));
         }
 
         //check url exists
         if($this->url->findByUri($request->uri_post) && $request->uri_post != $post->uri_post) {
-            return $this->responseErrors('uri_post', 'Liên kết đã tồn tại trong hồ sơ dữ liệu.');
+            return $this->responseErrors('uri_post', trans('validation.unique', ['attribute' => 'liên kết bài viết']));
         }
 
         if(!empty($request->avatar_post)) {
@@ -116,7 +117,7 @@ class PostController extends BaseController
         }
 
         if(count($request->tag) > 10) {
-            return $this->responseErrors('tag', 'Không được vượt quá 10 tag.');
+            return $this->responseErrors('tag', trans('validation.max.numeric', ['attribute' => 'tag', 'max' => 10]));
         }
 
         $url = $this->url->findByUri($post->uri_post);
@@ -172,7 +173,7 @@ class PostController extends BaseController
     {
         $post = $this->post->find($id);
         if (empty($post)) {
-            return $this->responseErrors('article', 'Bài viết không được tìm thấy');
+            return $this->responseErrors('post', trans('validation.not_found', ['attribute' => 'Bài viết']));
         }
 
         $this->url->findByUri($post->uri_post)->delete();

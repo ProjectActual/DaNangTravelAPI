@@ -20,7 +20,10 @@ class TagController extends BaseController
 
     public function index(Request $request)
     {
-        $tags = $this->tag->withCount('posts')->paginate($this->paginate);
+        $tags = $this->tag
+            ->searchWithTag($request->search)
+            ->withCount('posts')
+            ->paginate($this->paginate);
 
         return response()->json($tags);
     }
@@ -33,7 +36,7 @@ class TagController extends BaseController
         }
 
         if($request->tag != $tag->tag && $this->tag->all()->contains('tag', $request->tag)) {
-            return $this->responseErrors('tag', 'Tag đã tồn tại trong hồ sơ dữ liệu.');
+            return $this->responseErrors('tag', trans('validation.unique', ['attribute' => 'tag']));
         }
 
         $tag->tag = $request->tag;

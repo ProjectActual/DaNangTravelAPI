@@ -34,6 +34,10 @@ class CategoryController extends BaseController
 
     public function store(CreateCategoryRequest $request)
     {
+        if($this->category->all()->count() >= 10) {
+            return $this->responseErrors('category', trans('validation.max.numeric', ['attribute' => 'danh mục', 'max' => 10]));
+        }
+
         $url = $this->url->create([
             'url_title'   => $request->name_category,
             'uri'         => $request->uri_category,
@@ -53,7 +57,7 @@ class CategoryController extends BaseController
         $category = $this->category->find($id);
 
         if($this->url->findByUri($request->uri_category) && $request->uri_category != $category->uri_category) {
-            return $this->responseErrors('uri_category', 'Link đã tồn tại trong hồ sơ dữ liệu.');
+            return $this->responseErrors('uri_category', trans('validation.unique', ['attribute' => 'liên kết danh mục']));
         }
 
         $url = $this->url->findByUri($category->uri_category);
@@ -67,5 +71,30 @@ class CategoryController extends BaseController
         $category->save();
 
         return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
+    }
+
+    public function edit($id)
+    {
+        $category = $this->category->find($id);
+
+        if(empty($category)) {
+            return $this->responseErrors('category', trans('validation.not_found', ['attribute' => 'Danh mục']));
+        }
+
+        return response()->json($category, Response::HTTP_OK);
+    }
+
+    public function destroy($id)
+    {
+        $category = $this->category->find($id);
+        if (empty($category)) {
+            return $this->responseErrors('category', trans('validation.not_found', ['attribute' => 'Danh mục']));
+        }
+
+        $this->url->findByUri($category->uri_category)->delete();
+
+        $category->delete();
+
+        return $this->responses(trans('notication.delete.success'), Response::HTTP_OK);
     }
 }

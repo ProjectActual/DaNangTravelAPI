@@ -24,7 +24,7 @@ class CreateCategoryRequest extends FormRequest
     public function rules()
     {
         return [
-            "name_category"     => "required|string|max:255",
+            "name_category"     => "required|min:6|string|max:255",
             "uri_category"      => "required|min:6|regex:/[a-z0-9\-]+/|unique:urls,uri",
         ];
     }
