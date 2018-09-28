@@ -23,7 +23,10 @@ class AdminMiddleware
             return $next($request);
         }
 
-        return responses('You do not have access to the router', 401);
+        return response()->json([
+            'message'     => 'You do not have access to the router',
+            'status'      => 401
+        ], 401);
 
     }
 }
