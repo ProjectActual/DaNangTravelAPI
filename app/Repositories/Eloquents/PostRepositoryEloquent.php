@@ -38,14 +38,12 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
     public function latest()
     {
         return $this->model
-            ->orderBy('created_at', 'desc')
             ->orderBy('updated_at', 'desc');
     }
 
     public function oldest()
     {
         return $this->model
-            ->orderBy('created_at', 'asc')
             ->orderBy('updated_at', 'asc');
     }
 
@@ -56,5 +54,30 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
                 $query
                 ->orWhere('title', 'LIKE', "%{$search}%");
             });
+    }
+
+    public function findByIsSlider()
+    {
+        return $this->model
+            ->where('is_slider', Post::IS_SLIDER['YES'])
+            ->get();
+    }
+
+    public function findByIsHot()
+    {
+        return $this->model
+            ->where('is_hot', Post::IS_HOT['YES'])
+            ->get();
+    }
+
+    public function findByCategory($id)
+    {
+        $model = $this->model
+            ->where('category_id', $id)
+            ->limit(5)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return $model;
     }
 }
