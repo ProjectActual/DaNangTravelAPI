@@ -36,6 +36,8 @@ class PostController extends BaseController
         $this->url         = $url;
         $this->post        = $post;
         $this->category   = $category;
+
+        $this->tag->skipPresenter();
     }
 
     public function index(Request $request)
