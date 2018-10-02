@@ -114,8 +114,6 @@ class PostController extends BaseController
         }
 
         if(!empty($request->avatar_post)) {
-            Storage::delete($post->avatar_post);
-
             $post->avatar_post  = $request->avatar_post;
         }
 

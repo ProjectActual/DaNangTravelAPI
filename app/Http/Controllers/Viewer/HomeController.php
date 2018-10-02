@@ -25,13 +25,13 @@ class HomeController extends Controller
         $this->tag      = $tag;
         $this->post     = $post;
         $this->category = $category;
+
+        $this->post->setPresenter(PostPresenter::class);
+        $this->category->setPresenter(CategoryPresenter::class);
     }
 
     public function master(Request $request)
     {
-        $this->post->setPresenter(PostPresenter::class);
-        $this->category->setPresenter(CategoryPresenter::class);
-
         $composerFoods      = $this->post->findInMonth(Post::CODE_CATEGORY['AM_THUC']);
 
         $composerTravels    = $this->post->findInMonth(Post::CODE_CATEGORY['DU_LICH']);

@@ -8,4 +8,5 @@ Route::group(['as' => 'home.'], function () {
 
 Route::group(['as' => 'post.', 'prefix' => '{uri_category}'], function () {
     Route::get('/', 'PostController@index')->name('index');
+    Route::get('/{uri_post}', 'PostController@show')->name('show');
 });
