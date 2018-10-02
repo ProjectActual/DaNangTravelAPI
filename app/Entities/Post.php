@@ -26,6 +26,24 @@ class Post extends Model implements Transformable
         'INACTIVE'  => 'INACTIVE',
     ];
 
+    CONST IS_HOT = [
+        'YES'    => 'YES',
+        'NO'     => 'NO',
+    ];
+
+    CONST IS_SLIDER = [
+        'YES'    => 'YES',
+        'NO'     => 'NO',
+    ];
+
+    CONST CODE_CATEGORY = [
+        'DU_LICH'     => 1,
+        'DIEM_DEN'    => 2,
+        'SU_KIEN'     => 3,
+        'AM_THUC'     => 4,
+        'CAM_NANG'    => 5,
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -35,7 +53,8 @@ class Post extends Model implements Transformable
 
     protected $fillable  = [
         'title', 'uri_post', 'content', 'display', 'count_view',
-        'avatar_post', 'user_id', 'category_id', 'status',
+        'avatar_post', 'user_id', 'category_id', 'status', 'is_hot', 'is_slider',
+        'summary',
     ];
 
     public function comments()

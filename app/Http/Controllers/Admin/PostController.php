@@ -36,13 +36,15 @@ class PostController extends BaseController
         $this->url         = $url;
         $this->post        = $post;
         $this->category   = $category;
+
+        $this->tag->skipPresenter();
     }
 
     public function index(Request $request)
     {
         $posts = $this->post
             ->searchWithPost($request->search)
-            ->latest()
+            ->orderBy('updated_at', 'desc')
             ->paginate($this->paginate);
 
         return response()->json($posts);
@@ -73,6 +75,7 @@ class PostController extends BaseController
         $post   = $this->post->create([
             'content'       => $request->content,
             'title'         => $request->title,
+            'title'         => $request->summary,
             'status'        => ($request->status == true) ? Post::STATUS['ACTIVE'] : Post::STATUS['INACTIVE'],
             'avatar_post'   => $image,
             'uri_post'      => $request->uri_post,
@@ -127,6 +130,7 @@ class PostController extends BaseController
 
         $post->content      = $request->content;
         $post->title        = $request->title;
+        $post->summary        = $request->summary;
         $post->status       = ($request->status == true) ? Post::STATUS['ACTIVE'] : Post::STATUS['INACTIVE'];
         $post->uri_post     = $request->uri_post;
         $post->category_id  = $request->category_id;
