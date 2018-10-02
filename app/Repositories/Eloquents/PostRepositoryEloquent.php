@@ -58,24 +58,25 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
 
     public function findByIsSlider()
     {
-        return $this->model
-            ->where('is_slider', Post::IS_SLIDER['YES'])
-            ->get();
+        return $this->scopeQuery(function ($query) {
+            return $query->where('is_slider', Post::IS_SLIDER['YES']);
+        })->get();
     }
 
     public function findByIsHot()
     {
-        return $this->model
-            ->where('is_hot', Post::IS_HOT['YES'])
-            ->get();
+        return $this->scopeQuery(function ($query) {
+            return $query->where('is_hot', Post::IS_HOT['YES']);
+        })->get();
     }
 
     public function findByCategory($category_id)
     {
-        $model = $this->model
-            ->where('category_id', $category_id)
-            ->limit(5)
-            ->orderBy('created_at', 'desc')
+        $model = $this->scopeQuery(function ($query) use ($category_id) {
+            return $query
+                ->where('category_id', $category_id)
+                ->limit(5);
+            })->latest()
             ->get();
 
         return $model;
@@ -116,5 +117,19 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
         return $this->scopeQuery(function ($query) use ($category_id){
             return $query->where('category_id', $category_id);
         });
+    }
+
+    public function findByUri($uri_post)
+    {
+        return $this->findByField('uri_post', $uri_post);
+    }
+
+    public function filterByRelationPost($uri_post)
+    {
+        return $this
+            ->scopeQuery(function ($query) {
+                return $query->limit(4);
+            })
+            ->findWhereNotIn('uri_post', [$uri_post]);
     }
 }

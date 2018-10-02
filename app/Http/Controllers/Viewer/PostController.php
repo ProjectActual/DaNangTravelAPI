@@ -13,7 +13,7 @@ class PostController extends Controller
 {
     protected $post;
     protected $category;
-    protected $paginate = 7;
+    protected $paginate = 10;
 
     public function __construct(
         PostRepository $post,
@@ -33,5 +33,14 @@ class PostController extends Controller
             ->paginate($this->paginate);
 
         return response()->json($posts, 200);
+    }
+
+    public function show(Request $request, $uri_category, $uri_post)
+    {
+        $post = $this->post->with('tags')->findByUri($uri_post);
+
+        $relationPost = $this->post->filterByRelationPost($uri_post);
+
+        return response()->json(compact('post','relationPost'), 200);
     }
 }

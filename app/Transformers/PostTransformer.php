@@ -30,6 +30,7 @@ class PostTransformer extends TransformerAbstract
             'avatar_post'   => $model->avatar_post,
             'uri_category'  => $model->category->uri_category,
             'type_category' => $model->category->type_category,
+            'tag' => $model->tags,
             'summary'       => $model->summary,
             'created_at'    => $model->created_at,
             'updated_at'    => $model->updated_at
