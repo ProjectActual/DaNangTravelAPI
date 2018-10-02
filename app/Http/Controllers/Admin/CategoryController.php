@@ -32,6 +32,12 @@ class CategoryController extends BaseController
         return response()->json($category);
     }
 
+
+    /**
+     * @param  CreateCategoryRequest $request
+     *
+     * @return json
+     */
     public function store(CreateCategoryRequest $request)
     {
         if($this->category->all()->count() >= 10) {

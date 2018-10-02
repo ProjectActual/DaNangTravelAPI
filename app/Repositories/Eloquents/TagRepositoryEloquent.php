@@ -25,7 +25,10 @@ class TagRepositoryEloquent extends BaseRepository implements TagRepository
         return Tag::class;
     }
 
-
+    public function presenter()
+    {
+        return 'App\\Presenters\\TagPresenter';
+    }
 
     /**
      * Boot up the repository, pushing criteria
@@ -48,5 +51,10 @@ class TagRepositoryEloquent extends BaseRepository implements TagRepository
             $query
                 ->orWhere('tag', 'LIKE', "%{$search}%");
         });
+    }
+
+    public function findId($id)
+    {
+        return $this->model->find($id);
     }
 }

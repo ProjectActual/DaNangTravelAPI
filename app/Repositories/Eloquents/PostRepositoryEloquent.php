@@ -8,6 +8,9 @@ use App\Repositories\Contracts\PostRepository;
 use App\Entities\Post;
 use App\Validators\PostValidator;
 
+use Carbon\Carbon;
+use App\Presenters\PostPresenter;
+
 /**
  * Class PostRepositoryEloquent.
  *
@@ -25,8 +28,6 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
         return Post::class;
     }
 
-
-
     /**
      * Boot up the repository, pushing criteria
      */
@@ -37,8 +38,7 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
 
     public function latest()
     {
-        return $this->model
-            ->orderBy('updated_at', 'desc');
+        return $this->orderBy('updated_at', 'desc');
     }
 
     public function oldest()
@@ -70,14 +70,51 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
             ->get();
     }
 
-    public function findByCategory($id)
+    public function findByCategory($category_id)
     {
         $model = $this->model
-            ->where('category_id', $id)
+            ->where('category_id', $category_id)
             ->limit(5)
             ->orderBy('created_at', 'desc')
             ->get();
 
         return $model;
+    }
+
+    public function findInMonth($category_id)
+    {
+        $now    = Carbon::now();
+
+        $repository = $this->scopeQuery(function ($query) use ($now, $category_id) {
+            return $query
+                ->where('category_id', $category_id)
+                ->orderBy('count_view', 'desc')
+                ->WhereMonth('created_at', $now->month)
+                ->WhereYear('created_at',  $now->year)
+                ->limit(5);
+            })->get();
+
+        if(empty($repository['data'])) {
+            $repository = $this->scopeQuery(function ($query) use($category_id) {
+                return $query
+                    ->where('category_id', $category_id)
+                    ->orderBy('count_view', 'desc')
+                    ->limit(5);
+            })->get();
+        }
+
+        return $repository;
+    }
+
+/**
+ * [filterByUrlCategory description]
+ * @param  instance App\Entities\Category
+ * @return category_id
+ */
+    public function filterByUrlCategory($category_id)
+    {
+        return $this->scopeQuery(function ($query) use ($category_id){
+            return $query->where('category_id', $category_id);
+        });
     }
 }
