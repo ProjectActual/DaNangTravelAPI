@@ -60,8 +60,9 @@ class PostController extends BaseController
 
     public function store(CreatePostRequest $request)
     {
-        $user = $request->user();
-        dd($request->tag);
+        $user         = $request->user();
+        $request->tag = json_decode($request->tag);
+
         if(count($request->tag) > 10) {
             return $this->responseErrors('tag', trans('validation.max.numeric', ['attribute' => 'tag', 'max' => 10]));
         }
@@ -72,14 +73,14 @@ class PostController extends BaseController
         ]);
 
         $post   = $this->post->create([
-            'content'       => $request->content,
-            'title'         => $request->title,
-            'title'         => $request->summary,
-            'status'        => ($request->status == true) ? Post::STATUS['ACTIVE'] : Post::STATUS['INACTIVE'],
-            'avatar_post'   => $request->avatar_post,
-            'uri_post'      => $request->uri_post,
-            'category_id'   => $request->category_id,
-            'user_id'       => $user->id,
+            'content'     => $request->content,
+            'title'       => $request->title,
+            'summary'     => $request->summary,
+            'status'      => ($request->status == true) ? Post::STATUS['ACTIVE'] : Post::STATUS['INACTIVE'],
+            'avatar_post' => $request->avatar_post,
+            'uri_post'    => $request->uri_post,
+            'category_id' => $request->category_id,
+            'user_id'     => $user->id,
         ]);
 
         $this->checkAndGenerateTag($request->tag, $post->id);
@@ -89,7 +90,6 @@ class PostController extends BaseController
 
     public function update(UpdatePostRequest $request, $id)
     {
-        dd($request->tag);
         $user = $request->user();
         $post = $this->post->find($id);
 
@@ -106,6 +106,7 @@ class PostController extends BaseController
             $post->avatar_post  = $request->avatar_post;
         }
 
+        $request->tag = json_decode($request->tag);
         if(count($request->tag) > 10) {
             return $this->responseErrors('tag', trans('validation.max.numeric', ['attribute' => 'tag', 'max' => 10]));
         }
@@ -114,11 +115,10 @@ class PostController extends BaseController
         $url->url_title     = $request->title;
         $url->uri           = $request->uri_post;
         $url->save();
-
         $post->content      = $request->content;
         $post->title        = $request->title;
-        $post->summary        = $request->summary;
-        $post->status       = ($request->status == true) ? Post::STATUS['ACTIVE'] : Post::STATUS['INACTIVE'];
+        $post->summary      = $request->summary;
+        $post->status       = $request->status;
         $post->uri_post     = $request->uri_post;
         $post->category_id  = $request->category_id;
         $post->user_id      = $user->id;
