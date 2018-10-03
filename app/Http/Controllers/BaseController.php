@@ -21,11 +21,4 @@ class BaseController extends Controller
     {
         throw \Illuminate\Validation\ValidationException::withMessages([$key => $message]);
     }
-
-    public function saveImage($file ,$uri = 'public/images/general')
-    {
-        $path = $file->store($uri);
-
-        return $path;
-    }
 }

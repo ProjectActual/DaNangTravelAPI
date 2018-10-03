@@ -18,7 +18,6 @@ use App\Repositories\Contracts\PostRepository;
 use App\Repositories\Contracts\CategoryRepository;
 use App\Http\Requests\Admin\Post\CreatePostRequest;
 use App\Http\Requests\Admin\Post\UpdatePostRequest;
-use App\Http\Requests\Admin\Post\UploadFileRequest;
 
 class PostController extends BaseController
 {
@@ -61,9 +60,8 @@ class PostController extends BaseController
 
     public function store(CreatePostRequest $request)
     {
-         $user = $request->user();
-        $request->tag = explode(",",$request->tag);
-
+        $user = $request->user();
+        dd($request->tag);
         if(count($request->tag) > 10) {
             return $this->responseErrors('tag', trans('validation.max.numeric', ['attribute' => 'tag', 'max' => 10]));
         }
@@ -73,13 +71,12 @@ class PostController extends BaseController
             'uri'           => $request->uri_post,
         ]);
 
-        $image  = $this->saveImage($request->avatar_post ,'public/images/avatar_post');
         $post   = $this->post->create([
             'content'       => $request->content,
             'title'         => $request->title,
             'title'         => $request->summary,
             'status'        => ($request->status == true) ? Post::STATUS['ACTIVE'] : Post::STATUS['INACTIVE'],
-            'avatar_post'   => $image,
+            'avatar_post'   => $request->avatar_post,
             'uri_post'      => $request->uri_post,
             'category_id'   => $request->category_id,
             'user_id'       => $user->id,
@@ -90,19 +87,9 @@ class PostController extends BaseController
         return $this->responses(trans('notication.create.success'), Response::HTTP_OK, $post);
     }
 
-    public function uploadFile(UploadFileRequest $request)
-    {
-        if(empty($request->avatar_post)) {
-            $path = '';
-        } else {
-            $path = $request->avatar_post->store('public/images/avatar_post');
-        }
-
-        return response()->json($path, 200);
-    }
-
     public function update(UpdatePostRequest $request, $id)
     {
+        dd($request->tag);
         $user = $request->user();
         $post = $this->post->find($id);
 

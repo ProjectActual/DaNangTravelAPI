@@ -30,7 +30,7 @@ class CreatePostRequest extends FormRequest
             'status'        => 'required',
             'summary'       => 'required|max:255',
             'category_id'   => 'required|exists:categories,id',
-            'avatar_post'   => 'required|image|max:6000|mimes:png, jpg, jpeg',
+            'avatar_post'   => 'required',
         ];
     }
 }
