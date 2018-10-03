@@ -57,4 +57,11 @@ class TagRepositoryEloquent extends BaseRepository implements TagRepository
     {
         return $this->model->find($id);
     }
+
+    public function findWithUri($uri_tag)
+    {
+        $tag = $this->model->where('uri_tag', $uri_tag)->first();
+
+        return $tag;
+    }
 }

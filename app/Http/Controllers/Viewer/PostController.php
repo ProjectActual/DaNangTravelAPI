@@ -28,7 +28,7 @@ class PostController extends Controller
     {
         $category = $this->category->findByUri($uri_category);
 
-        $posts = $this->post
+        $posts    = $this->post
             ->filterByUrlCategory($category->id)
             ->paginate($this->paginate);
 
@@ -37,7 +37,7 @@ class PostController extends Controller
 
     public function show(Request $request, $uri_category, $uri_post)
     {
-        $post = $this->post->with('tags')->findByUri($uri_post);
+        $post         = $this->post->with('tags')->findByUri($uri_post);
 
         $relationPost = $this->post->filterByRelationPost($uri_post);
 
