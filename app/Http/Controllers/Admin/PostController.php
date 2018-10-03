@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 
+use Uuid;
 use App\Entities\Post;
 use App\Services\SendMail;
 use App\Http\Controllers\BaseController;
@@ -38,6 +39,7 @@ class PostController extends BaseController
         $this->category   = $category;
 
         $this->tag->skipPresenter();
+        $this->post->skipCriteria();
     }
 
     public function index(Request $request)
@@ -162,7 +164,10 @@ class PostController extends BaseController
         //check tag exist
         foreach($tag as $item) {
             if(!$tags->contains('tag', $item)) {
-                $this->tag->create(['tag' => $item]);
+                $this->tag->create([
+                    'tag'     => $item,
+                    'uri_tag' => Uuid::generate(4)->string
+                ]);
             }
 
             $this->tag->findByTag($item)

@@ -38,7 +38,7 @@
                               <td colspan="2">
                                 <div style="line-height:1.6">
                                   <div style="font-size:16px; display:block;">
-                                    <p style="text-align: justify;">Bạn nhận được email này vì chúng tôi đã nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn hãy <a href="{{route('admin.authenticate_token', $info['token']) }}" style="font-size: 25px"><b>BẤM VÀO ĐÂY</b></a> để đặt lại mật khẩu</p>
+                                    <p style="text-align: justify;">Bạn nhận được email này vì chúng tôi đã nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn hãy <a href="{{ env('APP_URL_FE') . "/admin/forget-password/change-password/{$info['token']}" }}"  style="font-size: 25px"><b>BẤM VÀO ĐÂY</b></a> để đặt lại mật khẩu</p>
                                     <p style="text-align: justify;">Nếu bạn không yêu cầu đặt lại mật khẩu, bạn không cần thực hiện thêm hành động nào.</p>
                                   </div>
                                 </div>

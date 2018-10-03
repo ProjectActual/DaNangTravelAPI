@@ -96,13 +96,13 @@ class PasswordResetController extends BaseController
             return $this->responses(trans('passwords.user'), Response::HTTP_NOT_FOUND);
         }
 
-        $user->password = bcrypt($request->password);
+        $user->password = bcrypt($request->password_reset);
         $user->save();
 
         $passwordReset->delete();
 
         SendMail::send($request->email, trans('passwords.reset'), 'email.password_reset_success');
 
-        return response()->json($user);
+        return $this->responses(trans('passwords.reset'), Response::HTTP_OK);
     }
 }

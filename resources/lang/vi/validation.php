@@ -30,9 +30,9 @@ return [
         'array'   => 'Trường :attribute must have between :min and :max items.',
     ],
     'boolean'              => 'Trường :attribute field must be true or false.',
-    'confirmed'            => 'Trường :attribute confirmation does not match.',
+    'confirmed'            => 'Trường :attribute không trùng khớp.',
     'date'                 => 'Trường :attribute is not a valid date.',
-    'date_format'          => 'Trường :attribute does not match Trường format :format.',
+    'date_format'          => 'Trường :attribute không trùng khớp Trường format :format.',
     'different'            => 'Trường :attribute and :other must be different.',
     'digits'               => 'Trường :attribute must be :digits digits.',
     'digits_between'       => 'Trường :attribute must be between :min and :max digits.',
@@ -143,14 +143,16 @@ return [
     */
 
     'attributes' => [
-        'uri_post'                               => 'liên kết bài viết',
-        'title'                                  => 'tiêu đề',
-        'avatar_post'                            => 'ảnh bài viết',
-        'content'                                => 'nội dung bài viết',
-        'category_id'                            => 'danh mục',
-        'name_category'                          => 'tên danh mục',
-        'uri_category'                           => 'liên kết danh mục',
-        'category'                               => 'danh mục',
+        'uri_post'              => 'liên kết bài viết',
+        'title'                 => 'tiêu đề',
+        'avatar_post'           => 'ảnh bài viết',
+        'content'               => 'nội dung bài viết',
+        'category_id'           => 'danh mục',
+        'name_category'         => 'tên danh mục',
+        'uri_category'          => 'liên kết danh mục',
+        'category'              => 'danh mục',
+        'password_reset'        => 'xác nhận mật khẩu hoặc mật khẩu',
+        'password_reset'        => 'xác nhận mật khẩu',
     ],
 
 ];

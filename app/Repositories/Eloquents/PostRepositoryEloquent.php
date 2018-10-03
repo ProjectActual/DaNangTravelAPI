@@ -10,6 +10,7 @@ use App\Validators\PostValidator;
 
 use Carbon\Carbon;
 use App\Presenters\PostPresenter;
+use App\Criteria\Post\FilterByPostActiveCriteria;
 
 /**
  * Class PostRepositoryEloquent.
@@ -34,6 +35,7 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
     public function boot()
     {
         $this->pushCriteria(app(RequestCriteria::class));
+        $this->pushCriteria(app(FilterByPostActiveCriteria::class));
     }
 
     public function latest()

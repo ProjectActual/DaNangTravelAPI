@@ -22,8 +22,10 @@ class TagTransformer extends TransformerAbstract
     public function transform(Tag $model)
     {
         return [
-            'id'         => (int) $model->id,
-            'tag'        => $model->tag
+            'id'      => (int) $model->id,
+            'tag'     => $model->tag,
+            'uri_tag' => $model->uri_tag,
+            'posts'   => $model->posts,
         ];
     }
 }
