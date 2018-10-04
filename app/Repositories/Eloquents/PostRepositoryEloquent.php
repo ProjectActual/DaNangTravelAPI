@@ -45,7 +45,8 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
 
     public function latest()
     {
-        return $this->orderBy('updated_at', 'desc');
+        return $this
+            ->orderBy('updated_at', 'desc');
     }
 
     public function oldest()

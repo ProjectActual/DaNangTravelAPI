@@ -83,4 +83,12 @@ class Post extends Model implements Transformable
         return $this->belongsTo(Category::class, 'category_id', 'id');
     }
 
+    public function getAvatarPostAttribute($value)
+    {
+        if (empty($value)) {
+            return "http://{$_SERVER['HTTP_HOST']}/images/users/travel-health.jpg";
+        }
+
+        return $value;
+    }
 }

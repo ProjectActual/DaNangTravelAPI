@@ -42,7 +42,7 @@ class PostController extends BaseController
 
     public function index(Request $request)
     {
-        $posts = $this->post->paginate($this->paginate);
+        $posts = $this->post->latest()->paginate($this->paginate);
 
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('posts'));
     }

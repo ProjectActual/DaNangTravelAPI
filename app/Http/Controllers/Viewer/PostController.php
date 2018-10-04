@@ -23,7 +23,7 @@ class PostController extends Controller
         $this->category = $category;
         $this->post     = $post;
         $this->post->setPresenter(PostPresenter::class);
-        $this->pushCriteria(FilterByPostActiveCriteria::class);
+        $this->post->pushCriteria(FilterByPostActiveCriteria::class);
     }
 
     public function index(Request $request, $uri_category)

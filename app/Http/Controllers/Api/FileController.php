@@ -13,12 +13,12 @@ class FileController extends Controller
     public function uploadFile(UploadFileRequest $request)
     {
         if(empty($request->fileUpload)) {
-            $path = '';
+            $url = '';
         } else {
             $path = $request->fileUpload->store('public/images/avatar_post');
+            $url = "http://$_SERVER[HTTP_HOST]" . Storage::url($path);
         }
 
-        $url = "http://$_SERVER[HTTP_HOST]" . Storage::url($path);
         return response()->json($url, 200);
     }
 }

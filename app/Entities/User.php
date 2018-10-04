@@ -68,7 +68,7 @@ class User extends Authenticatable implements Transformable
     public function getAvatarAttribute($value)
     {
         if (empty($value)) {
-            return '/images/users/default-avatar.png';
+            return "http://{$_SERVER['HTTP_HOST']}/images/users/default-avatar.png";
         }
 
         return $value;
@@ -76,6 +76,6 @@ class User extends Authenticatable implements Transformable
 
     public function getFullNameAttribute()
     {
-        return trim("{$this->first_name}, {$this->last_name}");
+        return trim("{$this->last_name} {$this->first_name}");
     }
 }

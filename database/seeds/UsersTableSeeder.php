@@ -33,5 +33,16 @@ class UsersTableSeeder extends Seeder
                 'gender'            => rand(1, 2) == 1 ? User::GENDER['MALE'] : User::GENDER['FEMALE'],
             ]);
         }
+
+        DB::table('users')->insert([
+            'email'             => 'trantruongquy2702@gmail.com',
+            'password'          => bcrypt('123123123'),
+            'remember_token'    => str_random(10),
+            'first_name'        => 'Quy',
+            'last_name'         => 'tran truong',
+            'phone'             => '0934890911',
+            'birthday'          => '1996-02-27',
+            'gender'            => 'MALE',
+        ]);
     }
 }

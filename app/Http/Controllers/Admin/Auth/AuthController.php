@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Admin\LoginRequest;
+use App\Http\Requests\Admin\ProfileRequest;
 use App\Http\Requests\Admin\ChangePasswordRequest;
 use App\Repositories\Eloquents\UserRepositoryEloquent;
 
@@ -59,11 +60,31 @@ class AuthController extends BaseController
 
     public function user(Request $request)
     {
-        $user = $this->user->with(['roles'])
+        $profile = $this->user->with(['roles'])
             ->withCount('posts')
             ->find($request->user()->id);
 
-        return response()->json($user);
+        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('profile'));
+    }
+
+    public function update(ProfileRequest $request)
+    {
+        $this->user->skipPresenter();
+
+        $user = $this->user->find($request->user()->id);
+        if(!empty($request->avatar)) {
+            $user->avatar     = $request->avatar;
+        }
+
+        $user->first_name = $request->first_name;
+        $user->last_name  = $request->last_name;
+        $user->phone      = $request->phone;
+        $user->gender     = $request->gender;
+        $user->birthday   = $request->birthday;
+
+        $user->save();
+
+        return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
     }
 
     public function changePassword(ChangePasswordRequest $request)

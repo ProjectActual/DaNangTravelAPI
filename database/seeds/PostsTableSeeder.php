@@ -35,7 +35,6 @@ class PostsTableSeeder extends Seeder
                     'uri_post'      => 'category-' . $category->uri_category . '-post-' . $index,
                     'content'       => $faker->realText(200, 3),
                     'summary'       => $faker->realText(120, 3),
-                    'avatar_post'        => '/images/users/default-avatar.png',
                     'status'        => (rand(1,2) == 1) ? Post::STATUS['ACTIVE'] : Post::STATUS['INACTIVE'],
                     'user_id'       => rand(1, $count_user),
                     'created_at'    => now(),

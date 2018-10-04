@@ -21,6 +21,8 @@ Route::group(['namespace' => 'Auth\\'], function () {
         Route::get('logout', 'AuthController@logout')->name('logout');
         Route::get('user', 'AuthController@user')->name('user');
 
+        Route::put('user', 'AuthController@update')->name('update');
+
         Route::post('change-password', 'AuthController@changePassword')->name('change_password');
     });
 });
