@@ -33,11 +33,11 @@ class HomeController extends BaseController
 
     public function master(Request $request)
     {
-        $composerFoods      = $this->post->findInMonth(Post::CODE_CATEGORY['AM_THUC']);
+        $composerFoods      = $this->post->latest()->findInMonth(Post::CODE_CATEGORY['AM_THUC']);
 
-        $composerTravels    = $this->post->findInMonth(Post::CODE_CATEGORY['DU_LICH']);
+        $composerTravels    = $this->post->latest()->findInMonth(Post::CODE_CATEGORY['DU_LICH']);
 
-        $composerEvents     = $this->post->findInMonth(Post::CODE_CATEGORY['SU_KIEN']);
+        $composerEvents     = $this->post->latest()->findInMonth(Post::CODE_CATEGORY['SU_KIEN']);
 
         $composerTags       = $this->tag->get();
 
@@ -52,9 +52,9 @@ class HomeController extends BaseController
 
     public function index(Request $request)
     {
-        $sliders = $this->post->findByIsSlider();
+        $sliders = $this->post->latest()->findByIsSlider();
 
-        $hots    = $this->post->findByIsHot();
+        $hots    = $this->post->latest()->findByIsHot();
 
         $posts    = $this->post
             ->scopeQuery(function ($query) {
