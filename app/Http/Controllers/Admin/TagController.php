@@ -3,16 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\BaseController;
 
+use Uuid;
 use App\Http\Requests\Admin\Tag\TagRequest;
 use App\Repositories\Contracts\TagRepository;
 
 class TagController extends BaseController
 {
     protected $tag;
-    protected $paginate = 15;
+    protected $paginate = 10;
 
     public function __construct(TagRepository $tag)
     {
@@ -22,11 +24,9 @@ class TagController extends BaseController
     public function index(Request $request)
     {
         $tags = $this->tag
-            ->searchWithTag($request->search)
-            ->withCount('posts')
             ->paginate($this->paginate);
 
-        return response()->json($tags);
+        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('tags'));
     }
 
     public function update(TagRequest $request, $id)
@@ -41,10 +41,12 @@ class TagController extends BaseController
             return $this->responseErrors('tag', trans('validation.unique', ['attribute' => 'tag']));
         }
 
+        $tag->uri_tag = Uuid::generate(4)->string;
         $tag->tag = $request->tag;
+
         $tag->save();
 
-        return $this->responses(trans('notication.edit.success'), 200);
+        return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
     }
 
     public function destroy($id)
@@ -52,6 +54,6 @@ class TagController extends BaseController
         $this->tag->skipPresenter();
         $this->tag->find($id)->delete();
 
-        return $this->responses(trans('notication.delete.success'), 200);
+        return $this->responses(trans('notication.delete.success'), Response::HTTP_OK);
     }
 }

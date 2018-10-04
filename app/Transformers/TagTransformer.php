@@ -22,10 +22,11 @@ class TagTransformer extends TransformerAbstract
     public function transform(Tag $model)
     {
         return [
-            'id'      => (int) $model->id,
-            'tag'     => $model->tag,
-            'uri_tag' => $model->uri_tag,
-            'posts'   => $model->posts,
+            'id'          => (int) $model->id,
+            'tag'         => $model->tag,
+            'uri_tag'     => $model->uri_tag,
+            'created_at'     => $model->created_at,
+            'count_posts' => $model->posts->count(),
         ];
     }
 }
