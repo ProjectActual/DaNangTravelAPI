@@ -39,6 +39,10 @@ Route::group(['middleware' => ['admin', 'auth:api']], function () {
 
         Route::put('/{id}', 'PostController@update')->name('update');
 
+        Route::put('/hot/{id}', 'PostController@showHot')->name('show_how');
+
+        Route::put('/slider/{id}', 'PostController@showSlider')->name('show_slider');
+
         Route::delete('/{id}', 'PostController@destroy')->name('destroy');
     });
 

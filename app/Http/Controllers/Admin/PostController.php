@@ -15,9 +15,11 @@ use App\Notifications\PasswordResetRequest;
 use App\Repositories\Contracts\UrlRepository;
 use App\Repositories\Contracts\TagRepository;
 use App\Repositories\Contracts\PostRepository;
+use  App\Http\Requests\Admin\Post\CheckHotRequest;
 use App\Repositories\Contracts\CategoryRepository;
 use App\Http\Requests\Admin\Post\CreatePostRequest;
 use App\Http\Requests\Admin\Post\UpdatePostRequest;
+use App\Http\Requests\Admin\Post\CheckSliderRequest;
 
 class PostController extends BaseController
 {
@@ -161,6 +163,38 @@ class PostController extends BaseController
         $post->delete();
 
         return $this->responses(trans('notication.delete.success'), Response::HTTP_OK);
+    }
+
+    public function showSlider(CheckSliderRequest $request, $id)
+    {
+        $this->post->skipPresenter();
+
+        $post = $this->post->find($id);
+
+        if (empty($post)) {
+            return $this->responseErrors('post', trans('validation.not_found', ['attribute' => 'Bài viết']));
+        }
+
+        $post->is_slider = ($request->is_slider == Post::IS_SLIDER['YES']) ? Post::IS_SLIDER['NO'] : Post::IS_SLIDER['YES'];
+        $post->save();
+
+        return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
+    }
+
+    public function showHot(CheckHotRequest $request, $id)
+    {
+        $this->post->skipPresenter();
+
+        $post = $this->post->find($id);
+
+        if (empty($post)) {
+            return $this->responseErrors('post', trans('validation.not_found', ['attribute' => 'Bài viết']));
+        }
+
+        $post->is_hot = ($request->is_hot == Post::IS_HOT['YES']) ? Post::IS_HOT['NO'] : Post::IS_HOT['YES'];
+        $post->save();
+
+        return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
     }
 
 }
