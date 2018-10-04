@@ -24,8 +24,11 @@ class CategoryTransformer extends TransformerAbstract
         return [
             'id'            => (int) $model->id,
             'name_category' => $model->name_category,
+            'type_category' => $model->type_category,
             'uri_category'  => $model->uri_category,
-            'created_at'    => $model->created_at,
+            'description'   => $model->description,
+
+            'count_posts'   => $model->posts->count(),
         ];
     }
 }

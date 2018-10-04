@@ -27,9 +27,9 @@ class CategoryController extends BaseController
 
     public function index(Request $request)
     {
-        $category = $this->category->withCount('posts')->all();
+        $categories = $this->category->all();
 
-        return response()->json($category);
+        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('categories'));
     }
 
 
@@ -40,6 +40,8 @@ class CategoryController extends BaseController
      */
     public function store(CreateCategoryRequest $request)
     {
+        $this->category->skipPresenter();
+
         if($this->category->all()->count() >= 10) {
             return $this->responseErrors('category', trans('validation.max.numeric', ['attribute' => 'danh mục', 'max' => 10]));
         }
@@ -50,9 +52,10 @@ class CategoryController extends BaseController
         ]);
 
         $category = $this->category->create([
-            'name_category'     => $request->name_category,
-            'uri_category'      => $request->uri_category,
-            'description'       => $request->description
+            'name_category' => $request->name_category,
+            'uri_category'  => $request->uri_category,
+            'type_category' => $request->type_category,
+            'description'   => $request->description,
         ]);
 
         return $this->responses(trans('notication.create.success'), Response::HTTP_OK);
@@ -60,10 +63,15 @@ class CategoryController extends BaseController
 
     public function update(UpdateCategoryRequest $request, $id)
     {
+        $this->category->skipPresenter();
         $category = $this->category->find($id);
 
         if($this->url->findByUri($request->uri_category) && $request->uri_category != $category->uri_category) {
             return $this->responseErrors('uri_category', trans('validation.unique', ['attribute' => 'liên kết danh mục']));
+        }
+
+        if($this->category->findByField('type_category', $request->type_category)->isNotEmpty() && $request->type_category != $category->type_category) {
+            return $this->responseErrors('type_category', trans('validation.unique', ['attribute' => 'loại danh mục']));
         }
 
         $url = $this->url->findByUri($category->uri_category);
@@ -73,6 +81,7 @@ class CategoryController extends BaseController
 
         $category->name_category     = $request->name_category;
         $category->uri_category      = $request->uri_category;
+        $category->type_category     = $request->type_category;
         $category->description       = $request->description;
         $category->save();
 
@@ -87,11 +96,12 @@ class CategoryController extends BaseController
             return $this->responseErrors('category', trans('validation.not_found', ['attribute' => 'Danh mục']));
         }
 
-        return response()->json($category, Response::HTTP_OK);
+        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('category'));
     }
 
     public function destroy($id)
     {
+        $this->category->skipPresenter();
         $category = $this->category->find($id);
         if (empty($category)) {
             return $this->responseErrors('category', trans('validation.not_found', ['attribute' => 'Danh mục']));

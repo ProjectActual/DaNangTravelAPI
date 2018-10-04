@@ -26,6 +26,7 @@ class CreateCategoryRequest extends FormRequest
         return [
             "name_category"     => "required|min:6|string|max:255",
             "uri_category"      => "required|min:6|regex:/[a-z0-9\-]+/|unique:urls,uri",
+            "type_category"     => "required|unique:categories,type_category",
         ];
     }
 }

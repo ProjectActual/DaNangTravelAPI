@@ -38,7 +38,6 @@ class PostController extends BaseController
         $this->category   = $category;
 
         $this->tag->skipPresenter();
-        // $this->post->skipCriteria();
     }
 
     public function index(Request $request)

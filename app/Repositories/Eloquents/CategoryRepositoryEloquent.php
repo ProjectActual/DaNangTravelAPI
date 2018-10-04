@@ -25,7 +25,10 @@ class CategoryRepositoryEloquent extends BaseRepository implements CategoryRepos
         return Category::class;
     }
 
-
+    public function presenter()
+    {
+        return 'App\\Presenters\\CategoryPresenter';
+    }
 
     /**
      * Boot up the repository, pushing criteria
