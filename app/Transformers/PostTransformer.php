@@ -28,10 +28,16 @@ class PostTransformer extends TransformerAbstract
             'uri_post'      => $model->uri_post,
             'count_view'    => $model->count_view,
             'avatar_post'   => $model->avatar_post,
+            'summary'       => $model->summary,
+            'status'        => $model->status,
+            'is_slider'     => $model->is_slider,
+            'is_hot'        => $model->is_hot,
+
+            'category_id'   => $model->category_id,
             'uri_category'  => $model->category->uri_category,
             'type_category' => $model->category->type_category,
-            'tag' => $model->tags,
-            'summary'       => $model->summary,
+
+            'tag'           => $model->tags,
             'created_at'    => $model->created_at,
             'updated_at'    => $model->updated_at
         ];

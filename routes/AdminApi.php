@@ -36,7 +36,6 @@ Route::group(['middleware' => ['admin', 'auth:api']], function () {
         Route::post('/', 'PostController@store')->name('store');
 
         Route::put('/{id}', 'PostController@update')->name('update');
-        Route::post('/edit/{id}', 'PostController@edit')->name('edit');
 
         Route::delete('/{id}', 'PostController@destroy')->name('destroy');
     });

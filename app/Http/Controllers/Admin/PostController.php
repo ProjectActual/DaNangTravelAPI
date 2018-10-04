@@ -38,28 +38,26 @@ class PostController extends BaseController
         $this->category   = $category;
 
         $this->tag->skipPresenter();
-        $this->post->skipCriteria();
+        // $this->post->skipCriteria();
     }
 
     public function index(Request $request)
     {
-        $posts = $this->post
-            ->searchWithPost($request->search)
-            ->orderBy('updated_at', 'desc')
-            ->paginate($this->paginate);
+        $posts = $this->post->paginate($this->paginate);
 
-        return response()->json($posts);
+        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('posts'));
     }
 
     public function show($id)
     {
         $post = $this->post->find($id);
 
-        return response()->json($post);
+        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('post'));
     }
 
     public function store(CreatePostRequest $request)
     {
+        $this->post->skipPresenter();
         $user         = $request->user();
         $request->tag = json_decode($request->tag);
 
@@ -85,11 +83,12 @@ class PostController extends BaseController
 
         $this->checkAndGenerateTag($request->tag, $post->id);
 
-        return $this->responses(trans('notication.create.success'), Response::HTTP_OK, $post);
+        return $this->responses(trans('notication.create.success'), Response::HTTP_OK);
     }
 
     public function update(UpdatePostRequest $request, $id)
     {
+        $this->post->skipPresenter();
         $user = $request->user();
         $post = $this->post->find($id);
 
@@ -131,20 +130,6 @@ class PostController extends BaseController
         return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
     }
 
-    public function edit($id)
-    {
-        $post = $this->post->with('tags')->find($id);
-
-        if(empty($post)) {
-            return response()->json([
-                'message'     => 'Incorect route',
-                'status'      => Response::HTTP_NOT_FOUND
-            ], Response::HTTP_NOT_FOUND);
-        }
-
-        return response()->json($post);
-    }
-
     public function checkAndGenerateTag($tag, $post_id) {
         $tags = $this->tag->all();
 
@@ -165,6 +150,7 @@ class PostController extends BaseController
 
     public function destroy($id)
     {
+        $this->post->skipPresenter();
         $post = $this->post->find($id);
         if (empty($post)) {
             return $this->responseErrors('post', trans('validation.not_found', ['attribute' => 'Bài viết']));
