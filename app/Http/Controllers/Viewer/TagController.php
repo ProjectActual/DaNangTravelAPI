@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Viewer;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 
 use App\Presenters\PostPresenter;
 use App\Repositories\Contracts\TagRepository;
 use App\Repositories\Contracts\PostRepository;
 use App\Criteria\Tag\FilterPostByTagCriteriaCriteria;
 
-class TagController extends Controller
+class TagController extends BaseController
 {
     protected $tag;
     protected $post;

@@ -3,18 +3,19 @@
 namespace App\Http\Controllers\Viewer;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 
 use App\Presenters\PostPresenter;
+use App\Http\Requests\SearchRequest;
 use App\Repositories\Contracts\PostRepository;
 use App\Criteria\Post\FilterByPostActiveCriteria;
 use App\Repositories\Contracts\CategoryRepository;
 
-class PostController extends Controller
+class PostController extends BaseController
 {
     protected $post;
     protected $category;
-    protected $paginate = 10;
+    protected $paginate = 15;
 
     public function __construct(
         PostRepository $post,
@@ -47,5 +48,12 @@ class PostController extends Controller
         $relationPost = $this->post->filterByRelationPost($uri_post);
 
         return response()->json(compact('post','relationPost'), 200);
+    }
+
+    public function search(SearchRequest $request)
+    {
+        $posts = $this->post->paginate($this->paginate);
+
+        return $this->responses(trans('notication.load.success'), 200, compact('posts'));
     }
 }

@@ -2,6 +2,9 @@
 
 return [
 
+
+// validator custom
+
     /*
     |--------------------------------------------------------------------------
     | Validation Language Lines
@@ -12,7 +15,6 @@ return [
     | as the size rules. Feel free to tweak each of these messages here.
     |
     */
-
     'accepted'             => 'Trường :attribute must be accepted.',
     'active_url'           => 'Trường :attribute is not a valid URL.',
     'after'                => 'Trường :attribute must be a date after :date.',
