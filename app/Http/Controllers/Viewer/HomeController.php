@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Viewer;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use Illuminate\Http\Response;
+use App\Http\Controllers\BaseController;
 
 use App\Entities\Post;
 use App\Presenters\PostPresenter;
@@ -12,7 +13,7 @@ use App\Repositories\Contracts\TagRepository;
 use App\Repositories\Contracts\PostRepository;
 use App\Repositories\Contracts\CategoryRepository;
 
-class HomeController extends Controller
+class HomeController extends BaseController
 {
     protected $post;
     protected $category;
@@ -32,24 +33,28 @@ class HomeController extends Controller
 
     public function master(Request $request)
     {
-        $composerFoods      = $this->post->findInMonth(Post::CODE_CATEGORY['AM_THUC']);
+        $composerFoods      = $this->post->latest()->findInMonth(Post::CODE_CATEGORY['AM_THUC']);
 
-        $composerTravels    = $this->post->findInMonth(Post::CODE_CATEGORY['DU_LICH']);
+        $composerTravels    = $this->post->latest()->findInMonth(Post::CODE_CATEGORY['DU_LICH']);
 
-        $composerEvents     = $this->post->findInMonth(Post::CODE_CATEGORY['SU_KIEN']);
+        $composerEvents     = $this->post->latest()->findInMonth(Post::CODE_CATEGORY['SU_KIEN']);
 
         $composerTags       = $this->tag->get();
 
         $composerCategories = $this->category->get();
 
-        return response()->json(compact('composerFoods', 'composerTravels', 'composerEvents', 'composerTags', 'composerCategories'));
+        return $this->responses(
+            trans('notication.load.success'),
+            Response::HTTP_OK,
+            compact('composerFoods', 'composerTravels', 'composerEvents', 'composerTags', 'composerCategories')
+        );
     }
 
     public function index(Request $request)
     {
-        $sliders = $this->post->findByIsSlider();
+        $sliders = $this->post->latest()->findByIsSlider();
 
-        $hots    = $this->post->findByIsHot();
+        $hots    = $this->post->latest()->findByIsHot();
 
         $posts    = $this->post
             ->scopeQuery(function ($query) {
@@ -58,6 +63,10 @@ class HomeController extends Controller
 
         $foods   = $this->post->findByCategory(Post::CODE_CATEGORY['AM_THUC']);
 
-        return response()->json(compact('sliders', 'hots', 'posts', 'foods'), 200);
+        return $this->responses(
+            trans('notication.load.success'),
+            Response::HTTP_OK,
+            compact('sliders', 'hots', 'posts', 'foods')
+        );
     }
 }

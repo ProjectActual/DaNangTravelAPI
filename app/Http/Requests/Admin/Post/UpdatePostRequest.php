@@ -27,7 +27,7 @@ class UpdatePostRequest extends FormRequest
             'title'         => 'required|min:6|max:255',
             'uri_post'      => 'required|min:6|regex:/[a-z0-9\-]+/',
             'content'       => 'required|min:6',
-            'status'        => 'required',
+            'status'        => 'required|in:ACTIVE,INACTIVE',
             'summary'        => 'required|max:255',
             'category_id'   => 'required|exists:categories,id',
         ];

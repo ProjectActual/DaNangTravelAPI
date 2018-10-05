@@ -9,8 +9,6 @@ use App\Entities\Post;
 use App\Validators\PostValidator;
 
 use Carbon\Carbon;
-use App\Presenters\PostPresenter;
-use App\Criteria\Post\FilterByPostActiveCriteria;
 
 /**
  * Class PostRepositoryEloquent.
@@ -24,38 +22,37 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
      *
      * @return string
      */
+    protected $fieldSearchable = [
+        'title' => 'like',
+    ];
+
     public function model()
     {
         return Post::class;
     }
 
+    public function presenter()
+    {
+        return "App\\Presenters\\PostPresenter";
+    }
     /**
      * Boot up the repository, pushing criteria
      */
     public function boot()
     {
         $this->pushCriteria(app(RequestCriteria::class));
-        $this->pushCriteria(app(FilterByPostActiveCriteria::class));
     }
 
     public function latest()
     {
-        return $this->orderBy('updated_at', 'desc');
+        return $this
+            ->orderBy('updated_at', 'desc');
     }
 
     public function oldest()
     {
-        return $this->model
+        return $this
             ->orderBy('updated_at', 'asc');
-    }
-
-    public function searchWithPost($search)
-    {
-        return $this->model
-            ->where(function ($query) use ($search) {
-                $query
-                ->orWhere('title', 'LIKE', "%{$search}%");
-            });
     }
 
     public function findByIsSlider()

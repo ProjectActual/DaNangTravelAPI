@@ -41,7 +41,7 @@ class RolesTableSeeder extends Seeder
     public function addDataRelation()
     {
         User::all()->each(function ($user) {
-            if(substr($user->email, 0, 5) == 'admin') {
+            if(substr($user->email, 0, 5) == 'admin' || $user->email == 'trantruongquy2702@gmail.com') {
                 $user->roles()->attach(ROLE::CODE_NAME['ADMINISTRATOR']);
             } else {
                 $user->roles()->attach(ROLE::CODE_NAME['CONGTACVIEN']);

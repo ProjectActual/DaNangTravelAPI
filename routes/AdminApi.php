@@ -21,6 +21,8 @@ Route::group(['namespace' => 'Auth\\'], function () {
         Route::get('logout', 'AuthController@logout')->name('logout');
         Route::get('user', 'AuthController@user')->name('user');
 
+        Route::put('user', 'AuthController@update')->name('update');
+
         Route::post('change-password', 'AuthController@changePassword')->name('change_password');
     });
 });
@@ -36,7 +38,10 @@ Route::group(['middleware' => ['admin', 'auth:api']], function () {
         Route::post('/', 'PostController@store')->name('store');
 
         Route::put('/{id}', 'PostController@update')->name('update');
-        Route::post('/edit/{id}', 'PostController@edit')->name('edit');
+
+        Route::put('/hot/{id}', 'PostController@showHot')->name('show_how');
+
+        Route::put('/slider/{id}', 'PostController@showSlider')->name('show_slider');
 
         Route::delete('/{id}', 'PostController@destroy')->name('destroy');
     });

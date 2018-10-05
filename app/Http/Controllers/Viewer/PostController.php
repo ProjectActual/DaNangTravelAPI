@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 
 use App\Presenters\PostPresenter;
 use App\Repositories\Contracts\PostRepository;
+use App\Criteria\Post\FilterByPostActiveCriteria;
 use App\Repositories\Contracts\CategoryRepository;
 
 class PostController extends Controller
@@ -21,7 +22,10 @@ class PostController extends Controller
     ){
         $this->category = $category;
         $this->post     = $post;
+
         $this->post->setPresenter(PostPresenter::class);
+        $this->post->pushCriteria(FilterByPostActiveCriteria::class);
+        $this->category->skipPresenter();
     }
 
     public function index(Request $request, $uri_category)
@@ -30,6 +34,7 @@ class PostController extends Controller
 
         $posts    = $this->post
             ->filterByUrlCategory($category->id)
+            ->latest()
             ->paginate($this->paginate);
 
         return response()->json($posts, 200);

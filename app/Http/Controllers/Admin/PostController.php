@@ -15,10 +15,11 @@ use App\Notifications\PasswordResetRequest;
 use App\Repositories\Contracts\UrlRepository;
 use App\Repositories\Contracts\TagRepository;
 use App\Repositories\Contracts\PostRepository;
+use  App\Http\Requests\Admin\Post\CheckHotRequest;
 use App\Repositories\Contracts\CategoryRepository;
 use App\Http\Requests\Admin\Post\CreatePostRequest;
 use App\Http\Requests\Admin\Post\UpdatePostRequest;
-use App\Http\Requests\Admin\Post\UploadFileRequest;
+use App\Http\Requests\Admin\Post\CheckSliderRequest;
 
 class PostController extends BaseController
 {
@@ -39,30 +40,27 @@ class PostController extends BaseController
         $this->category   = $category;
 
         $this->tag->skipPresenter();
-        $this->post->skipCriteria();
     }
 
     public function index(Request $request)
     {
-        $posts = $this->post
-            ->searchWithPost($request->search)
-            ->orderBy('updated_at', 'desc')
-            ->paginate($this->paginate);
+        $posts = $this->post->latest()->paginate($this->paginate);
 
-        return response()->json($posts);
+        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('posts'));
     }
 
     public function show($id)
     {
         $post = $this->post->find($id);
 
-        return response()->json($post);
+        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('post'));
     }
 
     public function store(CreatePostRequest $request)
     {
-         $user = $request->user();
-        $request->tag = explode(",",$request->tag);
+        $this->post->skipPresenter();
+        $user         = $request->user();
+        $request->tag = json_decode($request->tag);
 
         if(count($request->tag) > 10) {
             return $this->responseErrors('tag', trans('validation.max.numeric', ['attribute' => 'tag', 'max' => 10]));
@@ -73,36 +71,25 @@ class PostController extends BaseController
             'uri'           => $request->uri_post,
         ]);
 
-        $image  = $this->saveImage($request->avatar_post ,'public/images/avatar_post');
         $post   = $this->post->create([
-            'content'       => $request->content,
-            'title'         => $request->title,
-            'title'         => $request->summary,
-            'status'        => ($request->status == true) ? Post::STATUS['ACTIVE'] : Post::STATUS['INACTIVE'],
-            'avatar_post'   => $image,
-            'uri_post'      => $request->uri_post,
-            'category_id'   => $request->category_id,
-            'user_id'       => $user->id,
+            'content'     => $request->content,
+            'title'       => $request->title,
+            'summary'     => $request->summary,
+            'status'      => ($request->status == true) ? Post::STATUS['ACTIVE'] : Post::STATUS['INACTIVE'],
+            'avatar_post' => $request->avatar_post,
+            'uri_post'    => $request->uri_post,
+            'category_id' => $request->category_id,
+            'user_id'     => $user->id,
         ]);
 
         $this->checkAndGenerateTag($request->tag, $post->id);
 
-        return $this->responses(trans('notication.create.success'), Response::HTTP_OK, $post);
-    }
-
-    public function uploadFile(UploadFileRequest $request)
-    {
-        if(empty($request->avatar_post)) {
-            $path = '';
-        } else {
-            $path = $request->avatar_post->store('public/images/avatar_post');
-        }
-
-        return response()->json($path, 200);
+        return $this->responses(trans('notication.create.success'), Response::HTTP_OK);
     }
 
     public function update(UpdatePostRequest $request, $id)
     {
+        $this->post->skipPresenter();
         $user = $request->user();
         $post = $this->post->find($id);
 
@@ -119,6 +106,7 @@ class PostController extends BaseController
             $post->avatar_post  = $request->avatar_post;
         }
 
+        $request->tag = json_decode($request->tag);
         if(count($request->tag) > 10) {
             return $this->responseErrors('tag', trans('validation.max.numeric', ['attribute' => 'tag', 'max' => 10]));
         }
@@ -127,11 +115,10 @@ class PostController extends BaseController
         $url->url_title     = $request->title;
         $url->uri           = $request->uri_post;
         $url->save();
-
         $post->content      = $request->content;
         $post->title        = $request->title;
-        $post->summary        = $request->summary;
-        $post->status       = ($request->status == true) ? Post::STATUS['ACTIVE'] : Post::STATUS['INACTIVE'];
+        $post->summary      = $request->summary;
+        $post->status       = $request->status;
         $post->uri_post     = $request->uri_post;
         $post->category_id  = $request->category_id;
         $post->user_id      = $user->id;
@@ -142,20 +129,6 @@ class PostController extends BaseController
         $this->checkAndGenerateTag($request->tag, $post->id);
 
         return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
-    }
-
-    public function edit($id)
-    {
-        $post = $this->post->with('tags')->find($id);
-
-        if(empty($post)) {
-            return response()->json([
-                'message'     => 'Incorect route',
-                'status'      => Response::HTTP_NOT_FOUND
-            ], Response::HTTP_NOT_FOUND);
-        }
-
-        return response()->json($post);
     }
 
     public function checkAndGenerateTag($tag, $post_id) {
@@ -178,6 +151,7 @@ class PostController extends BaseController
 
     public function destroy($id)
     {
+        $this->post->skipPresenter();
         $post = $this->post->find($id);
         if (empty($post)) {
             return $this->responseErrors('post', trans('validation.not_found', ['attribute' => 'Bài viết']));
@@ -189,6 +163,38 @@ class PostController extends BaseController
         $post->delete();
 
         return $this->responses(trans('notication.delete.success'), Response::HTTP_OK);
+    }
+
+    public function showSlider(CheckSliderRequest $request, $id)
+    {
+        $this->post->skipPresenter();
+
+        $post = $this->post->find($id);
+
+        if (empty($post)) {
+            return $this->responseErrors('post', trans('validation.not_found', ['attribute' => 'Bài viết']));
+        }
+
+        $post->is_slider = ($request->is_slider == Post::IS_SLIDER['YES']) ? Post::IS_SLIDER['NO'] : Post::IS_SLIDER['YES'];
+        $post->save();
+
+        return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
+    }
+
+    public function showHot(CheckHotRequest $request, $id)
+    {
+        $this->post->skipPresenter();
+
+        $post = $this->post->find($id);
+
+        if (empty($post)) {
+            return $this->responseErrors('post', trans('validation.not_found', ['attribute' => 'Bài viết']));
+        }
+
+        $post->is_hot = ($request->is_hot == Post::IS_HOT['YES']) ? Post::IS_HOT['NO'] : Post::IS_HOT['YES'];
+        $post->save();
+
+        return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
     }
 
 }

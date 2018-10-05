@@ -10,6 +10,9 @@ return [
     ],
     'delete' => [
         'success' => 'Xóa thành công'
+    ],
+    'load' => [
+        'success' => 'Load thành công'
     ]
 
 ];

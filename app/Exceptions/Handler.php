@@ -64,7 +64,6 @@ class Handler extends ExceptionHandler
                 return $this->errorsException('Method is not defined', Response::HTTP_METHOD_NOT_ALLOWED);
             }
         }
-
         return parent::render($request, $e);
     }
 

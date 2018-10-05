@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Admin\Category;
+namespace App\Http\Requests\Admin\Post;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateCategoryRequest extends FormRequest
+class CheckHotRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +24,7 @@ class CreateCategoryRequest extends FormRequest
     public function rules()
     {
         return [
-            "name_category"     => "required|min:6|string|max:255",
-            "uri_category"      => "required|min:6|regex:/[a-z0-9\-]+/|unique:urls,uri",
-            "type_category"     => "required|unique:categories,type_category",
+            'is_hot' => 'required|in:YES,NO',
         ];
     }
 }

@@ -25,7 +25,10 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
         return User::class;
     }
 
-
+    public function presenter()
+    {
+        return "App\\Presenters\\UserPresenter";
+    }
 
     /**
      * Boot up the repository, pushing criteria

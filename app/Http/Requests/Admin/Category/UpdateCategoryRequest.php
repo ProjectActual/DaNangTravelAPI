@@ -26,6 +26,7 @@ class UpdateCategoryRequest extends FormRequest
         return [
             "name_category"     => "required|min:6|string|max:255",
             "uri_category"      => "required|min:6|regex:/[a-z1-9\-]+/",
+            "type_category"     => "required",
         ];
     }
 }

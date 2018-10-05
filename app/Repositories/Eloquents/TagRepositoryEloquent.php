@@ -20,6 +20,11 @@ class TagRepositoryEloquent extends BaseRepository implements TagRepository
      *
      * @return string
      */
+    protected $fieldSearchable = [
+        'tag'     => 'like',
+        'uri_tag' => 'like',
+    ];
+
     public function model()
     {
         return Tag::class;
@@ -43,14 +48,6 @@ class TagRepositoryEloquent extends BaseRepository implements TagRepository
         return $this->model
             ->where('tag', $tag)
             ->first();
-    }
-
-    public function searchWithTag($search = '')
-    {
-        return $this->model->where(function ($query) use ($search) {
-            $query
-                ->orWhere('tag', 'LIKE', "%{$search}%");
-        });
     }
 
     public function findId($id)
