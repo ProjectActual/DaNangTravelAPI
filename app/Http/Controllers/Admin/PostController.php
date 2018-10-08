@@ -8,13 +8,16 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 
 use Uuid;
+use Entrust;
 use App\Entities\Post;
+use App\Entities\Role;
 use App\Services\SendMail;
 use App\Http\Controllers\BaseController;
 use App\Notifications\PasswordResetRequest;
 use App\Repositories\Contracts\UrlRepository;
 use App\Repositories\Contracts\TagRepository;
 use App\Repositories\Contracts\PostRepository;
+use App\Criteria\Post\FilterPostWithCTVCriteria;
 use  App\Http\Requests\Admin\Post\CheckHotRequest;
 use App\Repositories\Contracts\CategoryRepository;
 use App\Http\Requests\Admin\Post\CreatePostRequest;
@@ -34,24 +37,32 @@ class PostController extends BaseController
         PostRepository $post,
         CategoryRepository $category
     ){
-        $this->tag        = $tag;
-        $this->url         = $url;
-        $this->post        = $post;
-        $this->category   = $category;
+        $this->tag      = $tag;
+        $this->url      = $url;
+        $this->post     = $post;
+        $this->category = $category;
 
         $this->tag->skipPresenter();
     }
 
     public function index(Request $request)
     {
+        $this->post->pushCriteria(new FilterPostWithCTVCriteria());
         $posts = $this->post->latest()->paginate($this->paginate);
 
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('posts'));
     }
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        $post = $this->post->find($id);
+        $user = $request->user();
+        $post = $this->post->skipPresenter()->find($id);
+
+        if(!Entrust::hasRole(Role::NAME[1]) && $post['user_id'] != $user->id) {
+            return $this->responseException('You do not have access to the router', 401);
+        }
+
+        $post = $post->presenter();
 
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('post'));
     }
@@ -71,11 +82,15 @@ class PostController extends BaseController
             'uri'           => $request->uri_post,
         ]);
 
+        if(!Entrust::hasRole(Role::NAME[1])) {
+            $request->status = Post::STATUS['INACTIVE'];
+        }
+
         $post   = $this->post->create([
             'content'     => $request->content,
             'title'       => $request->title,
             'summary'     => $request->summary,
-            'status'      => ($request->status == true) ? Post::STATUS['ACTIVE'] : Post::STATUS['INACTIVE'],
+            'status'      => $request->status,
             'avatar_post' => $request->avatar_post,
             'uri_post'    => $request->uri_post,
             'category_id' => $request->category_id,
@@ -92,6 +107,9 @@ class PostController extends BaseController
         $this->post->skipPresenter();
         $user = $request->user();
         $post = $this->post->find($id);
+        if(!Entrust::hasRole(Role::NAME[1]) && $post->user_id != $user->id) {
+            return $this->responseException('You do not have access to the router', Response::HTTP_UNAUTHORIZED);
+        }
 
         if(empty($post)) {
             return $this->responseErrors('post', trans('validation.not_found', ['attribute' => 'Bài viết']));
@@ -149,12 +167,18 @@ class PostController extends BaseController
         }
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $this->post->skipPresenter();
         $post = $this->post->find($id);
+        $user = $request->user();
+
+        if(!Entrust::hasRole(Role::NAME[1]) && $post->user_id != $user->id) {
+            return $this->responseException('You do not have access to the router', Response::HTTP_UNAUTHORIZED);
+        }
+
         if (empty($post)) {
-            return $this->responseErrors('post', trans('validation.not_found', ['attribute' => 'Bài viết']));
+            return $this->responseException('Incorect route', Response::HTTP_NOT_FOUND);
         }
 
         $this->url->findByUri($post->uri_post)->delete();
@@ -169,18 +193,23 @@ class PostController extends BaseController
     {
         $this->post->skipPresenter();
 
+        $post = $this->post->find($id);
+        $user = $request->user();
+
+        if(!Entrust::hasRole(Role::NAME[1]) && $post->user_id != $user->id) {
+            return $this->responseException('You do not have access to the router', Response::HTTP_UNAUTHORIZED);
+        }
+
         if( $this->post->findByIsSlider()->count() >= 3 && $request->is_slider == Post::IS_SLIDER['NO']) {
             $this->responseErrors('post', trans('validation_custom.posts.limit', ['attribute' => 'Slider và tin nổi bật', 'max' => 3]));
         }
 
-        if( $this->post->find($request->id)->status === Post::STATUS['INACTIVE'] ) {
+        if( $post->status === Post::STATUS['INACTIVE'] ) {
             $this->responseErrors('post', trans('validation_custom.posts.selected'));
         }
 
-        $post = $this->post->find($id);
-
         if (empty($post)) {
-            return $this->responseErrors('post', trans('validation.not_found', ['attribute' => 'Bài viết']));
+            return $this->responseException('Incorect route', Response::HTTP_NOT_FOUND);
         }
 
         $post->is_slider = ($request->is_slider == Post::IS_SLIDER['YES']) ? Post::IS_SLIDER['NO'] : Post::IS_SLIDER['YES'];
@@ -193,18 +222,23 @@ class PostController extends BaseController
     {
         $this->post->skipPresenter();
 
+        $post = $this->post->find($id);
+        $user = $request->user();
+
+        if(!Entrust::hasRole(Role::NAME[1]) && $post->user_id != $user->id) {
+            return $this->responseException('You do not have access to the router', Response::HTTP_UNAUTHORIZED);
+        }
+
         if( $this->post->findByIsHot()->count() >= 3 && $request->is_hot == Post::IS_HOT['NO']) {
             $this->responseErrors('post', trans('validation_custom.posts.limit', ['attribute' => 'Slider và tin nổi bật', 'max' => 3]));
         }
 
-        if( $this->post->find($request->id)->status === Post::STATUS['INACTIVE'] ) {
+        if( $post->status === Post::STATUS['INACTIVE'] ) {
             $this->responseErrors('post', trans('validation_custom.posts.selected'));
         }
 
-        $post = $this->post->find($id);
-
         if (empty($post)) {
-            return $this->responseErrors('post', trans('validation.not_found', ['attribute' => 'Bài viết']));
+            return $this->responseException('Incorect route', Response::HTTP_NOT_FOUND);
         }
 
         $post->is_hot = ($request->is_hot == Post::IS_HOT['YES']) ? Post::IS_HOT['NO'] : Post::IS_HOT['YES'];

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Entrust;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 
+use App\Entities\Role;
 use App\Http\Controllers\BaseController;
 use App\Repositories\Contracts\UrlRepository;
 use App\Repositories\Contracts\CategoryRepository;
@@ -42,6 +44,10 @@ class CategoryController extends BaseController
     {
         $this->category->skipPresenter();
 
+        if(!Entrust::hasRole(Role::NAME[1])) {
+            return $this->responseException('You do not have access to the router', 401);
+        }
+
         if($this->category->all()->count() >= 10) {
             return $this->responseErrors('category', trans('validation.max.numeric', ['attribute' => 'danh mục', 'max' => 10]));
         }
@@ -63,6 +69,10 @@ class CategoryController extends BaseController
 
     public function update(UpdateCategoryRequest $request, $id)
     {
+        if(!Entrust::hasRole(Role::NAME[1])) {
+            return $this->responseException('You do not have access to the router', 401);
+        }
+
         $this->category->skipPresenter();
         $category = $this->category->find($id);
 
@@ -90,6 +100,10 @@ class CategoryController extends BaseController
 
     public function edit($id)
     {
+        if(!Entrust::hasRole(Role::NAME[1])) {
+            return $this->responseException('You do not have access to the router', 401);
+        }
+
         $category = $this->category->find($id);
 
         if(empty($category)) {
@@ -101,6 +115,10 @@ class CategoryController extends BaseController
 
     public function destroy($id)
     {
+        if(!Entrust::hasRole(Role::NAME[1])) {
+            return $this->responseException('You do not have access to the router', 401);
+        }
+
         $this->category->skipPresenter();
         $category = $this->category->find($id);
         if (empty($category)) {

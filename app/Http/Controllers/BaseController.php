@@ -21,4 +21,12 @@ class BaseController extends Controller
     {
         throw \Illuminate\Validation\ValidationException::withMessages([$key => $message]);
     }
+
+    public function responseException($message, $status)
+    {
+        return response()->json([
+            'message'     => $message,
+            'status'      => $status
+        ], $status);
+    }
 }
