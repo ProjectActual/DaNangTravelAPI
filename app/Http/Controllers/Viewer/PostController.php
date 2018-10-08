@@ -50,7 +50,7 @@ class PostController extends BaseController
         return response()->json(compact('post','relationPost'), 200);
     }
 
-    public function search(SearchRequest $request)
+    public function search(Request $request)
     {
         $posts = $this->post->paginate($this->paginate);
 

@@ -173,6 +173,10 @@ class PostController extends BaseController
             $this->responseErrors('post', trans('validation_custom.posts.limit', ['attribute' => 'Slider và tin nổi bật', 'max' => 3]));
         }
 
+        if( $this->post->find($request->id)->status === Post::STATUS['INACTIVE'] ) {
+            $this->responseErrors('post', trans('validation_custom.posts.selected'));
+        }
+
         $post = $this->post->find($id);
 
         if (empty($post)) {
@@ -191,6 +195,10 @@ class PostController extends BaseController
 
         if( $this->post->findByIsHot()->count() >= 3 && $request->is_hot == Post::IS_HOT['NO']) {
             $this->responseErrors('post', trans('validation_custom.posts.limit', ['attribute' => 'Slider và tin nổi bật', 'max' => 3]));
+        }
+
+        if( $this->post->find($request->id)->status === Post::STATUS['INACTIVE'] ) {
+            $this->responseErrors('post', trans('validation_custom.posts.selected'));
         }
 
         $post = $this->post->find($id);

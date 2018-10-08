@@ -11,6 +11,7 @@ use App\Presenters\PostPresenter;
 use App\Presenters\CategoryPresenter;
 use App\Repositories\Contracts\TagRepository;
 use App\Repositories\Contracts\PostRepository;
+use App\Criteria\Post\FilterByPostActiveCriteria;
 use App\Repositories\Contracts\CategoryRepository;
 
 class HomeController extends BaseController
@@ -29,6 +30,7 @@ class HomeController extends BaseController
 
         $this->post->setPresenter(PostPresenter::class);
         $this->category->setPresenter(CategoryPresenter::class);
+        $this->post->pushCriteria(FilterByPostActiveCriteria::class);
     }
 
     public function master(Request $request)
