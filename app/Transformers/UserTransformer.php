@@ -30,6 +30,7 @@ class UserTransformer extends TransformerAbstract
             'avatar'      => $model->avatar,
             'gender'      => $model->gender,
             'birthday'    => $model->birthday,
+            'active'      => $model->active,
             'count_posts' => $model->posts->count(),
             'roles'       => $model->roles,
             'created_at'  => $model->created_at,

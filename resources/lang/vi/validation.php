@@ -154,7 +154,10 @@ return [
         'uri_category'          => 'liên kết danh mục',
         'category'              => 'danh mục',
         'password_reset'        => 'xác nhận mật khẩu hoặc mật khẩu',
-        'password_reset'        => 'xác nhận mật khẩu',
+        'first_name'            => 'Tên',
+        'last_name'             => 'Họ',
+        'password'              => 'mật khẩu',
+        'password_confirmation' => 'xác nhận lại mật khẩu',
     ],
 
 ];

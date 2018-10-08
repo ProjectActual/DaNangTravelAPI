@@ -27,7 +27,7 @@
                           <tbody>
                             <tr style="background:#2e3291">
                               <td style="line-height:25px;padding:10px 20px;text-align:center">
-                                <h1 style="color:#fff;font-size:30px;text-align:center">Đặt lại mật khẩu</h1>
+                                <h1 style="color:#fff;font-size:30px;text-align:center">Xác thực đăng ký</h1>
                               </td>
                             </tr>
                           </tbody>
@@ -38,8 +38,7 @@
                               <td colspan="2">
                                 <div style="line-height:1.6">
                                   <div style="font-size:16px; display:block;">
-                                    <p style="text-align: justify;">Bạn nhận được email này vì chúng tôi đã nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn hãy <a href="{{ env('APP_URL_FE') . "/admin/forget-password/change-password/{$info['token']}" }}"  style="font-size: 25px"><b>BẤM VÀO ĐÂY</b></a> để đặt lại mật khẩu</p>
-                                    <p style="text-align: justify;">Nếu bạn không yêu cầu đặt lại mật khẩu, bạn không cần thực hiện thêm hành động nào.</p>
+                                    <p style="text-align: justify;">Bạn nhận được email này vì chúng tôi đã nhận được yêu cầu đăng ký tài khoản của bạn <a href="{{ env('APP_URL_FE') . "/admin/register/{$info['activation_token']}" }}"  style="font-size: 25px"><b>BẤM VÀO ĐÂY</b></a> để hoàn tất quá trình đăng ký</p>
                                   </div>
                                 </div>
                               </td>

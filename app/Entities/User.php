@@ -30,6 +30,11 @@ class User extends Authenticatable implements Transformable
         'FEMALE'  => 'FEMALE',
     ];
 
+    CONST ACTIVE = [
+        1 => 'YES',
+        2 => 'NO',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -46,6 +51,7 @@ class User extends Authenticatable implements Transformable
     protected $fillable  = [
         'email', 'password', 'first_name', 'last_name',
         'phone', 'avatar', 'gender', 'date_of_birth',
+        'active', 'activation_token',
     ];
 
     public function posts()
