@@ -1,4 +1,5 @@
 <?php
+Route::get('/search', 'PostController@search')->name('search');
 
 Route::group(['as' => 'home.'], function () {
     Route::get('/', 'HomeController@index')->name('index');

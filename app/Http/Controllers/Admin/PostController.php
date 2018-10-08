@@ -169,6 +169,14 @@ class PostController extends BaseController
     {
         $this->post->skipPresenter();
 
+        if( $this->post->findByIsSlider()->count() >= 3 && $request->is_slider == Post::IS_SLIDER['NO']) {
+            $this->responseErrors('post', trans('validation_custom.posts.limit', ['attribute' => 'Slider và tin nổi bật', 'max' => 3]));
+        }
+
+        if( $this->post->find($request->id)->status === Post::STATUS['INACTIVE'] ) {
+            $this->responseErrors('post', trans('validation_custom.posts.selected'));
+        }
+
         $post = $this->post->find($id);
 
         if (empty($post)) {
@@ -185,6 +193,14 @@ class PostController extends BaseController
     {
         $this->post->skipPresenter();
 
+        if( $this->post->findByIsHot()->count() >= 3 && $request->is_hot == Post::IS_HOT['NO']) {
+            $this->responseErrors('post', trans('validation_custom.posts.limit', ['attribute' => 'Slider và tin nổi bật', 'max' => 3]));
+        }
+
+        if( $this->post->find($request->id)->status === Post::STATUS['INACTIVE'] ) {
+            $this->responseErrors('post', trans('validation_custom.posts.selected'));
+        }
+
         $post = $this->post->find($id);
 
         if (empty($post)) {
@@ -196,5 +212,4 @@ class PostController extends BaseController
 
         return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
     }
-
 }
