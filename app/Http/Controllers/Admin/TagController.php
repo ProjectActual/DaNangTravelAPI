@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Entrust;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\BaseController;
 
 use Uuid;
+use App\Entities\Role;
 use App\Http\Requests\Admin\Tag\TagRequest;
 use App\Repositories\Contracts\TagRepository;
 
@@ -31,6 +33,10 @@ class TagController extends BaseController
 
     public function update(TagRequest $request, $id)
     {
+        if(!Entrust::hasRole(Role::NAME[1])) {
+            return $this->responseException('You do not have access to the router', 401);
+        }
+
         $this->tag->skipPresenter();
         $tag = $this->tag->find($id);
         if($request->tag == $tag->tag) {
@@ -51,6 +57,10 @@ class TagController extends BaseController
 
     public function destroy($id)
     {
+        if(!Entrust::hasRole(Role::NAME[1])) {
+            return $this->responseException('You do not have access to the router', 401);
+        }
+
         $this->tag->skipPresenter();
         $this->tag->find($id)->delete();
 

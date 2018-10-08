@@ -5,6 +5,8 @@ namespace App\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
+use Prettus\Repository\Contracts\Presentable;
+use Prettus\Repository\Traits\PresentableTrait;
 
 use App\Entities\Tag;
 use App\Entities\User;
@@ -17,9 +19,10 @@ use App\Entities\PostImage;
  *
  * @package namespace App\Entities;
  */
-class Post extends Model implements Transformable
+class Post extends Model implements Transformable, Presentable
 {
     use TransformableTrait;
+    use PresentableTrait;
 
     CONST STATUS = [
         'ACTIVE'    => 'ACTIVE',

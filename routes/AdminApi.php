@@ -27,7 +27,7 @@ Route::group(['namespace' => 'Auth\\'], function () {
     });
 });
 
-Route::group(['middleware' => ['admin', 'auth:api']], function () {
+Route::group(['middleware' => ['authentication', 'auth:api']], function () {
 
     Route::group(['prefix' => 'posts', 'as' => 'posts.'], function () {
         Route::get('/', 'PostController@index')->name('index');

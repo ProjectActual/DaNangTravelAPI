@@ -5,8 +5,9 @@ namespace App\Http\Middleware;
 use Closure;
 use App\Entities\Role;
 use Auth;
+use App;
 
-class AdminMiddleware
+class AuthenticationMiddleware
 {
     /**
      * Handle an incoming request.
@@ -19,7 +20,7 @@ class AdminMiddleware
     {
         $user = Auth::guard('api')->user();
 
-        if(!empty($user) && $user->roles->contains('name', ROLE::NAME['ADMINISTRATOR'])) {
+        if($user->hasRole(Role::NAME[1]) || $user->hasRole(Role::NAME[2])) {
             return $next($request);
         }
 
