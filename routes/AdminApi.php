@@ -20,7 +20,7 @@ Route::group(['namespace' => 'Auth\\'], function () {
     Route::post('/forget-password/{token}', 'PasswordResetController@authenticateToken')->name('authenticate_token');
     Route::put('/forget-password', 'PasswordResetController@reset')->name('reset');
 
-    Route::group(['middleware' => ['auth:api']], function () {
+    Route::group(['middleware' => ['authentication', 'auth:api', 'block', 'credential']], function () {
         Route::get('logout', 'AuthController@logout')->name('logout');
         Route::get('user', 'AuthController@user')->name('user');
 
@@ -30,7 +30,7 @@ Route::group(['namespace' => 'Auth\\'], function () {
     });
 });
 
-Route::group(['middleware' => ['authentication', 'auth:api', 'block']], function () {
+Route::group(['middleware' => ['authentication', 'auth:api', 'block', 'credential']], function () {
 
     Route::group(['prefix' => 'posts', 'as' => 'posts.'], function () {
         Route::get('/', 'PostController@index')->name('index');
