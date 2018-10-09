@@ -30,7 +30,7 @@ Route::group(['namespace' => 'Auth\\'], function () {
     });
 });
 
-Route::group(['middleware' => ['authentication', 'auth:api']], function () {
+Route::group(['middleware' => ['authentication', 'auth:api', 'block']], function () {
 
     Route::group(['prefix' => 'posts', 'as' => 'posts.'], function () {
         Route::get('/', 'PostController@index')->name('index');
@@ -68,11 +68,14 @@ Route::group(['middleware' => ['authentication', 'auth:api']], function () {
         Route::delete('/{id}', 'TagController@destroy')->name('destroy');
     });
 
-    Route::group(['prefix' => 'congtacvien', 'as' => 'cong_tac_vien.'], function () {
+    Route::group(['prefix' => 'congtacvien', 'as' => 'cong_tac_vien.', 'middleware' => 'admin'], function () {
         Route::get('/', 'CongTacVienController@index')->name('index');
         Route::get('/{id}', 'CongTacVienController@show')->name('show');
 
         Route::put('/{id}', 'CongTacVienController@update')->name('update');
+        Route::put('/block/{id}', 'CongTacVienController@block')->name('block');
+
+        Route::delete('/{id}', 'CongTacVienController@destroy')->name('destroy');
     });
 });
 

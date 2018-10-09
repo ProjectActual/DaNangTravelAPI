@@ -10,7 +10,10 @@ return [
         'current' => 'Mật khẩu hiện tại không khớp.',
     ],
     'credential' => [
-        'approved' => 'Tài khoản đã được phê duyệt, vì vậy không thể phê duyệt nửa.',
+        'approved'       => 'Người dùng đã được phê duyệt, vì vậy không thể phê duyệt nửa.',
+        'approved_email' => 'Người dùng hiện tại chưa xác thực bằng email nên không thể thực hiện tác vụ',
+        'approved_admin' => 'Người dùng hiện tại chưa được phê duyệt nên không thể thực hiện tác vụ',
     ],
+    'change' => 'bạn không thực hiện tác vụ nào cả',
 
 ];

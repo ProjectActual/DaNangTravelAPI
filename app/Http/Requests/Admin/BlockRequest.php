@@ -4,7 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ApprovedCTVRequest extends FormRequest
+class BlockRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,8 @@ class ApprovedCTVRequest extends FormRequest
     public function rules()
     {
         return [
-            'reason'       => 'max:1000',
-            'admin_active' => 'required|string|in:YES,NO',
+            'reason'   => 'max:1000',
+            'is_block' => 'required|string|in:YES,NO',
         ];
     }
 }

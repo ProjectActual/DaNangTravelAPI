@@ -3,11 +3,12 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Entities\Role;
-use Auth;
-use App;
+use \Illuminate\Http\Response;
+use Entrust;
 
-class AuthenticationMiddleware
+use App\Entities\Role;
+
+class AdminMiddleware
 {
     /**
      * Handle an incoming request.
@@ -18,15 +19,13 @@ class AuthenticationMiddleware
      */
     public function handle($request, Closure $next)
     {
-        $user = Auth::guard('api')->user();
-
-        if($user->hasRole(Role::NAME[1]) || $user->hasRole(Role::NAME[2])) {
+        if(Entrust::hasRole(Role::NAME[1])) {
             return $next($request);
         }
 
         return response()->json([
             'message'     => 'You do not have access to the router',
-            'status'      => 401
-        ], 401);
+            'status'      => Response::HTTP_UNAUTHORIZED
+        ], Response::HTTP_UNAUTHORIZED);
     }
 }
