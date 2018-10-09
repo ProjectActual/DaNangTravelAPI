@@ -9,6 +9,8 @@ use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
+use App\Entities\User;
+use App\Services\SendMail;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Admin\LoginRequest;
 use App\Http\Requests\Admin\ProfileRequest;
@@ -61,8 +63,8 @@ class AuthController extends BaseController
     public function user(Request $request)
     {
         $profile = $this->user->with(['roles'])
-            ->withCount('posts')
-            ->find($request->user()->id);
+        ->withCount('posts')
+        ->find($request->user()->id);
 
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('profile'));
     }
@@ -95,7 +97,7 @@ class AuthController extends BaseController
         $old_password = $user->password;
 
         if(!Hash::check($request->old_password, $old_password)) {
-            return $this->responseErrors('password', 'Mật khẩu hiện tại không khớp.');
+            return $this->responseErrors('password', trans('validation_custom.password.current'));
         }
 
         $user->password = bcrypt($request->new_password);

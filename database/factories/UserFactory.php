@@ -24,6 +24,7 @@ $factory->define(User::class, function (Faker $faker) {
         'first_name'        => $faker->firstName,
         'last_name'         => $faker->lastName,
         'phone'             => $faker->e164PhoneNumber,
+        'active'            => 'YES',
         'birthday'          => $faker->date('Y-m-d', '2009-01-01'),
         'gender'            => rand(1, 2) == 1 ? User::GENDER['MALE'] : User::GENDER['FEMALE'],
     ];

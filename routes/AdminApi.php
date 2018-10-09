@@ -13,11 +13,14 @@
 
 Route::group(['namespace' => 'Auth\\'], function () {
     // Route::post('login', 'AuthController@login')->name('login');
+    Route::post('/register', 'RegisterController@register')->name('register');
+    Route::post('/credential/{activation_token}', 'RegisterController@credential')->name('credential');
+
     Route::post('/forget-password', 'PasswordResetController@create')->name('create');
     Route::post('/forget-password/{token}', 'PasswordResetController@authenticateToken')->name('authenticate_token');
     Route::put('/forget-password', 'PasswordResetController@reset')->name('reset');
 
-    Route::group(['middleware' => 'auth:api'], function () {
+    Route::group(['middleware' => ['auth:api']], function () {
         Route::get('logout', 'AuthController@logout')->name('logout');
         Route::get('user', 'AuthController@user')->name('user');
 
