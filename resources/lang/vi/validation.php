@@ -153,7 +153,7 @@ return [
         'name_category'         => 'tên danh mục',
         'uri_category'          => 'liên kết danh mục',
         'category'              => 'danh mục',
-        'password_reset'        => 'xác nhận mật khẩu hoặc mật khẩu',
+        'password_reset'        => 'xác nhận mật khẩu',
         'first_name'            => 'Tên',
         'last_name'             => 'Họ',
         'password'              => 'mật khẩu',

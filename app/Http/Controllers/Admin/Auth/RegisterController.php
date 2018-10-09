@@ -64,16 +64,4 @@ class RegisterController extends BaseController
 
         return $this->responses(trans('notication.email.success'), Response::HTTP_OK);
     }
-
-    public function XacThuc(Request $request)
-    {
-        $CongTacVien = $request->user();
-
-        if($CongTacVien->active == User::ACTIVE[2] && !$CongTacVien->hasRole(Role::NAME[1])) {
-            return response()->json([
-                'message'     => trans('notication.email.register'),
-                'status'      => 201
-            ], 201);
-        }
-    }
 }
