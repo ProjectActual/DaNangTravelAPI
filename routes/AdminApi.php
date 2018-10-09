@@ -67,5 +67,12 @@ Route::group(['middleware' => ['authentication', 'auth:api']], function () {
 
         Route::delete('/{id}', 'TagController@destroy')->name('destroy');
     });
+
+    Route::group(['prefix' => 'congtacvien', 'as' => 'cong_tac_vien.'], function () {
+        Route::get('/', 'CongTacVienController@index')->name('index');
+        Route::get('/{id}', 'CongTacVienController@show')->name('show');
+
+        Route::put('/{id}', 'CongTacVienController@update')->name('update');
+    });
 });
 

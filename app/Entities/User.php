@@ -35,6 +35,16 @@ class User extends Authenticatable implements Transformable
         2 => 'NO',
     ];
 
+    CONST ADMIN_ACTIVE = [
+        1 => 'YES',
+        2 => 'NO',
+    ];
+
+    CONST IS_BLOCK = [
+        1 => 'YES',
+        2 => 'NO',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -51,7 +61,8 @@ class User extends Authenticatable implements Transformable
     protected $fillable  = [
         'email', 'password', 'first_name', 'last_name',
         'phone', 'avatar', 'gender', 'date_of_birth',
-        'active', 'activation_token',
+        'active', 'activation_token', 'admin_active',
+        'is_block',
     ];
 
     public function posts()

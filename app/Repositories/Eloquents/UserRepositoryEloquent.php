@@ -20,6 +20,11 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
      *
      * @return string
      */
+    protected $fieldSearchable = [
+        'first_name' => 'like',
+        'last_name'  => 'like',
+    ];
+
     public function model()
     {
         return User::class;
@@ -43,5 +48,14 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
         return $this->model
             ->where('email', $email)
             ->first();
+    }
+
+    public function sortByCTV()
+    {
+        return $this->scopeQuery(function ($query) {
+            return $query
+                ->orderBy('active', 'desc')
+                ->orderBy('admin_active', 'asc');
+        });
     }
 }
