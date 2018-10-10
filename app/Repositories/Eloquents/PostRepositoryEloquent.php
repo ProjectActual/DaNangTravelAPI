@@ -120,15 +120,19 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
 
     public function findByUri($uri_post)
     {
-        return $this->findByField('uri_post', $uri_post);
+        return $this->scopeQuery(function ($query) use ($uri_post) {
+                return $query
+                    ->where('uri_post', $uri_post);
+            })->first();
     }
 
     public function filterByRelationPost($uri_post)
     {
         return $this
-            ->scopeQuery(function ($query) {
-                return $query->limit(4);
-            })
-            ->findWhereNotIn('uri_post', [$uri_post]);
+            ->scopeQuery(function ($query) use ($uri_post) {
+                return $query
+                    ->limit(4)
+                    ->where('uri_post', '<>', $uri_post);
+            });
     }
 }
