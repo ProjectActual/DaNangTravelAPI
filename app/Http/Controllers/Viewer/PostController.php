@@ -34,7 +34,7 @@ class PostController extends BaseController
         $category = $this->category->findByUri($uri_category);
 
         $posts    = $this->post
-            ->filterByUrlCategory($category->id)
+            ->filterByCategory($category->id)
             ->latest()
             ->paginate($this->paginate);
 

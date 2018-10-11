@@ -15,64 +15,82 @@ use App\Repositories\Eloquents\UserRepositoryEloquent;
 
 class CongTacVienController extends BaseController
 {
-    protected $cong_tac_vien;
+    /**
+     * @var int
+     */
     protected $paginate = 15;
 
-    public function __construct(UserRepositoryEloquent $cong_tac_vien)
-    {
-        $this->cong_tac_vien = $cong_tac_vien;
+    /**
+     * @var repository
+     */
+    protected $congTacVienRepository;
 
-        $this->cong_tac_vien->pushCriteria(new FilterByCongTacVienCriteria());
+
+    public function __construct(UserRepositoryEloquent $congTacVienRepository)
+    {
+        $this->congTacVienRepository = $congTacVienRepository;
+
+        $this->congTacVienRepository->pushCriteria(new FilterByCongTacVienCriteria());
     }
 
+    /**
+     * Hiển thị tất cả CTV
+     * @param  Request $request
+     * @return object
+     */
     public function index(Request $request)
     {
-        $cong_tac_vien = $this->cong_tac_vien->sortByCTV()->paginate($this->paginate);
+        $congTacVien = $this->congTacVienRepository->sortByCTV()->paginate($this->paginate);
 
-        return $this->responses(trans('notication.load.success'), 200, compact('cong_tac_vien'));
+        return $this->responses(trans('notication.load.success'), 200, compact('congTacVien'));
     }
 
+    /**
+     * thông tin chi tiết của CTV
+     * @param int $id đây là id tìm kiếm của CTV
+     * @return object
+     */
     public function show(Request $request, $id)
     {
-        $cong_tac_vien = $this->cong_tac_vien->find($id);
+        $congTacVien = $this->congTacVienRepository->find($id);
 
-        return $this->responses(trans('notication.load.success'), 200, compact('cong_tac_vien'));
+        return $this->responses(trans('notication.load.success'), 200, compact('congTacVien'));
     }
 
-/**
- * Phê duyệt cộng tác viên đăng ký
- * @param  AdminApprovedCTVRequest $request [giá trị từ client gửi lên]
- * @param  [type]                  $id      [id người dùng cần phê duyệt]
- * @return [type]                           [API json]
- */
+    /**
+     * Phê duyệt cộng tác viên đăng ký
+     * @param  AdminApprovedCTVRequest $request đây là những nguyên tắc ràng buộc khi request được chấp nhận
+     * @param  int                  $id      id người dùng cần phê duyệt
+     * @return object
+     */
     public function update(ApprovedCTVRequest $request, $id)
     {
-        $this->cong_tac_vien->skipPresenter();
-        $cong_tac_vien = $this->cong_tac_vien->find($id);
+        $this->congTacVienRepository->skipPresenter();
+        $congTacVien = $this->congTacVienRepository->find($id);
 
         // Kiểm tra nếu cộng tác viên đã được duyệt thì sẽ không cho duyệt nửa
-        if($cong_tac_vien->admin_active == User::ADMIN_ACTIVE[1]) {
-            return $this->responseErrors('cong_tac_vien', trans('validation_custom.credential.approved'));
+        if($congTacVien->admin_active == User::ADMIN_ACTIVE[1]) {
+            return $this->responseErrors('congTacVien', trans('validation_custom.credential.approved'));
         }
 
-        if($cong_tac_vien->active == User::ACTIVE[2]) {
-            return $this->responseErrors('cong_tac_vien', trans('validation_custom.credential.approved_email'));
+        if($congTacVien->active == User::ACTIVE[2]) {
+            return $this->responseErrors('congTacVien', trans('validation_custom.credential.approved_email'));
         }
 
-        $cong_tac_vien->admin_active = $request->admin_active;
+        $congTacVien->admin_active = $request->admin_active;
 
-        $cong_tac_vien->save();
+        $congTacVien->save();
 
         $info = [
             'reason'    => empty($request->reason) ? '' : $request->reason,
         ];
 
         //Kiểm tra nếu yêu cầu gửi lên là không duyệt thì send mail và xóa dữ liệu cũ
-        if($cong_tac_vien->admin_active == User::ADMIN_ACTIVE[1]) {
+        if($congTacVien->admin_active == User::ADMIN_ACTIVE[1]) {
             $info['message'] = trans('notication.email.admin.success');
 
             SendMail::send(
-                $cong_tac_vien->email,
+                $congTacVien->email,
                 trans('notication.email.admin.success'),
                 'email.admin_credentials.success',
                 $info
@@ -81,7 +99,7 @@ class CongTacVienController extends BaseController
             $info['message'] = trans('notication.email.admin.fail');
 
             SendMail::send(
-                $cong_tac_vien->email,
+                $congTacVien->email,
                 trans('notication.email.admin.fail'),
                 'email.admin_credentials.fail',
                 $info
@@ -91,46 +109,44 @@ class CongTacVienController extends BaseController
         return $this->responses(trans('notication.email.admin.approved'), 200);
     }
 
+    /**
+     * xóa CTV theo id
+     * @param int $id đây là id tìm kiếm của CTV
+     * @return object
+     */
     public function destroy(Request $request, $id)
     {
-        $this->cong_tac_vien->skipPresenter();
-        $cong_tac_vien = $this->cong_tac_vien->find($id);
-
-        if (empty($cong_tac_vien)) {
-            return $this->responseException('Incorect route', Response::HTTP_NOT_FOUND);
-        }
-
-        $cong_tac_vien->delete();
+        $congTacVien = $this->congTacVienRepository->delete($id);
 
         return $this->responses(trans('notication.delete.success'), Response::HTTP_OK);
     }
 
     public function block(BlockRequest $request, $id)
     {
-        $this->cong_tac_vien->skipPresenter();
-        $cong_tac_vien = $this->cong_tac_vien->find($id);
+        $this->congTacVienRepository->skipPresenter();
+        $congTacVien = $this->congTacVienRepository->find($id);
 
-        if($cong_tac_vien->admin_active == User::ADMIN_ACTIVE[2]) {
-            return $this->responseErrors('cong_tac_vien', trans('validation_custom.credential.approved_admin'));
+        if($congTacVien->admin_active == User::ADMIN_ACTIVE[2]) {
+            return $this->responseErrors('congTacVien', trans('validation_custom.credential.approved_admin'));
         }
 
-        if($cong_tac_vien->active == User::ACTIVE[2]) {
-            return $this->responseErrors('cong_tac_vien', trans('validation_custom.credential.approved_email'));
+        if($congTacVien->active == User::ACTIVE[2]) {
+            return $this->responseErrors('congTacVien', trans('validation_custom.credential.approved_email'));
         }
 
-        if($cong_tac_vien->is_block == $request->is_block) {
-            return $this->responseErrors('cong_tac_vien', trans('validation_custom.change'));
+        if($congTacVien->is_block == $request->is_block) {
+            return $this->responseErrors('congTacVien', trans('validation_custom.change'));
         }
 
-        $cong_tac_vien->is_block = $request->is_block;
+        $congTacVien->is_block = $request->is_block;
 
-        $cong_tac_vien->save();
+        $congTacVien->save();
 
         $info = [
             'reason'    => empty($request->reason) ? '' : $request->reason,
         ];
 
-        if($cong_tac_vien->is_block == User::IS_BLOCK[2]) {
+        if($congTacVien->is_block == User::IS_BLOCK[2]) {
             $info['title'] = trans('notication.email.block.unlock.title');
             $info['message'] = trans('notication.email.block.unlock.message');
         } else {
@@ -139,7 +155,7 @@ class CongTacVienController extends BaseController
         }
 
         SendMail::send(
-            $cong_tac_vien->email,
+            $congTacVien->email,
             trans('notication.email.block.info'),
             'email.block',
             $info

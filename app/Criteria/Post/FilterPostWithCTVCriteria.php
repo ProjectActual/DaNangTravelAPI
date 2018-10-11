@@ -27,7 +27,7 @@ class FilterPostWithCTVCriteria implements CriteriaInterface
     {
         $user = request()->user();
 
-        if(Entrust::hasRole(Role::NAME[2])) {
+        if(!Entrust::hasRole(Role::NAME[1])) {
             $model = $model->where('user_id', $user->id);
         }
 

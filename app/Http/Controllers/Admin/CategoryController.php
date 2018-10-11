@@ -16,95 +16,103 @@ use App\Http\Requests\Admin\Category\UpdateCategoryRequest;
 
 class CategoryController extends BaseController
 {
-    protected $url;
-    protected $category;
+    /**
+     * $url, $category
+     * @var repository
+     */
+    protected $urlRepository;
+    protected $categoryRepository;
 
     public function __construct(
-        UrlRepository $url,
-        CategoryRepository $category
+        UrlRepository $urlRepository,
+        CategoryRepository $categoryRepository
     ){
-        $this->url       = $url;
-        $this->category  = $category;
+        $this->urlRepository       = $urlRepository;
+        $this->categoryRepository  = $categoryRepository;
+
+        $this->middleware('admin')->except(['index']);
     }
 
+    /**
+     * Hiển thị tất cả danh mục
+     * @param  Request $request
+     * @return object
+     */
     public function index(Request $request)
     {
-        $categories = $this->category->all();
+        $categories = $this->categoryRepository->all();
 
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('categories'));
     }
 
 
     /**
-     * @param  CreateCategoryRequest $request
+     *  Tạo danh mục, chi áp dụng với admin
      *
-     * @return json
+     * @param  CreateCategoryRequest $request đây là những nguyên tắc ràng buộc khi request được chấp nhận
+     *
+     * @return object
      */
     public function store(CreateCategoryRequest $request)
     {
-        $this->category->skipPresenter();
+        $this->categoryRepository->skipPresenter();
 
-        if(!Entrust::hasRole(Role::NAME[1])) {
-            return $this->responseException('You do not have access to the router', 401);
-        }
-
-        if($this->category->all()->count() >= 10) {
+        if($this->categoryRepository->all()->count() >= 10) {
             return $this->responseErrors('category', trans('validation.max.numeric', ['attribute' => 'danh mục', 'max' => 10]));
         }
 
-        $url = $this->url->create([
+        $urlCredentials = [
             'url_title'   => $request->name_category,
             'uri'         => $request->uri_category,
-        ]);
+        ];
 
-        $category = $this->category->create([
-            'name_category' => $request->name_category,
-            'uri_category'  => $request->uri_category,
-            'type_category' => $request->type_category,
-            'description'   => $request->description,
-        ]);
+        $url = $this->urlRepository->create($urlCredentials);
+
+        $category = $this->categoryRepository->create($request->all());
 
         return $this->responses(trans('notication.create.success'), Response::HTTP_OK);
     }
 
+    /**
+     * cập nhật danh mục và url theo uri_category
+     *
+     * @param  UpdateCategoryRequest $request đây là những nguyên tắc ràng buộc khi request được chấp nhận
+     * @param  int                $id      là id của danh muc
+     * @return object
+     */
     public function update(UpdateCategoryRequest $request, $id)
     {
-        if(!Entrust::hasRole(Role::NAME[1])) {
-            return $this->responseException('You do not have access to the router', 401);
-        }
+        $category = $this->categoryRepository->skipPresenter()->find($id);
 
-        $this->category->skipPresenter();
-        $category = $this->category->find($id);
-
-        if($this->url->findByUri($request->uri_category) && $request->uri_category != $category->uri_category) {
+        if($this->urlRepository->findByUri($request->uri_category) && $request->uri_category != $category->uri_category) {
             return $this->responseErrors('uri_category', trans('validation.unique', ['attribute' => 'liên kết danh mục']));
         }
 
-        if($this->category->findByField('type_category', $request->type_category)->isNotEmpty() && $request->type_category != $category->type_category) {
+        // kiểm tra là loại danh mục là duy nhất
+        if($this->categoryRepository->findByField('type_category', $request->type_category)->isNotEmpty() && $request->type_category != $category->type_category) {
             return $this->responseErrors('type_category', trans('validation.unique', ['attribute' => 'loại danh mục']));
         }
 
-        $url = $this->url->findByUri($category->uri_category);
-        $url->url_title     = $request->name_category;
-        $url->uri           = $request->uri_category;
-        $url->save();
+        $url = $this->urlRepository->findByUri($category->uri_category);
+        $urlCredentials = [
+            'url_title'   => $request->name_category,
+            'uri'         => $request->uri_category,
+        ];
+        $this->urlRepository->update($urlCredentials, $url->id);
 
-        $category->name_category     = $request->name_category;
-        $category->uri_category      = $request->uri_category;
-        $category->type_category     = $request->type_category;
-        $category->description       = $request->description;
-        $category->save();
+        $this->categoryRepository->update($request->all(), $category->id);
 
         return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
     }
 
+    /**
+     * thông tin chi tiết của danh mục
+     * @param int $id đây là id tìm kiếm của danh mục
+     * @return object
+     */
     public function edit($id)
     {
-        if(!Entrust::hasRole(Role::NAME[1])) {
-            return $this->responseException('You do not have access to the router', 401);
-        }
-
-        $category = $this->category->find($id);
+        $category = $this->categoryRepository->find($id);
 
         if(empty($category)) {
             return $this->responseErrors('category', trans('validation.not_found', ['attribute' => 'Danh mục']));
@@ -113,21 +121,16 @@ class CategoryController extends BaseController
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('category'));
     }
 
+    /**
+     * xóa danh mục theo id
+     * @param int $id đây là id tìm kiếm của danh mục
+     * @return object
+     */
     public function destroy($id)
     {
-        if(!Entrust::hasRole(Role::NAME[1])) {
-            return $this->responseException('You do not have access to the router', 401);
-        }
+        $category = $this->categoryRepository->delete($id);
 
-        $this->category->skipPresenter();
-        $category = $this->category->find($id);
-        if (empty($category)) {
-            return $this->responseErrors('category', trans('validation.not_found', ['attribute' => 'Danh mục']));
-        }
-
-        $this->url->findByUri($category->uri_category)->delete();
-
-        $category->delete();
+        $this->urlRepository->findByUri($category->uri_category)->delete();
 
         return $this->responses(trans('notication.delete.success'), Response::HTTP_OK);
     }
