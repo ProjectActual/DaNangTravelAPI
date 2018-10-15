@@ -18,7 +18,7 @@ class AddHotAndSlideInPost extends Migration
         Schema::table('posts', function (Blueprint $table) {
             $table->string('is_hot')->default(Post::IS_HOT['NO'])->nullable();
             $table->string('is_slider')->default(Post::IS_SLIDER['NO'])->nullable();
-            $table->string('summary')->nullable();
+            $table->text('summary')->nullable();
         });
     }
 

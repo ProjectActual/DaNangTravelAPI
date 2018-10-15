@@ -43,18 +43,30 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
         $this->pushCriteria(app(RequestCriteria::class));
     }
 
+/**
+ * sắp xếp giảm dần với updated
+ * @return mixed
+ */
     public function latest()
     {
         return $this
             ->orderBy('updated_at', 'desc');
     }
 
+    /**
+     * sắp xếp tăng dần với updted
+     * @return mixed
+     */
     public function oldest()
     {
         return $this
             ->orderBy('updated_at', 'asc');
     }
 
+    /**
+     * findByIsSlider  lọc ra những bài viết là slider
+     * @return Array App\Entities\Post
+     */
     public function findByIsSlider()
     {
         return $this->scopeQuery(function ($query) {
@@ -62,6 +74,10 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
         })->get();
     }
 
+    /**
+     * findByIsHot  lọc ra những bài viết là Hot
+     * @return Array App\Entities\Post
+     */
     public function findByIsHot()
     {
         return $this->scopeQuery(function ($query) {
@@ -69,6 +85,11 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
         })->get();
     }
 
+    /**
+     * findByCategory lọc bài viết theo từng danh mục
+     * @param  int $category_id  đây là id của danh mục dùng để lọc
+     * @return Array App\Entities\Post
+     */
     public function findByCategory($category_id)
     {
         $model = $this->scopeQuery(function ($query) use ($category_id) {
@@ -81,6 +102,13 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
         return $model;
     }
 
+    /**
+     * findInMonth lọc bài viết có lượt view cao nhất trong tháng, nếu như trong tháng không
+     * có bài viết nào thì sẽ show 5 bài viết có lượt view cao nhất
+     *
+     * @param  int $category_id  đây là id của danh mục dùng để lọc
+     * @return Array App\Entities\Post
+     */
     public function findInMonth($category_id)
     {
         $now    = Carbon::now();
@@ -106,23 +134,33 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
         return $repository;
     }
 
-/**
- * [filterByUrlCategory description]
- * @param  instance App\Entities\Category
- * @return category_id
- */
-    public function filterByUrlCategory($category_id)
+    /**
+     * filterByUrlCategory  lọc theo Category id
+     * @param  int $category_id  đây là id của danh mục dùng để lọc
+     * @return mixed
+     */
+    public function filterByCategory($category_id)
     {
         return $this->scopeQuery(function ($query) use ($category_id){
             return $query->where('category_id', $category_id);
         });
     }
 
+    /**
+     * findByUri tìm theo uri bài viết
+     * @param  int $uri_post đây là uri của bài viết
+     * @return PostRepository
+     */
     public function findByUri($uri_post)
     {
         return $this->findByField('uri_post', $uri_post);
     }
 
+    /**
+     * findByUri tìm theo uri bài viết
+     * @param  int $uri_post đây là uri của bài viết
+     * @return PostRepository
+     */
     public function filterByRelationPost($uri_post)
     {
         return $this
@@ -130,5 +168,19 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
                 return $query->limit(4);
             })
             ->findWhereNotIn('uri_post', [$uri_post]);
+    }
+
+    /**
+     * [updateAndDetachTag description]
+     * @param  array  $postCredentials  mảng xác thực
+     * @param  int $id              id của bài viết cần update
+     * @return App\Entities\Post
+     */
+    public function updateAndDetachTag(array $postCredentials, $id)
+    {
+        $repository = $this->update($postCredentials, $id);
+        $repository->tags()->detach();
+
+        return $repository;
     }
 }

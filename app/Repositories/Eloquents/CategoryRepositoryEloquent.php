@@ -38,6 +38,12 @@ class CategoryRepositoryEloquent extends BaseRepository implements CategoryRepos
         $this->pushCriteria(app(RequestCriteria::class));
     }
 
+    /**
+     * tìm danh mục theo uri của danh mục
+     *
+     * @param string $uri_category đây là liên kết của danh mục
+     * @return App\Entities\Category
+     */
     public function findByUri($uri_category)
     {
         return $this->findByField('uri_category', $uri_category)->first();

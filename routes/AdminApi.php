@@ -12,7 +12,6 @@
 */
 
 Route::group(['namespace' => 'Auth\\'], function () {
-    // Route::post('login', 'AuthController@login')->name('login');
     Route::post('/register', 'RegisterController@register')->name('register');
     Route::post('/credential/{activation_token}', 'RegisterController@credential')->name('credential');
 
@@ -20,7 +19,7 @@ Route::group(['namespace' => 'Auth\\'], function () {
     Route::post('/forget-password/{token}', 'PasswordResetController@authenticateToken')->name('authenticate_token');
     Route::put('/forget-password', 'PasswordResetController@reset')->name('reset');
 
-    Route::group(['middleware' => ['authentication', 'auth:api', 'block', 'credential']], function () {
+    Route::group(['middleware' => ['authentication', 'auth:api', 'credential']], function () {
         Route::get('logout', 'AuthController@logout')->name('logout');
         Route::get('user', 'AuthController@user')->name('user');
 
@@ -30,7 +29,7 @@ Route::group(['namespace' => 'Auth\\'], function () {
     });
 });
 
-Route::group(['middleware' => ['authentication', 'auth:api', 'block', 'credential']], function () {
+Route::group(['middleware' => ['authentication', 'auth:api', 'credential']], function () {
 
     Route::group(['prefix' => 'posts', 'as' => 'posts.'], function () {
         Route::get('/', 'PostController@index')->name('index');
@@ -73,7 +72,6 @@ Route::group(['middleware' => ['authentication', 'auth:api', 'block', 'credentia
         Route::get('/{id}', 'CongTacVienController@show')->name('show');
 
         Route::put('/{id}', 'CongTacVienController@update')->name('update');
-        Route::put('/block/{id}', 'CongTacVienController@block')->name('block');
 
         Route::delete('/{id}', 'CongTacVienController@destroy')->name('destroy');
     });
