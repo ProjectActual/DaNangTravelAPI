@@ -27,7 +27,7 @@ class CreatePostRequest extends FormRequest
             'title'         => 'required|min:6|max:255',
             'uri_post'      => 'required|min:6|regex:/[a-z0-9\-]+/|unique:urls,uri',
             'content'       => 'required|min:6',
-            'summary'       => 'required|max:255',
+            'summary'       => 'required',
             'category_id'   => 'required|exists:categories,id',
             'avatar_post'   => 'required',
         ];
