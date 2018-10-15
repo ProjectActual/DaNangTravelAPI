@@ -25,34 +25,12 @@ class AuthController extends BaseController
     {
         $this->user = $user;
     }
-    // public function login(LoginRequest $request)
-    // {
-    //     $credentials = $request->all();
 
-    //     if (!Auth::attempt($credentials))
-    //     {
-    //         return responses('Unauthorized', Response::HTTP_UNAUTHORIZED);
-    //     }
-
-    //     $user   = $request->user();
-    //     $accessToken = $user->createToken('Laravel Password Grant Client');
-    //     $token  = $accessToken->token;
-
-    //     $token->save();
-
-    //     $expires_at = Carbon::parse(
-    //         $token->expires_at
-    //     )->toDateTimeString();
-
-    //     $data = [
-    //         'access_token' => 'Bearer ' . $accessToken->accessToken,
-    //         'token_type' => 'Bearer',
-    //         'expires_at' => $expires_at,
-    //     ];
-
-    //     return responses('login successfully', Response::HTTP_OK, $data);
-    // }
-
+/**
+ * chức năng đăng xuất khỏi hệ thống
+ *
+ * @return object
+ */
     public function logout(Request $request)
     {
         $request->user()->token()->revoke();
@@ -60,6 +38,11 @@ class AuthController extends BaseController
         return $this->responses('Successfully logged out', Response::HTTP_OK);
     }
 
+/**
+ * lấy thông tin của người dùng
+ *
+ * @return object
+ */
     public function user(Request $request)
     {
         $profile = $this->user->with(['roles'])
@@ -69,6 +52,13 @@ class AuthController extends BaseController
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('profile'));
     }
 
+/**
+ * Cập nhật thông tin của người.
+ *
+ * @param  ProfileRequest $request đây là những nguyên tắc ràng buộc khi request được chấp nhận
+ *
+ * @return object
+ */
     public function update(ProfileRequest $request)
     {
         $this->user->skipPresenter();
@@ -89,6 +79,12 @@ class AuthController extends BaseController
         return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
     }
 
+/**
+ * thay đôi mật khẩu của người dùng
+ *
+ * @param  ChangePasswordRequest $request đây là những nguyên tắc ràng buộc khi request được chấp nhận
+ * @return object
+ */
     public function changePassword(ChangePasswordRequest $request)
     {
 

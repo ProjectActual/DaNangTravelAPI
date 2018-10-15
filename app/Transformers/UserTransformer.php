@@ -31,8 +31,6 @@ class UserTransformer extends TransformerAbstract
             'gender'       => $model->gender,
             'birthday'     => $model->birthday,
             'active'       => $model->active,
-            'admin_active' => $model->admin_active,
-            'is_block'     => $model->is_block,
             'count_posts'  => $model->posts->count(),
             'roles'        => $model->roles,
             'created_at'   => $model->created_at,

@@ -24,7 +24,7 @@ class AdminMiddleware
         }
 
         return response()->json([
-            'message'     => 'You do not have access to the router',
+            'message'     => 'Bạn không có quyền truy cập vào đường dẫn',
             'status'      => Response::HTTP_UNAUTHORIZED
         ], Response::HTTP_UNAUTHORIZED);
     }

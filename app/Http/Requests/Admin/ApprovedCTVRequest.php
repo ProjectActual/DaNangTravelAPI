@@ -25,7 +25,7 @@ class ApprovedCTVRequest extends FormRequest
     {
         return [
             'reason'       => 'max:1000',
-            'admin_active' => 'required|string|in:YES,NO',
+            'active' => 'required|in:AUTHENTICATION,APPROVE,ACTIVE,LOCKED',
         ];
     }
 }

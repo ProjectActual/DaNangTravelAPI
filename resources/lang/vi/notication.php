@@ -16,13 +16,22 @@ return [
         'success' => 'Load thành công.',
     ],
     'email' => [
-        'credential' => 'Xác nhận đăng ký cộng tác viên DaNangTravel.',
-        'register'   => 'Chúng tôi đã gửi một liên kết xác thực tài khoản qua email của bạn!',
-        'success'    => 'Xác nhận đăng ký thành công',
+        'credential' => [
+            'register' => 'Xác nhận đăng ký cộng tác viên DaNangTravel.',
+            'status'   => 'Vấn đề về thông tin cộng tác viên DaNangTravel',
+            'expired ' => 'Thời gian xác thực tài khoản đã quá giới hạn, vì vậy tài khoản của bạn sẽ bị loại bỏ khỏi hồ sơ của chúng tôi.',
+        ],
+        'register'   => 'Chúng tôi đã gửi một liên kết xác thực tài khoản qua email của bạn!.',
+        'success'    => 'Xác nhận đăng ký thành công.',
         'admin'      => [
-            'success'  => 'Tài khoản của bạn đã được xác thực THÀNH CÔNG bởi Quản Trị Viên',
-            'fail'     => 'Tài khoản của bạn đã được xác thực THẤT BẠI bởi Quản Trị Viên',
-            'approved' => 'Phê duyệt thành công',
+            'success'  => [
+                'title'   => 'Tài khoản của bạn đã được phê duyệt.',
+                'message' => 'Bạn nhận được email này vì tài khoản của bạn đã được phê duyệt THÀNH CÔNG bởi Quản Trị Viên.',
+            ],
+            'fail'     => [
+                'title'   => 'Tài khoản của bạn chưa được phê duyệt',
+                'message' => 'Bạn nhận được email này vì tài khoản của bạn đã bị Quản trị viên từ chối vì một vài lí do.',
+            ],
         ],
         'block'     => [
             'info'   => 'Thông Tin Unlock/Lock Tài Khoản DaNangTravel.',
