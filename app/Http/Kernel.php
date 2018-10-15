@@ -67,6 +67,5 @@ class Kernel extends HttpKernel
         'authentication' => \App\Http\Middleware\AuthenticationMiddleware::class,
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
         'credential' => \App\Http\Middleware\CheckCredentialMiddleware::class,
-        'filter' => \App\Http\Middleware\FilterCountViewMiddleware::class,
     ];
 }
