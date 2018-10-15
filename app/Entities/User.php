@@ -31,18 +31,10 @@ class User extends Authenticatable implements Transformable
     ];
 
     CONST ACTIVE = [
-        1 => 'YES',
-        2 => 'NO',
-    ];
-
-    CONST ADMIN_ACTIVE = [
-        1 => 'YES',
-        2 => 'NO',
-    ];
-
-    CONST IS_BLOCK = [
-        1 => 'YES',
-        2 => 'NO',
+        1 => 'AUTHENTICATION',
+        2 => 'APPROVE',
+        3 => 'ACTIVE',
+        4 => 'LOCKED'
     ];
 
     /**
@@ -61,8 +53,7 @@ class User extends Authenticatable implements Transformable
     protected $fillable  = [
         'email', 'password', 'first_name', 'last_name',
         'phone', 'avatar', 'gender', 'date_of_birth',
-        'active', 'activation_token', 'admin_active',
-        'is_block',
+        'active', 'activation_token',
     ];
 
     public function posts()

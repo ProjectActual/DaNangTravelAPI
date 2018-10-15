@@ -33,6 +33,11 @@ class HomeController extends BaseController
         $this->post->pushCriteria(FilterByPostActiveCriteria::class);
     }
 
+    /**
+     * Dùng để hiển thị theo tháng của từng danh mục trong trang homepage
+     *
+     * @return object
+     */
     public function master(Request $request)
     {
         $composerFoods      = $this->post->latest()->findInMonth(Post::CODE_CATEGORY['AM_THUC']);
@@ -52,6 +57,11 @@ class HomeController extends BaseController
         );
     }
 
+    /**
+     * Dùng để hiển thị số bài viết trong slider hoặc bài viết hot
+     *
+     * @return object
+     */
     public function index(Request $request)
     {
         $sliders = $this->post->latest()->findByIsSlider();

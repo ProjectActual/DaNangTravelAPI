@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use \Illuminate\Http\Response;
 use Closure;
 use App\Entities\Role;
 use Auth;
@@ -25,8 +26,8 @@ class AuthenticationMiddleware
         }
 
         return response()->json([
-            'message'     => 'You do not have access to the router',
-            'status'      => 401
-        ], 401);
+            'message'     => 'Bạn không có quyền truy cập vào đường dẫn',
+            'status'      => Response::HTTP_UNAUTHORIZED
+        ], Response::HTTP_UNAUTHORIZED);
     }
 }

@@ -66,7 +66,6 @@ class Kernel extends HttpKernel
         'ability' => \Zizaco\Entrust\Middleware\EntrustAbility::class,
         'authentication' => \App\Http\Middleware\AuthenticationMiddleware::class,
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
-        'block' => \App\Http\Middleware\CheckBlockMiddware::class,
         'credential' => \App\Http\Middleware\CheckCredentialMiddleware::class,
         'filter' => \App\Http\Middleware\FilterCountViewMiddleware::class,
     ];

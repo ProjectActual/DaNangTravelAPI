@@ -18,232 +18,234 @@ use App\Repositories\Contracts\UrlRepository;
 use App\Repositories\Contracts\TagRepository;
 use App\Repositories\Contracts\PostRepository;
 use App\Criteria\Post\FilterPostWithCTVCriteria;
-use  App\Http\Requests\Admin\Post\CheckHotRequest;
-use App\Repositories\Contracts\CategoryRepository;
+use App\Http\Requests\Admin\Post\CheckHotRequest;
 use App\Http\Requests\Admin\Post\CreatePostRequest;
 use App\Http\Requests\Admin\Post\UpdatePostRequest;
 use App\Http\Requests\Admin\Post\CheckSliderRequest;
 
 class PostController extends BaseController
 {
-    protected $tag;
-    protected $url;
-    protected $post;
+    /** @var int
+    số lượng phần từ được xuất hiện trong page
+    */
     protected $paginate = 15;
 
-    public function __construct(
-        TagRepository $tag,
-        UrlRepository $url,
-        PostRepository $post,
-        CategoryRepository $category
-    ){
-        $this->tag      = $tag;
-        $this->url      = $url;
-        $this->post     = $post;
-        $this->category = $category;
+    /** @var instance */
+    protected $tagRepository;
+    protected $urlRepository;
+    protected $postRepository;
 
-        $this->tag->skipPresenter();
+    public function __construct(
+        TagRepository $tagRepository,
+        UrlRepository $urlRepository,
+        PostRepository $postRepository
+    ){
+        $this->tagRepository      = $tagRepository;
+        $this->urlRepository      = $urlRepository;
+        $this->postRepository     = $postRepository;
+
+        $this->postRepository->pushCriteria(new FilterPostWithCTVCriteria());
     }
 
+    /**
+     * hiển thị tất cả bài viết
+     * @return object
+     */
     public function index(Request $request)
     {
-        $this->post->pushCriteria(new FilterPostWithCTVCriteria());
-        $posts = $this->post->latest()->paginate($this->paginate);
+        $posts = $this->postRepository->latest()->paginate($this->paginate);
 
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('posts'));
     }
 
+    /**
+     * hiển thị chi tiết bài viết
+     * @param  integer  $id     là id của bài viết
+     * @return object
+     */
     public function show(Request $request, $id)
     {
-        $user = $request->user();
-        $post = $this->post->skipPresenter()->find($id);
-
-        if(!Entrust::hasRole(Role::NAME[1]) && $post['user_id'] != $user->id) {
-            return $this->responseException('You do not have access to the router', 401);
-        }
-
-        $post = $post->presenter();
+        $post = $this->postRepository->find($id);
 
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('post'));
     }
 
+    /**
+     * Tạo bài viết bởi người dùng
+     * @param  CreatePostRequest $request  những nguyên tắc ràng buộc khi request được chấp nhận
+     * @return object
+     */
     public function store(CreatePostRequest $request)
     {
-        $this->post->skipPresenter();
-        $user         = $request->user();
-        $request->tag = json_decode($request->tag);
+        $request->tag     = json_decode($request->tag);
 
         if(count($request->tag) > 10) {
             return $this->responseErrors('tag', trans('validation.max.numeric', ['attribute' => 'tag', 'max' => 10]));
         }
 
-        $this->url->create([
+        $urlCredentials  = [
             'url_title'     => $request->title,
             'uri'           => $request->uri_post,
-        ]);
+        ];
+        $this->urlRepository->create($urlCredentials);
 
-        if(!Entrust::hasRole(Role::NAME[1])) {
-            $request->status = Post::STATUS['INACTIVE'];
-        }
+        $postCredentials = $request->except('tag');
+        $postCredentials['user_id'] = $request->user()->id;
 
-        $post   = $this->post->create([
-            'content'     => $request->content,
-            'title'       => $request->title,
-            'summary'     => $request->summary,
-            'status'      => $request->status,
-            'avatar_post' => $request->avatar_post,
-            'uri_post'    => $request->uri_post,
-            'category_id' => $request->category_id,
-            'user_id'     => $user->id,
-        ]);
+        $post   = $this->postRepository->skipPresenter()->create($postCredentials);
 
         $this->checkAndGenerateTag($request->tag, $post->id);
 
         return $this->responses(trans('notication.create.success'), Response::HTTP_OK);
     }
 
+    /**
+     * [cập nhật thông tin bài viếtư
+     * @param  UpdatePostRequest $request      những nguyên tắc ràng buộc khi request được chấp nhận
+     * @param  int $id      id của bài viết
+     * @return object
+     */
     public function update(UpdatePostRequest $request, $id)
     {
-        $this->post->skipPresenter();
-        $user = $request->user();
-        $post = $this->post->find($id);
-        if(!Entrust::hasRole(Role::NAME[1]) && $post->user_id != $user->id) {
-            return $this->responseException('You do not have access to the router', Response::HTTP_UNAUTHORIZED);
-        }
-
-        if(empty($post)) {
-            return $this->responseErrors('post', trans('validation.not_found', ['attribute' => 'Bài viết']));
-        }
-
-        //check url exists
-        if($this->url->findByUri($request->uri_post) && $request->uri_post != $post->uri_post) {
-            return $this->responseErrors('uri_post', trans('validation.unique', ['attribute' => 'liên kết bài viết']));
-        }
-
-        if(!empty($request->avatar_post)) {
-            $post->avatar_post  = $request->avatar_post;
-        }
-
         $request->tag = json_decode($request->tag);
+
         if(count($request->tag) > 10) {
             return $this->responseErrors('tag', trans('validation.max.numeric', ['attribute' => 'tag', 'max' => 10]));
         }
 
-        $url = $this->url->findByUri($post->uri_post);
-        $url->url_title     = $request->title;
-        $url->uri           = $request->uri_post;
-        $url->save();
-        $post->content      = $request->content;
-        $post->title        = $request->title;
-        $post->summary      = $request->summary;
-        $post->status       = $request->status;
-        $post->uri_post     = $request->uri_post;
-        $post->category_id  = $request->category_id;
-        $post->user_id      = $user->id;
+        $post = $this->postRepository->skipPresenter()->find($id);
 
-        $post->save();
+        $postCredentials = $request->except('tag', 'avatar_post');
 
-        $post->tags()->detach();
+        if(!empty($request->avatar_post)) {
+            $postCredentials['avatar_post'] = $request->avatar_post;
+        }
+
+        if(!Entrust::hasRole(Role::NAME[1])) {
+            $postCredentials['status'] = Post::STATUS['INACTIVE'];
+        }
+
+        //check url exists
+        if($this->urlRepository->findByUri($request->uri_post) && $request->uri_post != $post->uri_post) {
+            return $this->responseErrors('uri_post', trans('validation.unique', ['attribute' => 'liên kết bài viết']));
+        }
+
+        $url = $this->urlRepository->findByUri($post->uri_post);
+        $urlCredentials  = [
+            'url_title'     => $request->title,
+            'uri'           => $request->uri_post,
+        ];
+
+        $this->urlRepository->update($urlCredentials, $url->id);
+
+        $post = $this->postRepository
+            ->updateAndDetachTag($postCredentials, $post->id);
+
         $this->checkAndGenerateTag($request->tag, $post->id);
 
         return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
     }
 
+    /**
+     * kiểm tra để khởi tạo tag cho bài viết, nếu tag chưa có thì tạo tag, nếu đã có rồi thì
+       attach vào bài viết
+    .*
+     * @param  Ẩy $tag     mảng tag được truyền lên từ request
+     * @param  int $pót_id   id của bài viết để attach tag
+     * @return [type]          [description]
+     */
     public function checkAndGenerateTag($tag, $post_id) {
-        $tags = $this->tag->all();
+        $tags = $this->tagRepository->skipPresenter()->all();
 
         //check tag exist
         foreach($tag as $item) {
             if(!$tags->contains('tag', $item)) {
-                $this->tag->create([
+                $this->tagRepository->create([
                     'tag'     => $item,
                     'uri_tag' => Uuid::generate(4)->string
                 ]);
             }
 
-            $this->tag->findByTag($item)
-            ->posts()
-            ->attach($post_id);
+            $this->tagRepository->findByTag($item)
+                ->posts()
+                ->attach($post_id);
         }
     }
 
+    /**
+     * xóa thông tin bài viết
+     * @param  int  $id      id của bài viết
+     * @return object
+     */
     public function destroy(Request $request, $id)
     {
-        $this->post->skipPresenter();
-        $post = $this->post->find($id);
-        $user = $request->user();
+        $this->postRepository->skipPresenter();
+        $post = $this->postRepository->find($id);
 
-        if(!Entrust::hasRole(Role::NAME[1]) && $post->user_id != $user->id) {
-            return $this->responseException('You do not have access to the router', Response::HTTP_UNAUTHORIZED);
-        }
+        $this->urlRepository->findByUri($post->uri_post)->delete();
 
-        if (empty($post)) {
-            return $this->responseException('Incorect route', Response::HTTP_NOT_FOUND);
-        }
-
-        $this->url->findByUri($post->uri_post)->delete();
-
-        Storage::delete($post->avatar_post);
         $post->delete();
 
         return $this->responses(trans('notication.delete.success'), Response::HTTP_OK);
     }
 
+    /**
+     * cập nhật những bài viết được hiển thị ra slider
+     * @param  CheckSliderRequest $request những nguyên tắc ràng buộc khi request được chấp nhận
+     * @param  int             $id      id của bài viết
+     * @return object
+     */
     public function showSlider(CheckSliderRequest $request, $id)
     {
-        $this->post->skipPresenter();
+        $this->validatorSliderAndHot($id);
 
-        $post = $this->post->find($id);
-        $user = $request->user();
-
-        if(!Entrust::hasRole(Role::NAME[1]) && $post->user_id != $user->id) {
-            return $this->responseException('You do not have access to the router', Response::HTTP_UNAUTHORIZED);
-        }
-
-        if( $this->post->findByIsSlider()->count() >= 3 && $request->is_slider == Post::IS_SLIDER['NO']) {
+        if( $this->postRepository->findByIsSlider()->count() >= 3 && $request->is_slider == Post::IS_SLIDER['NO']) {
             $this->responseErrors('post', trans('validation_custom.posts.limit', ['attribute' => 'Slider và tin nổi bật', 'max' => 3]));
         }
 
-        if( $post->status === Post::STATUS['INACTIVE'] ) {
-            $this->responseErrors('post', trans('validation_custom.posts.selected'));
-        }
+        $credentials = [
+            'is_slider' => ($request->is_slider == Post::IS_SLIDER['YES']) ? Post::IS_SLIDER['NO'] : Post::IS_SLIDER['YES']
+        ];
 
-        if (empty($post)) {
-            return $this->responseException('Incorect route', Response::HTTP_NOT_FOUND);
-        }
-
-        $post->is_slider = ($request->is_slider == Post::IS_SLIDER['YES']) ? Post::IS_SLIDER['NO'] : Post::IS_SLIDER['YES'];
-        $post->save();
+        $this->postRepository->update($credentials, $id);
 
         return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
     }
 
+    /**
+     * cập nhật những bài viết được cho là hot
+     * @param  CheckHotRequest $request những nguyên tắc ràng buộc khi request được chấp nhận
+     * @param  int          $id      id của bài viết
+     * @return object
+     */
     public function showHot(CheckHotRequest $request, $id)
     {
-        $this->post->skipPresenter();
+        $this->validatorSliderAndHot($id);
 
-        $post = $this->post->find($id);
-        $user = $request->user();
-
-        if(!Entrust::hasRole(Role::NAME[1]) && $post->user_id != $user->id) {
-            return $this->responseException('You do not have access to the router', Response::HTTP_UNAUTHORIZED);
-        }
-
-        if( $this->post->findByIsHot()->count() >= 3 && $request->is_hot == Post::IS_HOT['NO']) {
+        if( $this->postRepository->findByIsHot()->count() >= 3 && $request->is_hot == Post::IS_HOT['NO']) {
             $this->responseErrors('post', trans('validation_custom.posts.limit', ['attribute' => 'Slider và tin nổi bật', 'max' => 3]));
         }
+
+        $credentials = [
+            'is_hot' => ($request->is_hot == Post::IS_HOT['YES']) ? Post::IS_HOT['NO'] : Post::IS_HOT['YES']
+        ];
+
+        $this->postRepository->update($credentials, $id);
+
+        return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
+    }
+
+    /**
+     * bắt những nguyên tắc ràng buộc khi cập nhật slider và hot
+     * @param  int $id      id của bài viết
+     * @return void
+     */
+    public function validatorSliderAndHot($id)
+    {
+        $post = $this->postRepository->skipPresenter()->find($id);
 
         if( $post->status === Post::STATUS['INACTIVE'] ) {
             $this->responseErrors('post', trans('validation_custom.posts.selected'));
         }
-
-        if (empty($post)) {
-            return $this->responseException('Incorect route', Response::HTTP_NOT_FOUND);
-        }
-
-        $post->is_hot = ($request->is_hot == Post::IS_HOT['YES']) ? Post::IS_HOT['NO'] : Post::IS_HOT['YES'];
-        $post->save();
-
-        return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
     }
 }
