@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Viewer;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Event;
 use App\Http\Controllers\BaseController;
 
 use App\Presenters\PostPresenter;
@@ -68,7 +69,8 @@ class PostController extends BaseController
     {
         $post         = $this->post->with('tags')->findByUri($uri_post);
 
-        $relationPost = $this->post->filterByRelationPost($uri_post);
+        $relationPost = $this->post->filterByRelationPost($uri_post)->get();
+        Event::fire('posts.view', $post['data']['id']);
 
         return response()->json(compact('post','relationPost'), Response::HTTP_OK);
     }
