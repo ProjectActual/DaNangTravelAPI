@@ -1,23 +1,22 @@
 <?php
 
-namespace App\Http\Middleware;
+namespace App\Events;
 
-use Closure;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+
 use Carbon\Carbon;
-
 use App\Entities\Post;
 use App\Entities\ViewCount;
 
 class ViewPostHandler
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
-     */
-    private $session;
+    use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Hàm xử lí khi event được nhắc đến
