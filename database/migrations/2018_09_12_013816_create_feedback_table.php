@@ -20,7 +20,6 @@ class CreateFeedbackTable extends Migration
             $table->string('title');
             $table->text('content');
             $table->string('email');
-            $table->integer('user_id')->unsigned();
             $table->timestamps();
 
             $table->index('email');

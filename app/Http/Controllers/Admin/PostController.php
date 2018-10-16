@@ -78,29 +78,23 @@ class PostController extends BaseController
     public function store(CreatePostRequest $request)
     {
         $request->tag     = json_decode($request->tag);
-
-        if(count($request->tag) > 10) {
+        if (count($request->tag) > 10) {
             return $this->responseErrors('tag', trans('validation.max.numeric', ['attribute' => 'tag', 'max' => 10]));
         }
-
         $urlCredentials  = [
             'url_title'     => $request->title,
             'uri'           => $request->uri_post,
         ];
         $this->urlRepository->create($urlCredentials);
-
         $postCredentials = $request->except('tag');
         $postCredentials['user_id'] = $request->user()->id;
-
         $post   = $this->postRepository->skipPresenter()->create($postCredentials);
-
         $this->checkAndGenerateTag($request->tag, $post->id);
-
         return $this->responses(trans('notication.create.success'), Response::HTTP_OK);
     }
 
     /**
-     * [cập nhật thông tin bài viếtư
+     * cập nhật thông tin bài viết
      * @param  UpdatePostRequest $request      những nguyên tắc ràng buộc khi request được chấp nhận
      * @param  int $id      id của bài viết
      * @return object
@@ -132,14 +126,14 @@ class PostController extends BaseController
 
         $url = $this->urlRepository->findByUri($post->uri_post);
         $urlCredentials  = [
-            'url_title'     => $request->title,
-            'uri'           => $request->uri_post,
+            'url_title' => $request->title,
+            'uri'       => $request->uri_post,
         ];
 
         $this->urlRepository->update($urlCredentials, $url->id);
 
         $post = $this->postRepository
-            ->updateAndDetachTag($postCredentials, $post->id);
+        ->updateAndDetachTag($postCredentials, $post->id);
 
         $this->checkAndGenerateTag($request->tag, $post->id);
 
@@ -154,7 +148,8 @@ class PostController extends BaseController
      * @param  int $pót_id   id của bài viết để attach tag
      * @return [type]          [description]
      */
-    public function checkAndGenerateTag($tag, $post_id) {
+    public function checkAndGenerateTag($tag, $post_id)
+    {
         $tags = $this->tagRepository->skipPresenter()->all();
 
         //check tag exist
@@ -167,8 +162,8 @@ class PostController extends BaseController
             }
 
             $this->tagRepository->findByTag($item)
-                ->posts()
-                ->attach($post_id);
+            ->posts()
+            ->attach($post_id);
         }
     }
 
@@ -184,7 +179,7 @@ class PostController extends BaseController
 
         $this->urlRepository->findByUri($post->uri_post)->delete();
 
-        $post->delete();
+        $this->postRepository->delete($id);
 
         return $this->responses(trans('notication.delete.success'), Response::HTTP_OK);
     }

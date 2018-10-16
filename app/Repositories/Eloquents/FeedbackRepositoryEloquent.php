@@ -25,7 +25,10 @@ class FeedbackRepositoryEloquent extends BaseRepository implements FeedbackRepos
         return Feedback::class;
     }
 
-
+    public function presenter()
+    {
+        return "App\\Presenters\\FeedbackPresenter";
+    }
 
     /**
      * Boot up the repository, pushing criteria
@@ -35,10 +38,13 @@ class FeedbackRepositoryEloquent extends BaseRepository implements FeedbackRepos
         $this->pushCriteria(app(RequestCriteria::class));
     }
 
+/**
+ * sắp xếp giảm dần với updated
+ * @return mixed
+ */
     public function latest()
     {
-        return $this->model
-            ->orderBy('created_at', 'desc')
+        return $this
             ->orderBy('updated_at', 'desc');
     }
 }

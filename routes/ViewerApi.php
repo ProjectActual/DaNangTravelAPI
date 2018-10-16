@@ -15,3 +15,7 @@ Route::group(['as' => 'posts.', 'prefix' => 'posts/{uri_category}'], function ()
 Route::group(['as' => 'tags.', 'prefix' => 'tag/{uri_tag}'], function () {
     Route::get('/', 'TagController@index')->name('index');
 });
+
+Route::group(['as' => 'feedbacks.', 'prefix' => 'feedbacks'], function () {
+    Route::post('/sent', 'FeedbackController@create')->name('create');
+});
