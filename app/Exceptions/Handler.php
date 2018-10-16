@@ -57,7 +57,7 @@ class Handler extends ExceptionHandler
             }
 
             if($e instanceof \Illuminate\Auth\AuthenticationException) {
-                return $this->errorsException('Unauthentication', Response::HTTP_UNAUTHORIZED);
+                return $this->errorsException('Unauthorization', Response::HTTP_UNAUTHORIZED);
             }
 
             if($e instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException) {

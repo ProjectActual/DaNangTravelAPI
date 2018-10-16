@@ -4,12 +4,14 @@ return [
     'create' => [
         'success' => 'Successfully created',
     ],
-    'edit' => [
+    'edit'   => [
         'success' => 'Successfully updated',
-        'change' => 'Change password successfully',
+        'change'  => 'Change password successfully',
     ],
     'delete' => [
         'success' => 'Successfully deleted'
+    ],
+    'load'   => [
+        'success' => 'Successfully loaded'
     ]
-
 ];

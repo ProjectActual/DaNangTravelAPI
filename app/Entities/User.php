@@ -30,11 +30,20 @@ class User extends Authenticatable implements Transformable
         'FEMALE'  => 'FEMALE',
     ];
 
+    CONST ACTIVE = [
+        1 => 'AUTHENTICATION',
+        2 => 'APPROVE',
+        3 => 'ACTIVE',
+        4 => 'LOCKED'
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
+    protected $appends = array('full_name');
+
     protected $table     = 'users';
 
     protected $hidden = [
@@ -42,8 +51,9 @@ class User extends Authenticatable implements Transformable
     ];
 
     protected $fillable  = [
-        'email', 'password', 'first_name', 'last_name', 'cmnd',
+        'email', 'password', 'first_name', 'last_name',
         'phone', 'avatar', 'gender', 'date_of_birth',
+        'active', 'activation_token',
     ];
 
     public function posts()
@@ -62,4 +72,18 @@ class User extends Authenticatable implements Transformable
         ->withTimestamps();
     }
 
+
+    public function getAvatarAttribute($value)
+    {
+        if (empty($value)) {
+            return "http://{$_SERVER['HTTP_HOST']}/images/users/default-avatar.png";
+        }
+
+        return $value;
+    }
+
+    public function getFullNameAttribute()
+    {
+        return trim("{$this->last_name} {$this->first_name}");
+    }
 }

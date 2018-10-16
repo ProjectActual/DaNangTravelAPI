@@ -25,7 +25,7 @@ class Tag extends Model implements Transformable
     protected $table     = 'tags';
 
     protected $fillable  = [
-        'tag',
+        'tag', 'uri_tag',
     ];
 
     public function posts()

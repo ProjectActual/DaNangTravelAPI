@@ -26,7 +26,7 @@ class Category extends Model implements Transformable
     protected $table     = 'categories';
 
     protected $fillable  = [
-        'name_category', 'description', 'uri_category',
+        'name_category', 'description', 'uri_category', 'type_category'
     ];
 
     public function posts()

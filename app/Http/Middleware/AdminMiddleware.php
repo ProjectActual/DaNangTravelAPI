@@ -3,8 +3,10 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use \Illuminate\Http\Response;
+use Entrust;
+
 use App\Entities\Role;
-use Auth;
 
 class AdminMiddleware
 {
@@ -17,13 +19,13 @@ class AdminMiddleware
      */
     public function handle($request, Closure $next)
     {
-        $user = Auth::guard('api')->user();
-
-        if(!empty($user) && $user->roles->contains('name', ROLE::NAME['ADMINISTRATOR'])) {
+        if(Entrust::hasRole(Role::NAME[1])) {
             return $next($request);
         }
 
-        return responses('You do not have access to the router', 401);
-
+        return response()->json([
+            'message'     => 'Bạn không có quyền truy cập vào đường dẫn',
+            'status'      => Response::HTTP_UNAUTHORIZED
+        ], Response::HTTP_UNAUTHORIZED);
     }
 }

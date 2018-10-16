@@ -19,9 +19,9 @@ class Role extends EntrustRole implements Transformable
     use TransformableTrait;
 
     CONST NAME = [
-        'ADMINISTRATOR' => 'ADMINISTRATOR',
-        'CONGTACVIEN'   => 'CONGTACVIEN',
-        'VIEWER'        => 'VIEWER',
+        1 => 'ADMINISTRATOR',
+        2 => 'CONGTACVIEN',
+        3 => 'VIEWER',
     ];
 
     CONST CODE_NAME = [

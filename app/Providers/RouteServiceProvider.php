@@ -43,6 +43,8 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapCongTacVienApiRoutes();
 
+        $this->mapViewerApiRoutes();
+
         //
     }
 
@@ -71,7 +73,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::prefix('api')
              ->middleware('api')
-             ->namespace($this->namespace)
+             ->namespace($this->namespace . '\Api')
              ->group(base_path('routes/api.php'));
     }
 
@@ -82,6 +84,15 @@ class RouteServiceProvider extends ServiceProvider
             ->middleware('api')
             ->namespace($this->namespace . '\Admin')
             ->group(base_path('routes/AdminApi.php'));
+    }
+
+    protected function mapViewerApiRoutes()
+    {
+        Route::prefix('api')
+            ->name('viewer.')
+            ->middleware(['api', 'web'])
+            ->namespace($this->namespace . '\Viewer')
+            ->group(base_path('routes/ViewerApi.php'));
     }
 
     protected function mapCongTacVienApiRoutes()

@@ -20,12 +20,20 @@ class TagRepositoryEloquent extends BaseRepository implements TagRepository
      *
      * @return string
      */
+    protected $fieldSearchable = [
+        'tag'     => 'like',
+        'uri_tag' => 'like',
+    ];
+
     public function model()
     {
         return Tag::class;
     }
 
-
+    public function presenter()
+    {
+        return 'App\\Presenters\\TagPresenter';
+    }
 
     /**
      * Boot up the repository, pushing criteria
@@ -42,4 +50,20 @@ class TagRepositoryEloquent extends BaseRepository implements TagRepository
             ->first();
     }
 
+    public function findId($id)
+    {
+        return $this->model->find($id);
+    }
+
+/**
+ * findWithUri tìm theo uri của tag
+ * @param  string $uri_tag
+ * @return [type]          [description]
+ */
+    public function findWithUri($uri_tag)
+    {
+        $tag = $this->model->where('uri_tag', $uri_tag)->first();
+
+        return $tag;
+    }
 }

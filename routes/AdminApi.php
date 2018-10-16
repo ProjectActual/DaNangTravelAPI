@@ -12,34 +12,67 @@
 */
 
 Route::group(['namespace' => 'Auth\\'], function () {
-    // Route::post('login', 'AuthController@login')->name('login');
+    Route::post('/register', 'RegisterController@register')->name('register');
+    Route::post('/credential/{activation_token}', 'RegisterController@credential')->name('credential');
 
-    Route::group(['middleware' => 'auth:api'], function () {
+    Route::post('/forget-password', 'PasswordResetController@create')->name('create');
+    Route::post('/forget-password/{token}', 'PasswordResetController@authenticateToken')->name('authenticate_token');
+    Route::put('/forget-password', 'PasswordResetController@reset')->name('reset');
+
+    Route::group(['middleware' => ['authentication', 'auth:api', 'credential']], function () {
         Route::get('logout', 'AuthController@logout')->name('logout');
         Route::get('user', 'AuthController@user')->name('user');
+
+        Route::put('user', 'AuthController@update')->name('update');
 
         Route::post('change-password', 'AuthController@changePassword')->name('change_password');
     });
 });
 
-Route::group(['middleware' => ['admin', 'auth:api']], function () {
+Route::group(['middleware' => ['authentication', 'auth:api', 'credential']], function () {
     Route::group(['prefix' => 'posts', 'as' => 'posts.'], function () {
         Route::get('/', 'PostController@index')->name('index');
-        Route::get('/show/{id}', 'PostController@show')->name('show');
+        Route::get('/{id}', 'PostController@show')->name('show');
 
-        Route::post('create', 'PostController@store')->name('store');
+        Route::post('/uploadFile', 'PostController@uploadFile')->name('upload_file');
 
-        Route::put('update/{id}', 'PostController@update')->name('update');
+        Route::post('/', 'PostController@store')->name('store');
 
-        Route::delete('destroy/{id}', 'PostController@destroy')->name('destroy');
+        Route::put('/{id}', 'PostController@update')->name('update');
+
+        Route::put('/hot/{id}', 'PostController@showHot')->name('show_how');
+
+        Route::put('/slider/{id}', 'PostController@showSlider')->name('show_slider');
+
+        Route::delete('/{id}', 'PostController@destroy')->name('destroy');
     });
 
     Route::group(['prefix' => 'categories', 'as' => 'categories.'], function () {
         Route::get('/', 'CategoryController@index')->name('index');
 
-        Route::post('/create', 'CategoryController@store')->name('store');
+        Route::post('/', 'CategoryController@store')->name('store');
 
-        Route::put('/update/{id}', 'CategoryController@update')->name('update');
+        Route::get('/edit/{id}', 'CategoryController@edit')->name('edit');
+        Route::put('/{id}', 'CategoryController@update')->name('update');
+
+        Route::delete('/{id}', 'CategoryController@destroy')->name('destroy');
+    });
+
+    Route::group(['prefix' => 'tags', 'as' => 'tags.'], function () {
+        Route::get('/', 'TagController@index')->name('index');
+
+        Route::put('/{id}', 'TagController@update')->name('update');
+
+        Route::delete('/{id}', 'TagController@destroy')->name('destroy');
+    });
+
+    Route::group(['prefix' => 'congtacvien', 'as' => 'cong_tac_vien.', 'middleware' => 'admin'], function () {
+        Route::get('/', 'CongTacVienController@index')->name('index');
+        Route::get('/{id}', 'CongTacVienController@show')->name('show');
+
+        Route::put('/{id}', 'CongTacVienController@update')->name('update');
+
+        Route::delete('/{id}', 'CongTacVienController@destroy')->name('destroy');
     });
 
     Route::group(['prefix' => 'feedbacks', 'as' => 'feedbacks.'], function () {

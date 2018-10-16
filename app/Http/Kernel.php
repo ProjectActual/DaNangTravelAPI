@@ -19,6 +19,8 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\TrustProxies::class,
+        \Barryvdh\Cors\HandleCors::class,
+        \App\Http\Middleware\LocaleSwitcherMiddleware::class,
     ];
 
     /**
@@ -62,6 +64,8 @@ class Kernel extends HttpKernel
         'role' => \Zizaco\Entrust\Middleware\EntrustRole::class,
         'permission' => \Zizaco\Entrust\Middleware\EntrustPermission::class,
         'ability' => \Zizaco\Entrust\Middleware\EntrustAbility::class,
+        'authentication' => \App\Http\Middleware\AuthenticationMiddleware::class,
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        'credential' => \App\Http\Middleware\CheckCredentialMiddleware::class,
     ];
 }
