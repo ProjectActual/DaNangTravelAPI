@@ -3,9 +3,10 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Carbon\Carbon;
 
 use App\Entities\Post;
-use DB;
+use App\Entities\ViewCount;
 
 class ViewPostHandler
 {
@@ -29,18 +30,21 @@ class ViewPostHandler
         $post_id = $id;
         $session_name = request()->session_name;
 
-        // khi event được nhắc đến thì ta kiểm tra view_count xem đã tồn tại sesion_name ,
-        // nếu tồn tại thì không tăng view, nếu không tồn tại thì tăng view
+        $isExists = ViewCount::where(compact('post_id', 'session_name'))->first();
 
-        $isExists = DB::table('view_count')->where(compact('post_id', 'session_name'))->count();
-
-        if (!$isExists) {
-            DB::table('view_count')->insert(compact('post_id', 'session_name'));
+        // nếu tồn tại thì kiểm tra xem đã quá thời hạn của ss chưa , nếu quá thì xóa ss và tăng viewer, còn không thì không tăng
+        if(!empty($isExists)) {
+            if (Carbon::parse($isExists->created_at)->addMinutes(1440)->isPast()) {
+                $isExists->delete();
+                $isExists = '';
+            }
         }
 
-        $viewCount = DB::table('view_count')->where('post_id', $id)->count();
-        $post = Post::find($id);
-        $post->count_view = $viewCount;
-        $post->save();
+        // khi event được nhắc đến thì ta kiểm tra view_count xem đã tồn tại sesion_name ,
+        if (empty($isExists)) {
+            ViewCount::create(compact('post_id', 'session_name'));
+            $post = Post::find($id);
+            $post->increment('count_view');
+        }
     }
 }
