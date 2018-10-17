@@ -34,104 +34,92 @@ class CategoryController extends BaseController
     }
 
     /**
-     * Hiển thị tất cả danh mục
+     * Show all categories
      * @param  Request $request
      * @return Illuminate\Http\Response
      */
     public function index(Request $request)
     {
         $categories = $this->categoryRepository->all();
-
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('categories'));
     }
 
-
     /**
-     *  Tạo danh mục, chi áp dụng với admin
+     *  create category, only admin
      *
-     * @param  CreateCategoryRequest $request đây là những nguyên tắc ràng buộc khi request được chấp nhận
+     * @param  CreateCategoryRequest $request These are binding rules when requests are accepted
      *
      * @return Illuminate\Http\Response
      */
     public function store(CreateCategoryRequest $request)
     {
         $this->categoryRepository->skipPresenter();
-
+        //Only up to 10 categories can be created
         if($this->categoryRepository->all()->count() >= 10) {
             return $this->responseErrors('category', trans('validation.max.numeric', ['attribute' => 'danh mục', 'max' => 10]));
         }
-
+        //Create url with url_category
         $urlCredentials = [
             'url_title'   => $request->name_category,
             'uri'         => $request->uri_category,
         ];
-
         $url = $this->urlRepository->create($urlCredentials);
-
+        //Create category
         $category = $this->categoryRepository->create($request->all());
-
         return $this->responses(trans('notication.create.success'), Response::HTTP_OK);
     }
 
     /**
-     * cập nhật danh mục và url theo uri_category
+     * update category and url with uri_category
      *
-     * @param  UpdateCategoryRequest $request đây là những nguyên tắc ràng buộc khi request được chấp nhận
-     * @param  int                $id      là id của danh muc
+     * @param  UpdateCategoryRequest $request These are binding rules when requests are accepted
+     * @param  int                $id find and update category
      * @return Illuminate\Http\Response
      */
     public function update(UpdateCategoryRequest $request, $id)
     {
         $category = $this->categoryRepository->skipPresenter()->find($id);
-
+        //check uri_category is unique
         if($this->urlRepository->findByUri($request->uri_category) && $request->uri_category != $category->uri_category) {
             return $this->responseErrors('uri_category', trans('validation.unique', ['attribute' => 'liên kết danh mục']));
         }
-
-        // kiểm tra là loại danh mục là duy nhất
+        // check category is unique
         if($this->categoryRepository->findByField('type_category', $request->type_category)->isNotEmpty() && $request->type_category != $category->type_category) {
             return $this->responseErrors('type_category', trans('validation.unique', ['attribute' => 'loại danh mục']));
         }
-
+        //update url
         $url = $this->urlRepository->findByUri($category->uri_category);
         $urlCredentials = [
             'url_title'   => $request->name_category,
             'uri'         => $request->uri_category,
         ];
         $this->urlRepository->update($urlCredentials, $url->id);
-
+        //update category
         $this->categoryRepository->update($request->all(), $category->id);
-
         return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
     }
 
     /**
-     * thông tin chi tiết của danh mục
-     * @param int $id đây là id tìm kiếm của danh mục
+     * get infortion category
+     * @param int $id find and update category
      * @return Illuminate\Http\Response
      */
     public function edit($id)
     {
         $category = $this->categoryRepository->find($id);
-
-        if(empty($category)) {
-            return $this->responseErrors('category', trans('validation.not_found', ['attribute' => 'Danh mục']));
-        }
-
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('category'));
     }
 
     /**
-     * xóa danh mục theo id
-     * @param int $id đây là id tìm kiếm của danh mục
+     * delete category with id
+     * @param int $id find and delete category
      * @return Illuminate\Http\Response
      */
     public function destroy($id)
     {
+        //delete category and url vie uri_category
         $category = $this->categoryRepository->delete($id);
-
         $this->urlRepository->findByUri($category->uri_category)->delete();
-
         return $this->responses(trans('notication.delete.success'), Response::HTTP_OK);
     }
 }
