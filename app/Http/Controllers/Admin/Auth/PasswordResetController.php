@@ -19,107 +19,102 @@ use App\Repositories\Contracts\PasswordResetRepository;
 
 class PasswordResetController extends BaseController
 {
-    protected $user;
-    protected $passwordReset;
+    protected $userRepository;
+    protected $passwordResetRepository;
 
     public function __construct(
-        UserRepository $user,
-        PasswordResetRepository $passwordReset
+        UserRepository $userRepository,
+        PasswordResetRepository $passwordResetRepository
     ){
-        $this->user          = $user;
-        $this->passwordReset = $passwordReset;
+        $this->userRepository          = $user;
+        $this->passwordResetRepository = $passwordResetRepository;
     }
 
 /**
- * tạo yêu cầu khi người dùng quên mật khẩu
- * @param  ResetPasswordRequest $request [email]
- * @return json                         [tin nhắn và gửi mail]
+ * Create a request when user forget the password
+ *
+ * @param  ResetPasswordRequest $request These are binding rules when requests are accepted
+ * @return Illuminate\Http\Response
  */
     public function create(ResetPasswordRequest $request)
     {
-        $user = $this->user->findByEmail($request->email);
-
+        $user = $this->userRepository->findByEmail($request->email);
         //check email exists
         if(empty($user)) {
             return $this->responseErrors('email', trans('passwords.user'));
         }
-
         //generate token
         $token = Uuid::generate(4)->string;
-
-        //kiểm tra đã từng tạo token cho email này chưa, nếu chưa thì tạo, nếu có thì update token
-        $checkEmailReset = $this->passwordReset->findByEmail($request->email);
+        //The token check has been initialized, If not then start creating a token, contrary update the token
+        $checkEmailReset = $this->passwordResetRepository->findByEmail($request->email);
         if(empty($checkEmailReset)) {
-            $passwordReset = $this->passwordReset->create([
+            $passwordReset = $this->passwordResetRepository->create([
                 'email'     => $request->email,
                 'token'     => $token,
             ]);
         } else {
-            $passwordReset = $this->passwordReset->update([
+            $passwordReset = $this->passwordResetRepository->update([
                 'email'     => $request->email,
                 'token'     => $token,
             ], $checkEmailReset->id);
         }
-
-        //gán token vào mail
+        //Assign token into email
         $info = [
             'token' => $passwordReset->token,
         ];
-        if(!empty($passwordReset) && !empty($user)) {
-            SendMail::send($request->email, 'Đặt lại mật khẩu mới', 'email.password_reset', $info);
-        }
-
+        //send email reset password
+        SendMail::send($request->email, 'Đặt lại mật khẩu mới', 'email.password_reset', $info);
         return $this->responses(trans('passwords.sent'), Response::HTTP_OK);
     }
 
 /**
- * xác nhận email  thông qua token được đính trong email
- * @param  string $token [mã xác thực email]
- * @return json        [data, tình trạng]
+ * confirm email via the attached token in the email
+ *
+ * @param  string $token
+ * @return Illuminate\Http\Response
  */
     public function authenticateToken($token)
     {
-        $passwordReset = $this->passwordReset->findByToken($token);
-
+        $passwordReset = $this->passwordResetRepository->findByToken($token);
+        //check token is exists
         if(empty($passwordReset)) {
             return $this->responses(trans('passwords.token'), Response::HTTP_NOT_FOUND);
         }
-
+        //If the token is over 12 hours, the token will be disabled
         if (Carbon::parse($passwordReset->updated_at)->addMinutes(720)->isPast()) {
             $passwordReset->delete();
             return $this->responses(trans('passwords.token'), Response::HTTP_NOT_FOUND);
         }
-
         return response()->json($passwordReset, 200);
     }
 
 /**
- * thiết lập lại mật khẩu cho người dùng
+ * setting password for user
+ *
  * @param  ResetPasswordUserRequest $request [instance passwordReset]
- * @return json                            [message]
+ * @return Illuminate\Http\Response
  */
     public function reset(ResetPasswordUserRequest $request)
     {
-        $passwordReset = $this->passwordReset
+        //check email and token exists in table password_resets
+        $passwordReset = $this->passwordResetRepository
             ->findByEmailToken($request->tokenReset, $request->email);
-
+        //if empty is disable
         if(empty($passwordReset)) {
             return $this->responses(trans('passwords.token'), Response::HTTP_NOT_FOUND);
         }
-
-        $user = $this->user->findByEmail($request->email);
-
+        $user = $this->userRepository->findByEmail($request->email);
+        //check if user empty is disable
         if(empty($user)) {
             return $this->responses(trans('passwords.user'), Response::HTTP_NOT_FOUND);
         }
-
-        $user->password = bcrypt($request->password_reset);
-        $user->save();
-
-        $passwordReset->delete();
-
+        $credential = [
+            'password' => bcrypt($request->password_reset),
+        ];
+        $this->userRepository->update($credential, $user->id);
+        $this->passwordResetRepository->delete($passwordReset->id);
+        //send mail password reset success
         SendMail::send($request->email, trans('passwords.reset'), 'email.password_reset_success');
-
         return $this->responses(trans('passwords.reset'), Response::HTTP_OK);
     }
 }

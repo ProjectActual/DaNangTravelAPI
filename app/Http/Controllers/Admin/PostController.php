@@ -49,7 +49,7 @@ class PostController extends BaseController
 
     /**
      * hiển thị tất cả bài viết
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function index(Request $request)
     {
@@ -61,7 +61,7 @@ class PostController extends BaseController
     /**
      * hiển thị chi tiết bài viết
      * @param  integer  $id     là id của bài viết
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function show(Request $request, $id)
     {
@@ -73,7 +73,7 @@ class PostController extends BaseController
     /**
      * Tạo bài viết bởi người dùng
      * @param  CreatePostRequest $request  những nguyên tắc ràng buộc khi request được chấp nhận
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function store(CreatePostRequest $request)
     {
@@ -97,7 +97,7 @@ class PostController extends BaseController
      * cập nhật thông tin bài viết
      * @param  UpdatePostRequest $request      những nguyên tắc ràng buộc khi request được chấp nhận
      * @param  int $id      id của bài viết
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function update(UpdatePostRequest $request, $id)
     {
@@ -146,7 +146,7 @@ class PostController extends BaseController
     .*
      * @param  Ẩy $tag     mảng tag được truyền lên từ request
      * @param  int $pót_id   id của bài viết để attach tag
-     * @return [type]          [description]
+     * @return void
      */
     public function checkAndGenerateTag($tag, $post_id)
     {
@@ -170,7 +170,7 @@ class PostController extends BaseController
     /**
      * xóa thông tin bài viết
      * @param  int  $id      id của bài viết
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function destroy(Request $request, $id)
     {
@@ -188,7 +188,7 @@ class PostController extends BaseController
      * cập nhật những bài viết được hiển thị ra slider
      * @param  CheckSliderRequest $request những nguyên tắc ràng buộc khi request được chấp nhận
      * @param  int             $id      id của bài viết
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function showSlider(CheckSliderRequest $request, $id)
     {
@@ -211,7 +211,7 @@ class PostController extends BaseController
      * cập nhật những bài viết được cho là hot
      * @param  CheckHotRequest $request những nguyên tắc ràng buộc khi request được chấp nhận
      * @param  int          $id      id của bài viết
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function showHot(CheckHotRequest $request, $id)
     {

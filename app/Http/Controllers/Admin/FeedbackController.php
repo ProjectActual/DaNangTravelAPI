@@ -25,6 +25,10 @@ class FeedbackController extends BaseController
         $this->feedbackRepository->pushCriteria(new FilterFeedBackWithCTVCriteria());
     }
 
+    /**
+     * Show all feedback
+     * @return Illuminate\Http\Response
+     */
     public function index(Request $request)
     {
         $feedbacks = $this->feedbackRepository
@@ -34,6 +38,11 @@ class FeedbackController extends BaseController
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('feedbacks'));
     }
 
+    /**
+     * show detail of feedback
+     * @param  int  $id      This is used to find the feedback details
+     * @return Illuminate\Http\Response
+     */
     public function show(Request $request, $id)
     {
         $feedback = $this->feedbackRepository
@@ -42,6 +51,11 @@ class FeedbackController extends BaseController
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('feedback'));
     }
 
+    /**
+     * delete a feedback with id
+     * @param  int  $id      This is used to delete feedback
+     * @return Illuminate\Http\Response
+     */
     public function destroy($id)
     {
         $this->feedbackRepository->delete($id);
@@ -49,6 +63,11 @@ class FeedbackController extends BaseController
         return $this->responses(trans('notication.delete.success'), Response::HTTP_OK);
     }
 
+    /**
+     * send feedback to user via email
+     * @param  int  $id      This is used to delete feedback
+     * @return Illuminate\Http\Response
+     */
     public function send(FeedbackRequest $request)
     {
         $info = [

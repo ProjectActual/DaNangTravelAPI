@@ -36,7 +36,7 @@ class TagController extends BaseController
     /**
      * Hiển thị tất cả tags
      * @param  Request $request
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function index(Request $request)
     {
@@ -51,7 +51,7 @@ class TagController extends BaseController
      *
      * @param  TagRequest $request đây là những nguyên tắc ràng buộc khi request được chấp nhận
      * @param  int                $id      là id của danh muc
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function update(TagRequest $request, $id)
     {
@@ -74,7 +74,7 @@ class TagController extends BaseController
     /**
      * xóa danh mục theo id
      * @param int $id đây là id tìm kiếm của danh mục
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function destroy($id)
     {

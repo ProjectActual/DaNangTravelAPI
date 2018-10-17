@@ -36,7 +36,7 @@ class HomeController extends BaseController
     /**
      * Dùng để hiển thị theo tháng của từng danh mục trong trang homepage
      *
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function master(Request $request)
     {
@@ -60,7 +60,7 @@ class HomeController extends BaseController
     /**
      * Dùng để hiển thị số bài viết trong slider hoặc bài viết hot
      *
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function index(Request $request)
     {

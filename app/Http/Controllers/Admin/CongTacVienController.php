@@ -36,7 +36,7 @@ class CongTacVienController extends BaseController
     /**
      * Hiển thị tất cả CTV
      * @param  Request $request
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function index(Request $request)
     {
@@ -48,7 +48,7 @@ class CongTacVienController extends BaseController
     /**
      * thông tin chi tiết của CTV
      * @param int $id đây là id tìm kiếm của CTV
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function show(Request $request, $id)
     {
@@ -61,7 +61,7 @@ class CongTacVienController extends BaseController
      * Phê duyệt cộng tác viên đăng ký, block tài khoản
      * @param  AdminApprovedCTVRequest $request đây là những nguyên tắc ràng buộc khi request được chấp nhận
      * @param  int                  $id      id người dùng cần phê duyệt
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function update(ApprovedCTVRequest $request, $id)
     {
@@ -133,7 +133,7 @@ class CongTacVienController extends BaseController
     /**
      * xóa CTV theo id
      * @param int $id đây là id tìm kiếm của CTV
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function destroy(Request $request, $id)
     {
