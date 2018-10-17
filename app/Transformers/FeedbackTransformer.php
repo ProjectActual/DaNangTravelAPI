@@ -5,6 +5,7 @@ namespace App\Transformers;
 use League\Fractal\TransformerAbstract;
 use App\Entities\Feedback;
 use App\Entities\User;
+use App\Entities\Role;
 
 /**
  * Class FeedbackTransformer.
@@ -23,10 +24,19 @@ class FeedbackTransformer extends TransformerAbstract
     public function transform(Feedback $model)
     {
         $seeder = User::where('email', $model->email)->first();
+
+        if(empty($seeder)) {
+            $seeder = "Khách vãng lai";
+        } else if($seeder->hasRole(Role::NAME[2])){
+            $seeder = "Cộng Tác Viên";
+        } else {
+            $seeder = "Quản Trị Viên";
+        }
+
         return [
             'id'         => (int) $model->id,
             'email'      => $model->email,
-            // 'sender'     => empty($seeder) ? ''
+            'sender'     => $seeder,
             'title'      => $model->title,
             'content'    => $model->content,
             'created_at' => $model->created_at,

@@ -27,6 +27,6 @@ class FeedbackController extends BaseController
     {
         $this->feedbackRepository->create($request->all());
 
-        return $this->responses(trans('notication.create.success'), Response::HTTP_OK);
+        return $this->responses(trans('notication.feedback.success'), Response::HTTP_OK);
     }
 }

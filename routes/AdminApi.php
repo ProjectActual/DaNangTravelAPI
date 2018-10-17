@@ -78,7 +78,13 @@ Route::group(['middleware' => ['authentication', 'auth:api', 'credential']], fun
     Route::group(['prefix' => 'feedbacks', 'as' => 'feedbacks.'], function () {
         Route::get('/', 'FeedbackController@index')->name('index');
 
-        Route::get('/show/{id}', 'FeedbackController@show')->name('show');
+        Route::get('/{id}', 'FeedbackController@show')->name('show');
+
+        Route::post('/send', 'FeedbackController@send')->name('send');
+
+        Route::put('/{id}', 'FeedbackController@update')->name('update');
+
+        Route::delete('/{id}', 'FeedbackController@destroy')->name('destroy');
     });
 });
 

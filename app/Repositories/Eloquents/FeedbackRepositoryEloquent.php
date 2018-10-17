@@ -7,6 +7,7 @@ use Prettus\Repository\Criteria\RequestCriteria;
 use App\Repositories\Contracts\FeedbackRepository;
 use App\Entities\Feedback;
 use App\Validators\FeedbackValidator;
+use App\Entities\Role;
 
 /**
  * Class FeedbackRepositoryEloquent.
