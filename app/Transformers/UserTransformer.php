@@ -22,19 +22,20 @@ class UserTransformer extends TransformerAbstract
     public function transform(User $model)
     {
         return [
-            'id'           => (int) $model->id,
-            'full_name'    => $model->full_name,
-            'first_name'   => $model->first_name,
-            'last_name'    => $model->last_name,
-            'phone'        => $model->phone,
-            'avatar'       => $model->avatar,
-            'gender'       => $model->gender,
-            'birthday'     => $model->birthday,
-            'active'       => $model->active,
-            'count_posts'  => $model->posts->count(),
-            'roles'        => $model->roles,
-            'created_at'   => $model->created_at,
-            'updated_at'   => $model->updated_at
+            'id'          => (int) $model->id,
+            'email'       => $model->email,
+            'full_name'   => $model->full_name,
+            'first_name'  => $model->first_name,
+            'last_name'   => $model->last_name,
+            'phone'       => $model->phone,
+            'avatar'      => $model->avatar,
+            'gender'      => $model->gender,
+            'birthday'    => $model->birthday,
+            'active'      => $model->active,
+            'count_posts' => $model->posts->count(),
+            'roles'       => $model->roles,
+            'created_at'  => $model->created_at,
+            'updated_at'  => $model->updated_at
         ];
     }
 }
