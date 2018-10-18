@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Auth;
 
+use DB;
 use Hash;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -37,11 +38,11 @@ class AuthController extends BaseController
         return $this->responses('Successfully logged out', Response::HTTP_OK);
     }
 
-/**
- * get information of user
- *
- * @return Illuminate\Http\Response
- */
+    /**
+     * get information of user
+     *
+     * @return Illuminate\Http\Response
+     */
     public function user(Request $request)
     {
         $profile = $this->userRepository->with(['roles'])
@@ -50,15 +51,15 @@ class AuthController extends BaseController
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('profile'));
     }
 
-/**
- * update information of user
- *
- * @param  ProfileRequest $request These are binding rules when requests are accepted
- * @return Illuminate\Http\Response
- */
+    /**
+     * update information of user
+     *
+     * @param  ProfileRequest $request These are binding rules when requests are accepted
+     * @return Illuminate\Http\Response
+     */
     public function update(ProfileRequest $request)
     {
-        $this->user->skipPresenter();
+        $this->userRepository->skipPresenter();
         $credential = $request->except(['email', 'password', 'active', 'avatar']);
         // check if the $request->avatar is not empty update avatar, the reverse is do nothing
         if(!empty($request->avatar)) {
@@ -68,34 +69,45 @@ class AuthController extends BaseController
         return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
     }
 
-/**
- * change password of user
- *
- * @param  ChangePasswordRequest $request These are binding rules when requests are accepted
- * @return Illuminate\Http\Response
- */
+    /**
+     * change password of user
+     *
+     * @param  ChangePasswordRequest $request These are binding rules when requests are accepted
+     * @return Illuminate\Http\Response
+     */
     public function changePassword(ChangePasswordRequest $request)
     {
         $user = $request->user();
-
         $old_password = $user->password;
         //compare $request->password and old password is not match
         if(!Hash::check($request->old_password, $old_password)) {
             return $this->responseErrors('password', trans('validation_custom.password.current'));
         }
-        $user->password = bcrypt($request->new_password);
-        //delete old token
-        $user->token()->revoke();
-        //generate new token
-        $token = $user->createToken('newToken');
-        $accessToken = $token->accessToken;
-        $expires_at  = Carbon::parse($token->token->expires_at)->toDateTimeString();
-        $user->save();
-        $data = [
-            "token_type"   => "Bearer",
-            'access_token' => $accessToken,
-            'expires_at'   => $expires_at
-        ];
-        return $this->responses(trans('notication.edit.change'), Response::HTTP_OK, $data);
+        DB::beginTransaction();
+        try {
+            $credential = [
+                'password'  => bcrypt($request->new_password)
+            ];
+            //delete old token
+            $user->token()->revoke();
+            //generate new token
+            $tokenResult       = $user->createToken('newToken');
+            $token             = $tokenResult->token;
+            //update expires_at is 1 week for token;
+            $token->expires_at = Carbon::now()->addWeeks(2);
+            $token->save();
+            $expires_at        = Carbon::parse($token->expires_at)->toDateTimeString();
+            $this->userRepository->update($credential, $user->id);
+            $data               = [
+                "token_type"   => "Bearer",
+                'access_token' => $tokenResult->accessToken,
+                'expires_at'   => $expires_at
+            ];
+            DB::commit();
+            return $this->responses(trans('notication.edit.change'), Response::HTTP_OK, $data);
+        }catch(\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 }

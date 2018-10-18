@@ -52,7 +52,7 @@ class User extends Authenticatable implements Transformable
 
     protected $fillable  = [
         'email', 'password', 'first_name', 'last_name',
-        'phone', 'avatar', 'gender', 'date_of_birth',
+        'phone', 'avatar', 'gender', 'birthday',
         'active', 'activation_token',
     ];
 

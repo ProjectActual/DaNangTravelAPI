@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Auth;
 
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
@@ -26,7 +27,7 @@ class PasswordResetController extends BaseController
         UserRepository $userRepository,
         PasswordResetRepository $passwordResetRepository
     ){
-        $this->userRepository          = $user;
+        $this->userRepository          = $userRepository;
         $this->passwordResetRepository = $passwordResetRepository;
     }
 
@@ -39,24 +40,19 @@ class PasswordResetController extends BaseController
     public function create(ResetPasswordRequest $request)
     {
         $user = $this->userRepository->findByEmail($request->email);
+        $credentials = $request->only('email');
         //check email exists
         if(empty($user)) {
             return $this->responseErrors('email', trans('passwords.user'));
         }
         //generate token
-        $token = Uuid::generate(4)->string;
+        $credentials['token'] = Uuid::generate(4)->string;
         //The token check has been initialized, If not then start creating a token, contrary update the token
         $checkEmailReset = $this->passwordResetRepository->findByEmail($request->email);
         if(empty($checkEmailReset)) {
-            $passwordReset = $this->passwordResetRepository->create([
-                'email'     => $request->email,
-                'token'     => $token,
-            ]);
+            $passwordReset = $this->passwordResetRepository->create($credentials);
         } else {
-            $passwordReset = $this->passwordResetRepository->update([
-                'email'     => $request->email,
-                'token'     => $token,
-            ], $checkEmailReset->id);
+            $passwordReset = $this->passwordResetRepository->update($credentials, $checkEmailReset->id);
         }
         //Assign token into email
         $info = [
@@ -82,7 +78,7 @@ class PasswordResetController extends BaseController
         }
         //If the token is over 12 hours, the token will be disabled
         if (Carbon::parse($passwordReset->updated_at)->addMinutes(720)->isPast()) {
-            $passwordReset->delete();
+            $this->passwordResetRepository->delete($passwordReset->id);
             return $this->responses(trans('passwords.token'), Response::HTTP_NOT_FOUND);
         }
         return response()->json($passwordReset, 200);
@@ -91,7 +87,7 @@ class PasswordResetController extends BaseController
 /**
  * setting password for user
  *
- * @param  ResetPasswordUserRequest $request [instance passwordReset]
+ * @param  ResetPasswordUserRequest $request These are binding rules when requests are accepted
  * @return Illuminate\Http\Response
  */
     public function reset(ResetPasswordUserRequest $request)
@@ -108,13 +104,19 @@ class PasswordResetController extends BaseController
         if(empty($user)) {
             return $this->responses(trans('passwords.user'), Response::HTTP_NOT_FOUND);
         }
-        $credential = [
-            'password' => bcrypt($request->password_reset),
-        ];
-        $this->userRepository->update($credential, $user->id);
-        $this->passwordResetRepository->delete($passwordReset->id);
-        //send mail password reset success
-        SendMail::send($request->email, trans('passwords.reset'), 'email.password_reset_success');
-        return $this->responses(trans('passwords.reset'), Response::HTTP_OK);
+        DB::beginTransaction();
+        try {
+            $credential = [
+                'password' => bcrypt($request->password_reset),
+            ];
+            $this->userRepository->update($credential, $user->id);
+            $this->passwordResetRepository->delete($passwordReset->id);
+            //send mail password reset success
+            SendMail::send($request->email, trans('passwords.reset'), 'email.password_reset_success');
+            DB::commit();
+            return $this->responses(trans('passwords.reset'), Response::HTTP_OK);
+        }catch(\Exception $e) {
+            DB::rollBack();
+        }
     }
 }

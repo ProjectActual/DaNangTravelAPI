@@ -34,7 +34,6 @@ class FeedbackController extends BaseController
         $feedbacks = $this->feedbackRepository
             ->latest()
             ->paginate($this->paginate);
-
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('feedbacks'));
     }
 
@@ -47,7 +46,6 @@ class FeedbackController extends BaseController
     {
         $feedback = $this->feedbackRepository
             ->find($id);
-
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('feedback'));
     }
 
@@ -59,7 +57,6 @@ class FeedbackController extends BaseController
     public function destroy($id)
     {
         $this->feedbackRepository->delete($id);
-
         return $this->responses(trans('notication.delete.success'), Response::HTTP_OK);
     }
 
@@ -70,13 +67,15 @@ class FeedbackController extends BaseController
      */
     public function send(FeedbackRequest $request)
     {
+        if($request->user()->email == $request->email) {
+            $this->responseErrors('error', trans('validation_custom.users.myself'));
+        }
         $info = [
             'title'   => $request->title,
             'content' => $request->content,
         ];
         //send email feedback
         SendMail::send($request->email, trans('notication.feedback.subject'), 'email.feedback', $info);
-
         return $this->responses(trans('notication.feedback.success'), Response::HTTP_OK);
     }
 }

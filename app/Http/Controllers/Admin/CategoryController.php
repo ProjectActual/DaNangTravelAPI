@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use DB;
 use Entrust;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -48,7 +49,6 @@ class CategoryController extends BaseController
      *  create category, only admin
      *
      * @param  CreateCategoryRequest $request These are binding rules when requests are accepted
-     *
      * @return Illuminate\Http\Response
      */
     public function store(CreateCategoryRequest $request)
@@ -58,15 +58,22 @@ class CategoryController extends BaseController
         if($this->categoryRepository->all()->count() >= 10) {
             return $this->responseErrors('category', trans('validation.max.numeric', ['attribute' => 'danh mục', 'max' => 10]));
         }
-        //Create url with url_category
-        $urlCredentials = [
-            'url_title'   => $request->name_category,
-            'uri'         => $request->uri_category,
-        ];
-        $url = $this->urlRepository->create($urlCredentials);
-        //Create category
-        $category = $this->categoryRepository->create($request->all());
-        return $this->responses(trans('notication.create.success'), Response::HTTP_OK);
+        DB::beginTransaction();
+        try {
+            //Create url with url_category
+            $urlCredentials = [
+                'url_title'   => $request->name_category,
+                'uri'         => $request->uri_category,
+            ];
+            $url = $this->urlRepository->create($urlCredentials);
+            //Create category
+            $category = $this->categoryRepository->create($request->all());
+            DB::commit();
+            return $this->responses(trans('notication.create.success'), Response::HTTP_OK);
+        }catch(\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     /**
@@ -88,15 +95,22 @@ class CategoryController extends BaseController
             return $this->responseErrors('type_category', trans('validation.unique', ['attribute' => 'loại danh mục']));
         }
         //update url
-        $url = $this->urlRepository->findByUri($category->uri_category);
-        $urlCredentials = [
-            'url_title'   => $request->name_category,
-            'uri'         => $request->uri_category,
-        ];
-        $this->urlRepository->update($urlCredentials, $url->id);
-        //update category
-        $this->categoryRepository->update($request->all(), $category->id);
-        return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
+        DB::beginTransaction();
+        try {
+            $url = $this->urlRepository->findByUri($category->uri_category);
+            $urlCredentials = [
+                'url_title'   => $request->name_category,
+                'uri'         => $request->uri_category,
+            ];
+            $this->urlRepository->update($urlCredentials, $url->id);
+            //update category
+            $this->categoryRepository->update($request->all(), $category->id);
+            DB::commit();
+            return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
+        }catch(\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     /**
@@ -118,8 +132,16 @@ class CategoryController extends BaseController
     public function destroy($id)
     {
         //delete category and url vie uri_category
-        $category = $this->categoryRepository->delete($id);
-        $this->urlRepository->findByUri($category->uri_category)->delete();
-        return $this->responses(trans('notication.delete.success'), Response::HTTP_OK);
+        DB::beginTransaction();
+        try {
+            $category = $this->categoryRepository->skipPresenter()->find($id);
+            $this->categoryRepository->delete($category->id);
+            $this->urlRepository->findByUri($category->uri_category)->delete();
+            DB::commit();
+            return $this->responses(trans('notication.delete.success'), Response::HTTP_OK);
+        }catch(\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 }
