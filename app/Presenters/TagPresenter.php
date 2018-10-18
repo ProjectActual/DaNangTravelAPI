@@ -12,6 +12,8 @@ use Prettus\Repository\Presenter\FractalPresenter;
  */
 class TagPresenter extends FractalPresenter
 {
+    protected $resourceKeyCollection = 'tags';
+    protected $resourceKeyItem       = 'tags';
     /**
      * Transformer
      *

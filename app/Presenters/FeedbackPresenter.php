@@ -12,6 +12,8 @@ use Prettus\Repository\Presenter\FractalPresenter;
  */
 class FeedbackPresenter extends FractalPresenter
 {
+    protected $resourceKeyCollection = 'feedbacks';
+    protected $resourceKeyItem       = 'feedbacks';
     /**
      * Transformer
      *
