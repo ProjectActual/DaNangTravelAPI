@@ -76,6 +76,10 @@ Route::group(['middleware' => ['authentication', 'auth:api', 'credential']], fun
         Route::delete('/{id}', 'CongTacVienController@destroy')->name('destroy');
     });
 
+    Route::group(['prefix' => 'statistic', 'as' => 'statistic.', 'middleware' => 'admin'], function () {
+        Route::post('/', 'StatisticController@statistic')->name('statistic');
+    });
+
     Route::group(['prefix' => 'feedbacks', 'as' => 'feedbacks.'], function () {
         Route::get('/', 'FeedbackController@index')->name('index');
 
