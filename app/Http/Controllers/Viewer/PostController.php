@@ -44,7 +44,7 @@ class PostController extends BaseController
      * hiển thị tất cả bài viết từ mới đến cũ
      *
      * @param  string  $uri_category đây là thông tin unique của danh mục để lọc ra bài viết
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function index(Request $request, $uri_category)
     {
@@ -63,7 +63,7 @@ class PostController extends BaseController
      *
      * @param  string  $uri_category đây là thông tin unique của danh mục để lọc ra bài viết
      * @param  string  uri_post     đây là thông tin unique của bài viết để show bài viết
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function show(Request $request, $uri_category, $uri_post)
     {
@@ -78,7 +78,7 @@ class PostController extends BaseController
 /**
  * Chức năng dùng để search bài viết ở mọi niw
  *
- * @return object
+ * @return Illuminate\Http\Response
  */
     public function search(Request $request)
     {

@@ -22,8 +22,8 @@ class TagController extends BaseController
     protected $tagRepository;
 
     /**
-     * giới hạn danh sách của tags.
-     * @var integer
+     * the number of elements in a page.
+     * @var int
      */
     protected $paginate = 10;
 
@@ -34,52 +34,49 @@ class TagController extends BaseController
     }
 
     /**
-     * Hiển thị tất cả tags
+     * show all tags
      * @param  Request $request
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function index(Request $request)
     {
         $tags = $this->tagRepository
             ->paginate($this->paginate);
-
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('tags'));
     }
 
     /**
-     * cập nhật tag và url theo uri_tag
+     * update information tag
      *
-     * @param  TagRequest $request đây là những nguyên tắc ràng buộc khi request được chấp nhận
-     * @param  int                $id      là id của danh muc
-     * @return object
+     * @param  TagRequest $request These are binding rules when requests are accepted
+     * @param  int $id this is the key to find and update tags
+     * @return Illuminate\Http\Response
      */
     public function update(TagRequest $request, $id)
     {
         $tag = $this->tagRepository->skipPresenter()->find($id);
+        //Check the value has been changed
         if($request->tag == $tag->tag) {
-            return $this->responseErrors('tag', 'Bạn không thay đổi gì.');
+            return $this->responseErrors('tag', trans('validation_custom.change'));
         }
-
+        //Check and indicate that the tag is unique
         if($request->tag != $tag->tag && $this->tagRepository->all()->contains('tag', $request->tag)) {
             return $this->responseErrors('tag', trans('validation.unique', ['attribute' => 'tag']));
         }
-
         $credentials            = $request->all();
         $credentials['uri_tag'] = Uuid::generate(4)->string;
         $this->tagRepository->update($credentials, $id);
-
         return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
     }
 
     /**
-     * xóa danh mục theo id
-     * @param int $id đây là id tìm kiếm của danh mục
-     * @return object
+     * delete tag
+     * @param int $id this is the key to find and destroy tags
+     * @return Illuminate\Http\Response
      */
     public function destroy($id)
     {
         $this->tagRepository->delete($id);
-
         return $this->responses(trans('notication.delete.success'), Response::HTTP_OK);
     }
 }

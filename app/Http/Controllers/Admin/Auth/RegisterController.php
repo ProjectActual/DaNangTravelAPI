@@ -29,42 +29,37 @@ class RegisterController extends BaseController
     }
 
     /**
-     * Đăng kí cộng tác viên và gửi mail xác nhận
+     * register and send email authentication
      *
-     * @pẩm  RegisterRequest $request đây là những nguyên tắc ràng buộc khi request được chấp nhận
-     * @return object
+     * @param  RegisterRequest $request These are binding rules when requests are accepted
+     * @return Illuminate\Http\Response
      */
     public function register(RegisterRequest $request)
     {
-        $user = $this->user->create([
-            'first_name' => $request->first_name,
-            'last_name'  => $request->last_name,
-            'email'      => $request->email,
-            'password'   => bcrypt($request->password),
-            'activation_token'  => Uuid::generate(4)->string,
-        ]);
-
+        $credentials                     = $request->only(['first_name', 'last_name', 'email']);
+        $credentials['password']         = bcrypt($request->password);
+        $credentials['activation_token'] = Uuid::generate(4)->string;
+        $user = $this->user->create($credentials);
+        //Add role CONGTACVIEN for user registed
         $user->roles()->attach(Role::CODE_NAME['CONGTACVIEN']);
-
+        //Send email authentication to the user
         $info = [
             'activation_token'  => $user->activation_token,
         ];
-
         SendMail::send($user->email, trans('notication.email.credential.register'), 'email.register', $info);
-
         return $this->responses(trans('notication.email.register'), Response::HTTP_OK);
     }
 
     /**
-     * chức năng xác nhận activation_token khi người dùng click vào token ở mail
+     * confirm activation_token when user click the token in email
      *
-     * @param  string  $activation_token token dùng để \credential
-     * @return object
+     * @param  string  $activation_token Token used for authentication
+     * @return Illuminate\Http\Response
      */
     public function credential(Request $request, $activation_token)
     {
         $user = $this->user->findByField('activation_token', $activation_token)->first();
-
+        //check token is exists
         if(empty($user)) {
             return $this->responseException(
                 trans('notication.email.credential.expired'),
@@ -72,8 +67,8 @@ class RegisterController extends BaseController
                 self::TYPE['EXPIRED']
             );
         }
-
-        if (Carbon::parse($user->updated_at)->addMinutes(4320)->isPast()) {
+        //If the token is over 10 days, the token will be disabled
+        if (Carbon::parse($user->updated_at)->addMinutes(10080)->isPast()) {
             $this->user->delete($user->id);
             return $this->responseException(
                 trans('notication.email.credential.expired'),
@@ -81,12 +76,12 @@ class RegisterController extends BaseController
                 self::TYPE['EXPIRED']
             );
         }
-
-        $user->active           = User::ACTIVE[2];
-        $user->activation_token = '';
-
-        $user->save();
-
+        //Update credential user
+        $credentials = [
+            'active'           => User::ACTIVE[2],
+            'activation_token' => '',
+        ];
+        $this->user->update($credentials, $user->id);
         return $this->responses(trans('notication.email.success'), Response::HTTP_OK);
     }
 }

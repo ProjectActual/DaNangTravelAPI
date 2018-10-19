@@ -21,7 +21,7 @@ class Feedback extends Model implements Transformable
      *
      * @var array
      */
-    protected $table     = 'feedbacks';
+    protected $table     = 'feedback';
 
     protected $fillable  = [
         'title', 'content', 'email',

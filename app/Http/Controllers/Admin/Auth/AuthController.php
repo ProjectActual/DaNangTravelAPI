@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Auth;
 
+use DB;
 use Hash;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -19,98 +20,94 @@ use App\Repositories\Eloquents\UserRepositoryEloquent;
 
 class AuthController extends BaseController
 {
-    protected $user;
+    protected $userRepository;
 
-    public function __construct(UserRepositoryEloquent $user)
+    public function __construct(UserRepositoryEloquent $userRepository)
     {
-        $this->user = $user;
+        $this->userRepository = $userRepository;
     }
 
 /**
- * chức năng đăng xuất khỏi hệ thống
+ * logout of the system
  *
- * @return object
+ * @return Illuminate\Http\Response
  */
     public function logout(Request $request)
     {
         $request->user()->token()->revoke();
-
         return $this->responses('Successfully logged out', Response::HTTP_OK);
     }
 
-/**
- * lấy thông tin của người dùng
- *
- * @return object
- */
+    /**
+     * get information of user
+     *
+     * @return Illuminate\Http\Response
+     */
     public function user(Request $request)
     {
-        $profile = $this->user->with(['roles'])
+        $profile = $this->userRepository->with(['roles'])
         ->withCount('posts')
         ->find($request->user()->id);
-
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('profile'));
     }
 
-/**
- * Cập nhật thông tin của người.
- *
- * @param  ProfileRequest $request đây là những nguyên tắc ràng buộc khi request được chấp nhận
- *
- * @return object
- */
+    /**
+     * update information of user
+     *
+     * @param  ProfileRequest $request These are binding rules when requests are accepted
+     * @return Illuminate\Http\Response
+     */
     public function update(ProfileRequest $request)
     {
-        $this->user->skipPresenter();
-
-        $user = $this->user->find($request->user()->id);
+        $this->userRepository->skipPresenter();
+        $credential = $request->except(['email', 'password', 'active', 'avatar']);
+        // check if the $request->avatar is not empty update avatar, the reverse is do nothing
         if(!empty($request->avatar)) {
-            $user->avatar     = $request->avatar;
+            $credential['avatar'] = $request->avatar;
         }
-
-        $user->first_name = $request->first_name;
-        $user->last_name  = $request->last_name;
-        $user->phone      = $request->phone;
-        $user->gender     = $request->gender;
-        $user->birthday   = $request->birthday;
-
-        $user->save();
-
+        $this->userRepository->update($credential, $request->user()->id);
         return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
     }
 
-/**
- * thay đôi mật khẩu của người dùng
- *
- * @param  ChangePasswordRequest $request đây là những nguyên tắc ràng buộc khi request được chấp nhận
- * @return object
- */
+    /**
+     * change password of user
+     *
+     * @param  ChangePasswordRequest $request These are binding rules when requests are accepted
+     * @return Illuminate\Http\Response
+     */
     public function changePassword(ChangePasswordRequest $request)
     {
-
         $user = $request->user();
-
         $old_password = $user->password;
-
+        //compare $request->password and old password is not match
         if(!Hash::check($request->old_password, $old_password)) {
             return $this->responseErrors('password', trans('validation_custom.password.current'));
         }
-
-        $user->password = bcrypt($request->new_password);
-        $user->token()->revoke();
-        $token = $user->createToken('newToken');
-
-        $accessToken = $token->accessToken;
-        $expires_at  = Carbon::parse($token->token->expires_at)->toDateTimeString();
-
-        $user->save();
-
-        $data = [
-            "token_type"   => "Bearer",
-            'access_token' => $accessToken,
-            'expires_at'   => $expires_at
-        ];
-
-        return $this->responses(trans('notication.edit.change'), Response::HTTP_OK, $data);
+        DB::beginTransaction();
+        try {
+            $credential = [
+                'password'  => bcrypt($request->new_password)
+            ];
+            //delete old token
+            $user->token()->revoke();
+            //generate new token
+            $tokenResult       = $user->createToken('newToken');
+            $token             = $tokenResult->token;
+            //update expires_at is 1 week for token;
+            $token->expires_at = Carbon::now()->addWeeks(2);
+            $token->save();
+            $expires_at        = Carbon::parse($token->expires_at)->toDateTimeString();
+            $this->userRepository->update($credential, $user->id);
+            $data               = [
+                "token_type"   => "Bearer",
+                'access_token' => $tokenResult->accessToken,
+                'expires_at'   => $expires_at
+            ];
+            DB::commit();
+            return $this->responses(trans('notication.edit.change'), Response::HTTP_OK, $data);
+        }catch(\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 }

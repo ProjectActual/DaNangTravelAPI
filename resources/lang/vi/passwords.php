@@ -17,6 +17,6 @@ return [
     'reset'    => 'Mật khẩu của bạn đã được thiết lập lại thành công!',
     'sent'     => 'Chúng tôi đã gửi liên kết đặt lại mật khẩu qua email của bạn!',
     'token'    => 'Mã thông báo đặt lại mật khẩu này không hợp lệ.',
-    'user'     => "Chúng tôi không thể tìm thấy người dùng có địa chỉ email đó.",
+    'user'     => 'Địa chỉ email không được tìm thấy trong hồ sơ dữ liệu.',
 
 ];

@@ -29,6 +29,7 @@ class FilterPostByTagCriteriaCriteria implements CriteriaInterface
      */
     public function apply($model, RepositoryInterface $repository)
     {
+        // lọc bài viết theo tag
         return $model
             ->selectRaw('posts.*, tags.tag')
             ->join('post_tag', 'posts.id', '=', 'post_tag.post_id')

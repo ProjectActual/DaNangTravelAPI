@@ -20,7 +20,7 @@ class BaseController extends Controller
      * @param  string $message tin nhắn thành công của object
      * @param  int $status  status code của object
      * @param  array  $data    Dữ liệu được truyền vào để đưa xuống Client, nullable
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function responses($message, $status, $data = [])
     {
@@ -37,7 +37,7 @@ class BaseController extends Controller
      *
      * @param  string $key  gía trị khóa của lỗi
      * @param  string $message   mô tả ngắn về lỗi
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function responseErrors($key, $message)
     {
@@ -50,7 +50,7 @@ class BaseController extends Controller
      * @param  string $message   mô tả ngắn về lỗi
      * @param  int $status  status code của lỗi
      * @param  string $type    loại dữ liệu
-     * @return object
+     * @return Illuminate\Http\Response
      */
     public function responseException($message, $status, $type)
     {

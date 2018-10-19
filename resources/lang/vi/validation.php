@@ -17,13 +17,13 @@ return [
     */
     'accepted'             => 'Trường :attribute must be accepted.',
     'active_url'           => 'Trường :attribute is not a valid URL.',
-    'after'                => 'Trường :attribute must be a date after :date.',
+    'after'                => 'Trường :attribute phải sau ngày :date.',
     'after_or_equal'       => 'Trường :attribute must be a date after or equal to :date.',
     'alpha'                => 'Trường :attribute may only contain letters.',
     'alpha_dash'           => 'Trường :attribute may only contain letters, numbers, dashes and underscores.',
     'alpha_num'            => 'Trường :attribute may only contain letters and numbers.',
     'array'                => 'Trường :attribute must be an array.',
-    'before'               => 'Trường :attribute must be a date before :date.',
+    'before'               => 'Trường :attribute phải trước ngày :date.',
     'before_or_equal'      => 'Trường :attribute must be a date before or equal to :date.',
     'between'              => [
         'numeric' => 'Trường :attribute must be between :min and :max.',
@@ -158,6 +158,7 @@ return [
         'last_name'             => 'Họ',
         'password'              => 'mật khẩu',
         'password_confirmation' => 'xác nhận lại mật khẩu',
+        'birthday'              => 'ngày sinh',
     ],
 
 ];

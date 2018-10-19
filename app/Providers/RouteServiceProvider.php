@@ -90,7 +90,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::prefix('api')
             ->name('viewer.')
-            ->middleware(['api', 'web'])
+            ->middleware(['api'])
             ->namespace($this->namespace . '\Viewer')
             ->group(base_path('routes/ViewerApi.php'));
     }

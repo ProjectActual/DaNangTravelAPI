@@ -2,18 +2,18 @@
 
 namespace App\Presenters;
 
-use App\Transformers\UserTransformer;
+use App\Transformers\FeedbackTransformer;
 use Prettus\Repository\Presenter\FractalPresenter;
 
 /**
- * Class UserPresenter.
+ * Class FeedbackPresenter.
  *
  * @package namespace App\Presenters;
  */
-class UserPresenter extends FractalPresenter
+class FeedbackPresenter extends FractalPresenter
 {
-    protected $resourceKeyCollection = 'users';
-    protected $resourceKeyItem       = 'users';
+    protected $resourceKeyCollection = 'feedbacks';
+    protected $resourceKeyItem       = 'feedbacks';
     /**
      * Transformer
      *
@@ -21,6 +21,6 @@ class UserPresenter extends FractalPresenter
      */
     public function getTransformer()
     {
-        return new UserTransformer();
+        return new FeedbackTransformer();
     }
 }

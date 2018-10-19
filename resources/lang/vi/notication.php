@@ -46,4 +46,8 @@ return [
             ],
         ],
     ],
+    'feedback' => [
+        'subject'   => 'Phản hồi từ DaNangTravel',
+        'success'   => 'Gửi yêu cầu thành công',
+    ],
 ];

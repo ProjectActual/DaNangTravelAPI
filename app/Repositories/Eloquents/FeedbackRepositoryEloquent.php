@@ -7,6 +7,7 @@ use Prettus\Repository\Criteria\RequestCriteria;
 use App\Repositories\Contracts\FeedbackRepository;
 use App\Entities\Feedback;
 use App\Validators\FeedbackValidator;
+use App\Entities\Role;
 
 /**
  * Class FeedbackRepositoryEloquent.
@@ -25,7 +26,10 @@ class FeedbackRepositoryEloquent extends BaseRepository implements FeedbackRepos
         return Feedback::class;
     }
 
-    
+    public function presenter()
+    {
+        return "App\\Presenters\\FeedbackPresenter";
+    }
 
     /**
      * Boot up the repository, pushing criteria
@@ -34,5 +38,14 @@ class FeedbackRepositoryEloquent extends BaseRepository implements FeedbackRepos
     {
         $this->pushCriteria(app(RequestCriteria::class));
     }
-    
+
+/**
+ * sắp xếp giảm dần với updated
+ * @return mixed
+ */
+    public function latest()
+    {
+        return $this
+            ->orderBy('updated_at', 'desc');
+    }
 }

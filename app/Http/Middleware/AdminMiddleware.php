@@ -24,7 +24,7 @@ class AdminMiddleware
         }
 
         return response()->json([
-            'message'     => 'Bạn không có quyền truy cập vào đường dẫn',
+            'message'     => 'Bạn không có quyền truy cập',
             'status'      => Response::HTTP_UNAUTHORIZED
         ], Response::HTTP_UNAUTHORIZED);
     }

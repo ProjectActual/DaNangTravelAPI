@@ -19,18 +19,18 @@ Route::group(['namespace' => 'Auth\\'], function () {
     Route::post('/forget-password/{token}', 'PasswordResetController@authenticateToken')->name('authenticate_token');
     Route::put('/forget-password', 'PasswordResetController@reset')->name('reset');
 
-    Route::group(['middleware' => ['authentication', 'auth:api', 'credential']], function () {
-        Route::get('logout', 'AuthController@logout')->name('logout');
-        Route::get('user', 'AuthController@user')->name('user');
-
+    Route::group(['middleware' => ['authentication', 'auth:api']], function () {
+        Route::get('getUser', 'AuthController@user')->name('get_user');
         Route::put('user', 'AuthController@update')->name('update');
-
-        Route::post('change-password', 'AuthController@changePassword')->name('change_password');
+        Route::group(['middleware' => 'credential'], function () {
+            Route::get('logout', 'AuthController@logout')->name('logout');
+            Route::get('user', 'AuthController@user')->name('user');
+            Route::post('change-password', 'AuthController@changePassword')->name('change_password');
+        });
     });
 });
 
 Route::group(['middleware' => ['authentication', 'auth:api', 'credential']], function () {
-
     Route::group(['prefix' => 'posts', 'as' => 'posts.'], function () {
         Route::get('/', 'PostController@index')->name('index');
         Route::get('/{id}', 'PostController@show')->name('show');
@@ -74,6 +74,18 @@ Route::group(['middleware' => ['authentication', 'auth:api', 'credential']], fun
         Route::put('/{id}', 'CongTacVienController@update')->name('update');
 
         Route::delete('/{id}', 'CongTacVienController@destroy')->name('destroy');
+    });
+
+    Route::group(['prefix' => 'feedbacks', 'as' => 'feedbacks.'], function () {
+        Route::get('/', 'FeedbackController@index')->name('index');
+
+        Route::get('/{id}', 'FeedbackController@show')->name('show');
+
+        Route::post('/send', 'FeedbackController@send')->name('send');
+
+        Route::put('/{id}', 'FeedbackController@update')->name('update');
+
+        Route::delete('/{id}', 'FeedbackController@destroy')->name('destroy');
     });
 });
 

@@ -14,6 +14,8 @@ return [
         'approved_email' => 'Người dùng hiện tại chưa xác thực bằng email nên không thể thực hiện tác vụ',
         'approved_admin' => 'Người dùng hiện tại chưa được phê duyệt nên không thể thực hiện tác vụ',
     ],
-    'change' => 'bạn không thực hiện tác vụ nào cả',
-
+    'change' => 'Bạn không thực hiện tác vụ nào cả',
+    'users' => [
+        'myself' => 'Bạn không thể phản hồi cho chính mình',
+    ],
 ];
