@@ -25,7 +25,6 @@ class CongTacVienController extends BaseController
      */
     protected $congTacVienRepository;
 
-
     public function __construct(UserRepositoryEloquent $congTacVienRepository)
     {
         $this->congTacVienRepository = $congTacVienRepository;
@@ -66,7 +65,14 @@ class CongTacVienController extends BaseController
     {
         //get status old of CTV
         $statusOld = $this->checkApproveCTV($request->active, $id);
-        $congTacVien = $this->congTacVienRepository->update($request->only('active'), $id);
+        $credentials = $request->only('active');
+        if($request->active == User::ACTIVE[2]) {
+            $credentials['birthday'] = null;
+            $credentials['gender']   = null;
+            $credentials['avatar']   = null;
+            $credentials['phone']    = null;
+        }
+        $congTacVien = $this->congTacVienRepository->update($credentials, $id);
         $info = [
             'reason'    => empty($request->reason) ? '' : $request->reason,
         ];

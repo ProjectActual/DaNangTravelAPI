@@ -29,6 +29,13 @@ class CheckCredentialMiddleware
                     'type'        => 'authen_email'
                 ], 400);
             } else if($user->active == User::ACTIVE[2]) {
+                if(empty($user->phone || $user->birthday)) {
+                    return response()->json([
+                        'message'     => 'Cần xác nhận thông tin',
+                        'status'      => 400,
+                        'type'        => 'credential'
+                    ], 400);
+                }
                 return response()->json([
                     'message'     => 'Tài khoản của bạn chưa được Quản Trị Viên duyệt.',
                     'status'      => 400,
