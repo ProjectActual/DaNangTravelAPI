@@ -7,6 +7,8 @@ use Prettus\Repository\Criteria\RequestCriteria;
 use App\Repositories\Contracts\PostRepository;
 use App\Entities\Post;
 use App\Validators\PostValidator;
+use App\Entities\Role;
+use Entrust;
 
 use Carbon\Carbon;
 
@@ -47,19 +49,19 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
  * sắp xếp giảm dần với updated
  * @return mixed
  */
-    public function latest()
-    {
-        return $this
-            ->orderBy('updated_at', 'desc');
-    }
+public function latest()
+{
+    return $this
+    ->orderBy('updated_at', 'desc');
+}
 
-    public function order()
-    {
-        return $this
-            ->orderBy('is_slider', 'desc')
-            ->orderBy('is_hot', 'desc')
-            ->orderBy('updated_at', 'desc');
-    }
+public function order()
+{
+    return $this
+    ->orderBy('is_slider', 'desc')
+    ->orderBy('is_hot', 'desc')
+    ->orderBy('updated_at', 'desc');
+}
 
     /**
      * sắp xếp tăng dần với updted
@@ -68,7 +70,7 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
     public function oldest()
     {
         return $this
-            ->orderBy('updated_at', 'asc');
+        ->orderBy('updated_at', 'asc');
     }
 
     /**
@@ -102,10 +104,10 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
     {
         $model = $this->scopeQuery(function ($query) use ($category_id) {
             return $query
-                ->where('category_id', $category_id)
-                ->limit(5);
-            })->latest()
-            ->get();
+            ->where('category_id', $category_id)
+            ->limit(5);
+        })->latest()
+        ->get();
 
         return $model;
     }
@@ -123,19 +125,19 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
 
         $repository = $this->scopeQuery(function ($query) use ($now, $category_id) {
             return $query
-                ->where('category_id', $category_id)
-                ->orderBy('count_view', 'desc')
-                ->WhereMonth('created_at', $now->month)
-                ->WhereYear('created_at',  $now->year)
-                ->limit(5);
-            })->get();
+            ->where('category_id', $category_id)
+            ->orderBy('count_view', 'desc')
+            ->WhereMonth('created_at', $now->month)
+            ->WhereYear('created_at',  $now->year)
+            ->limit(5);
+        })->get();
 
         if(empty($repository['data'])) {
             $repository = $this->scopeQuery(function ($query) use($category_id) {
                 return $query
-                    ->where('category_id', $category_id)
-                    ->orderBy('count_view', 'desc')
-                    ->limit(5);
+                ->where('category_id', $category_id)
+                ->orderBy('count_view', 'desc')
+                ->limit(5);
             })->get();
         }
 
@@ -162,9 +164,9 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
     public function findByUri($uri_post)
     {
         return $this->scopeQuery(function ($query) use ($uri_post) {
-                return $query
-                    ->where('uri_post', $uri_post);
-            })->first();
+            return $query
+            ->where('uri_post', $uri_post);
+        })->first();
     }
 
     /**
@@ -175,11 +177,11 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
     public function filterByRelationPost($uri_post)
     {
         return $this
-            ->scopeQuery(function ($query) use ($uri_post) {
-                return $query
-                    ->limit(4)
-                    ->where('uri_post', '<>', $uri_post);
-            });
+        ->scopeQuery(function ($query) use ($uri_post) {
+            return $query
+            ->limit(4)
+            ->where('uri_post', '<>', $uri_post);
+        });
     }
 
     /**
@@ -193,6 +195,56 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
         $repository = $this->update($postCredentials, $id);
         $repository->tags()->detach();
 
+        return $repository;
+    }
+
+    /**
+     * filterPostInMonthCurrent  count filter all posts in month
+     * @return int
+     */
+    public function countPostInMonthCurrent()
+    {
+        $now        = Carbon::now();
+        $user       = request()->user();
+        if($user->hasRole(Role::NAME[1])) {
+            $repository = $this->scopeQuery(function ($query) use ($now) {
+                return $query
+                    ->selectRaw('count(*) as countInMonth, sum(count_view) as sumInMonth')
+                    ->whereYear('created_at', '=', $now->year)
+                    ->whereMonth('created_at', '=', $now->month);
+                })->first();
+        } else{
+            $repository = $this->scopeQuery(function ($query) use ($now, $user) {
+                return $query
+                    ->selectRaw('count(*) as countInMonth, sum(count_view) as sumInMonth')
+                    ->whereYear('created_at', '=', $now->year)
+                    ->whereMonth('created_at', '=', $now->month)
+                    ->where('user_id', $user->id);
+            })->first();
+        }
+        return $repository;
+    }
+
+    /**
+     * countPostWithRole  count filter all posts
+     * @return int
+     */
+    public function countPostWithRole()
+    {
+        $user       = request()->user();
+
+        if($user->hasRole(Role::NAME[1])) {
+            $repository = $this->scopeQuery(function ($query) {
+                return $query
+                    ->selectRaw('count(*) as count, sum(count_view) as sum');
+                })->first();
+        }else {
+            $repository = $this->scopeQuery(function ($query) use ($user) {
+                return $query
+                    ->selectRaw('count(*) as count, sum(count_view) as sum')
+                    ->where('user_id', $user->id);
+            })->first();
+        }
         return $repository;
     }
 }
