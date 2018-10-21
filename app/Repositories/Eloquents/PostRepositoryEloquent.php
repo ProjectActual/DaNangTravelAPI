@@ -58,9 +58,9 @@ public function latest()
 public function order()
 {
     return $this
-    ->orderBy('is_slider', 'desc')
-    ->orderBy('is_hot', 'desc')
-    ->orderBy('updated_at', 'desc');
+        ->orderBy('is_slider', 'desc')
+        ->orderBy('is_hot', 'desc')
+        ->orderBy('updated_at', 'desc');
 }
 
     /**
@@ -70,7 +70,7 @@ public function order()
     public function oldest()
     {
         return $this
-        ->orderBy('updated_at', 'asc');
+            ->orderBy('updated_at', 'asc');
     }
 
     /**
@@ -104,11 +104,9 @@ public function order()
     {
         $model = $this->scopeQuery(function ($query) use ($category_id) {
             return $query
-            ->where('category_id', $category_id)
-            ->limit(5);
-        })->latest()
-        ->get();
-
+                ->where('category_id', $category_id)
+                ->limit(5);
+            })->latest()->get();
         return $model;
     }
 
@@ -165,7 +163,7 @@ public function order()
     {
         return $this->scopeQuery(function ($query) use ($uri_post) {
             return $query
-            ->where('uri_post', $uri_post);
+                ->where('uri_post', $uri_post);
         })->first();
     }
 
@@ -179,8 +177,8 @@ public function order()
         return $this
         ->scopeQuery(function ($query) use ($uri_post) {
             return $query
-            ->limit(4)
-            ->where('uri_post', '<>', $uri_post);
+                ->limit(4)
+                ->where('uri_post', '<>', $uri_post);
         });
     }
 
