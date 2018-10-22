@@ -57,7 +57,7 @@ return [
         'array'   => 'Trường :attribute must have :value items or more.',
     ],
     'image'                => 'Trường :attribute phải là một ảnh.',
-    'in'                   => 'Trường selected :attribute is invalid.',
+    'in'                   => 'Trường :attribute đã chọn không đúng giá trị.',
     'in_array'             => 'Trường :attribute field does not exist in :other.',
     'integer'              => 'Trường :attribute must be an integer.',
     'ip'                   => 'Trường :attribute must be a valid IP address.',
@@ -82,8 +82,8 @@ return [
         'string'  => 'Trường :attribute không thể lớn hơn :max kí tự.',
         'array'   => 'Trường :attribute may not have more than :max items.',
     ],
-    'mimes'                => 'Trường :attribute must be a file of type: :values.',
-    'mimetypes'            => 'Trường :attribute must be a file of type: :values.',
+    'mimes'                => 'Trường :attribute phải là file định dạng: :values.',
+    'mimetypes'            => 'Trường :attribute phải là file định dạng: :values.',
     'min'                  => [
         'numeric' => 'Trường :attribute không được nhỏ :min.',
         'file'    => 'Trường :attribute không được nhỏ :min kg.',
@@ -112,7 +112,7 @@ return [
     'string'               => 'Trường :attribute must be a string.',
     'timezone'             => 'Trường :attribute must be a valid zone.',
     'unique'               => 'Trường :attribute đã tồn tại trong hồ sơ dữ liệu.',
-    'uploaded'             => 'Trường :attribute failed to upload.',
+    'uploaded'             => ':attribute được tải lên thất bại.',
     'url'                  => 'Trường :attribute format is invalid.',
     'not_found'            => ':attribute không được tìm thấy trong hồ sơ dữ liệu',
 
@@ -159,7 +159,8 @@ return [
         'password'              => 'mật khẩu',
         'password_confirmation' => 'xác nhận lại mật khẩu',
         'birthday'              => 'ngày sinh',
-        'now'                   => 'hiện tại'
+        'now'                   => 'hiện tại',
+        'fileUpload'            => 'ảnh'
     ],
 
 ];

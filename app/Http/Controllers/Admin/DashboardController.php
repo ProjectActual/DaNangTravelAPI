@@ -29,8 +29,8 @@ class DashboardController extends BaseController
     {
         $dateStart = Carbon::now()->subMonth(4)->startOfMonth();
         $dateEnd   = Carbon::now()->subMonth(1)->endOfMonth();
-        $data = $this->postRepository->statisticWithPostMonth($dateStart, $dateEnd);
-        $statistic;
+        $data      = $this->postRepository->statisticWithPostMonth($dateStart, $dateEnd);
+        $statistic = [];
 
         foreach($data as $item) {
             $statistic['dataLabel'][] = "$item->month-$item->year";

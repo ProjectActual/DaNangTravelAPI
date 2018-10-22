@@ -35,8 +35,6 @@ Route::group(['middleware' => ['authentication', 'auth:api', 'credential']], fun
         Route::get('/', 'PostController@index')->name('index');
         Route::get('/{id}', 'PostController@show')->name('show');
 
-        Route::post('/uploadFile', 'PostController@uploadFile')->name('upload_file');
-
         Route::post('/', 'PostController@store')->name('store');
 
         Route::put('/{id}', 'PostController@update')->name('update');

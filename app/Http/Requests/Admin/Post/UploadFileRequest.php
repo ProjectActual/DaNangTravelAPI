@@ -24,7 +24,7 @@ class UploadFileRequest extends FormRequest
     public function rules()
     {
         return [
-            'avatar_post'   => 'image|max:6000',
+            'fileUpload'   => 'image|mimes:png,jpg,jpeg',
         ];
     }
 }

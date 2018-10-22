@@ -63,6 +63,10 @@ class Handler extends ExceptionHandler
             if($e instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException) {
                 return $this->errorsException('Method is not defined', Response::HTTP_METHOD_NOT_ALLOWED);
             }
+
+            if($e instanceof \Illuminate\Http\Exceptions\PostTooLargeException) {
+                return $this->errorsException('File size too large, can not upload file', Response::HTTP_REQUEST_ENTITY_TOO_LARGE);
+            }
         }
 
         return parent::render($request, $e);
