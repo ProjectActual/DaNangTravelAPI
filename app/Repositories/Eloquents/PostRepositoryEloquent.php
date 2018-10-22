@@ -47,6 +47,7 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
 
 /**
  * sắp xếp giảm dần với updated
+ *
  * @return mixed
  */
 public function latest()
@@ -75,7 +76,7 @@ public function order()
 
     /**
      * findByIsSlider  lọc ra những bài viết là slider
-     * @return Array App\Entities\Post
+     * @return Colection
      */
     public function findByIsSlider()
     {
@@ -86,7 +87,7 @@ public function order()
 
     /**
      * findByIsHot  lọc ra những bài viết là Hot
-     * @return Array App\Entities\Post
+     * @return Colectiont
      */
     public function findByIsHot()
     {
@@ -98,7 +99,7 @@ public function order()
     /**
      * findByCategory lọc bài viết theo từng danh mục
      * @param  int $category_id  đây là id của danh mục dùng để lọc
-     * @return Array App\Entities\Post
+     * @return Colection
      */
     public function findByCategory($category_id)
     {
@@ -115,7 +116,7 @@ public function order()
      * có bài viết nào thì sẽ show 5 bài viết có lượt view cao nhất
      *
      * @param  int $category_id  đây là id của danh mục dùng để lọc
-     * @return Array App\Entities\Post
+     * @return Colection
      */
     public function findInMonth($category_id)
     {
@@ -145,7 +146,7 @@ public function order()
     /**
      * filterByUrlCategory  lọc theo Category id
      * @param  int $category_id  đây là id của danh mục dùng để lọc
-     * @return mixed
+     * @return Repository
      */
     public function filterByCategory($category_id)
     {
@@ -198,7 +199,7 @@ public function order()
 
     /**
      * filterPostInMonthCurrent  count filter all posts in month
-     * @return int
+     * @return PostRepository
      */
     public function countPostInMonthCurrent()
     {
@@ -225,7 +226,8 @@ public function order()
 
     /**
      * countPostWithRole  count filter all posts
-     * @return int
+     *
+     * @return App\Entities\Post
      */
     public function countPostWithRole()
     {
@@ -244,5 +246,45 @@ public function order()
             })->first();
         }
         return $repository;
+    }
+
+    /**
+     * Total number of articles / monthly views of CTV
+     *
+     * @param  Carbon $dateStart time to start searching
+     * @param  Carbon $dateEnd   time to end searching
+     * @return Colection
+     */
+    public function statisticWithPostMonth($dateStart, $dateEnd)
+    {
+        $user = request()->user();
+        //check role is ADMIN: view all, CONGTACVIEN: only himself
+        if(!$user->hasRole(Role::NAME[1])) {
+            $repository = $this->scopeQuery(function ($query) use ($user, $dateStart, $dateEnd) {
+                return $query
+                    ->selectRaw(
+                        'count(posts.id) as count_posts,
+                        sum(posts.count_view) as count_views,
+                        month(posts.created_at) as month,
+                        year(posts.created_at) as year'
+                    )->where('user_id', $user->id)
+                    ->whereDate('created_at', '>=', $dateStart)
+                    ->whereDate('created_at', '<=', $dateEnd)
+                    ->groupBy('month', 'year');
+            });
+        } else {
+            $repository = $this->scopeQuery(function ($query) use ($user, $dateStart, $dateEnd) {
+                return $query
+                    ->selectRaw(
+                        'count(posts.id) as count_posts,
+                        sum(posts.count_view) as count_views,
+                        month(posts.created_at) as month,
+                        year(posts.created_at) as year'
+                    )->whereDate('created_at', '>=', $dateStart)
+                    ->whereDate('created_at', '<=', $dateEnd)
+                    ->groupBy('month', 'year');
+            });
+        }
+        return $repository->get();
     }
 }

@@ -35,8 +35,6 @@ Route::group(['middleware' => ['authentication', 'auth:api', 'credential']], fun
         Route::get('/', 'PostController@index')->name('index');
         Route::get('/{id}', 'PostController@show')->name('show');
 
-        Route::post('/uploadFile', 'PostController@uploadFile')->name('upload_file');
-
         Route::post('/', 'PostController@store')->name('store');
 
         Route::put('/{id}', 'PostController@update')->name('update');
@@ -74,6 +72,10 @@ Route::group(['middleware' => ['authentication', 'auth:api', 'credential']], fun
         Route::put('/{id}', 'CongTacVienController@update')->name('update');
 
         Route::delete('/{id}', 'CongTacVienController@destroy')->name('destroy');
+    });
+
+    Route::group(['prefix' => 'statistic', 'as' => 'statistic.', 'middleware' => 'admin'], function () {
+        Route::post('/', 'StatisticController@statistic')->name('statistic');
     });
 
     Route::group(['prefix' => 'feedbacks', 'as' => 'feedbacks.'], function () {

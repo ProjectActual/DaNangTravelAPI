@@ -24,7 +24,7 @@ class ApprovedCTVRequest extends FormRequest
     public function rules()
     {
         return [
-            'reason'       => 'max:1000',
+            'reason' => 'max:1000',
             'active' => 'required|in:AUTHENTICATION,APPROVE,ACTIVE,LOCKED',
         ];
     }

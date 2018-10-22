@@ -14,14 +14,14 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         User::truncate();
-        factory(User::class, 10)->create();
+        factory(User::class, 5)->create();
         $this->seederAdmin();
     }
 
     public function seederAdmin()
     {
         $faker = Faker::create();
-        foreach (range(1, 5) as $index) {
+        foreach (range(1, 2) as $index) {
             DB::table('users')->insert([
                 'email'          => 'admin_' . $index . '@gmail.com',
                 'password'       => bcrypt('123123123'),
