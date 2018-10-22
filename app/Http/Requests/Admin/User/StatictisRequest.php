@@ -24,7 +24,7 @@ class StatictisRequest extends FormRequest
     public function rules()
     {
         return [
-            'date'  => 'required|date|date_format:Y/m/d|after:2018/1/1',
+            'date'  => 'required|date|date_format:Y/m/d|after:2018/1/1|before:now',
         ];
     }
 }

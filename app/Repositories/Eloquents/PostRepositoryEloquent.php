@@ -245,4 +245,37 @@ public function order()
         }
         return $repository;
     }
+
+    public function statisticWithPostMonth($dateStart, $dateEnd)
+    {
+        $user = request()->user();
+
+        if(!$user->hasRole(Role::NAME[1])) {
+            $repository = $this->scopeQuery(function ($query) use ($user, $dateStart, $dateEnd) {
+                return $query
+                    ->selectRaw(
+                        'count(posts.id) as count_posts,
+                        sum(posts.count_view) as count_views,
+                        month(posts.created_at) as month,
+                        year(posts.created_at) as year'
+                    )->where('user_id', $user->id)
+                    ->whereDate('created_at', '>=', $dateStart)
+                    ->whereDate('created_at', '<=', $dateEnd)
+                    ->groupBy('month', 'year');
+            });
+        } else {
+            $repository = $this->scopeQuery(function ($query) use ($user, $dateStart, $dateEnd) {
+                return $query
+                    ->selectRaw(
+                        'count(posts.id) as count_posts,
+                        sum(posts.count_view) as count_views,
+                        month(posts.created_at) as month,
+                        year(posts.created_at) as year'
+                    )->whereDate('created_at', '>=', $dateStart)
+                    ->whereDate('created_at', '<=', $dateEnd)
+                    ->groupBy('month', 'year');
+            });
+        }
+        return $repository->get();
+    }
 }

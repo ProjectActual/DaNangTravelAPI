@@ -159,6 +159,7 @@ return [
         'password'              => 'mật khẩu',
         'password_confirmation' => 'xác nhận lại mật khẩu',
         'birthday'              => 'ngày sinh',
+        'now'                   => 'hiện tại'
     ],
 
 ];
