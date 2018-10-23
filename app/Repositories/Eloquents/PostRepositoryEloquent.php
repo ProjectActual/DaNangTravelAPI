@@ -178,8 +178,8 @@ public function order()
         return $this
         ->scopeQuery(function ($query) use ($uri_post) {
             return $query
-                ->limit(4)
-                ->where('uri_post', '<>', $uri_post);
+                ->where('uri_post', '<>', $uri_post)
+                ->orderBy('created_at', 'desc');
         });
     }
 
