@@ -50,19 +50,17 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
  *
  * @return mixed
  */
-public function latest()
-{
-    return $this
-    ->orderBy('updated_at', 'desc');
-}
+    public function latest()
+    {
+        return $this
+            ->orderBy('updated_at', 'desc');
+    }
 
-public function order()
-{
-    return $this
-        ->orderBy('is_slider', 'desc')
-        ->orderBy('is_hot', 'desc')
-        ->orderBy('updated_at', 'desc');
-}
+    public function order($sort='created_at', $status='desc')
+    {
+        return $this
+            ->orderBy($sort, $status);
+    }
 
     /**
      * sắp xếp tăng dần với updted
