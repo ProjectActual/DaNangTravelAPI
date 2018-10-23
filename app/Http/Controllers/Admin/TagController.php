@@ -38,8 +38,31 @@ class TagController extends BaseController
      */
     public function index(Request $request)
     {
-        $tags = $this->tagRepository
-            ->all();
+        if ($request->sort == 'tag_asc') {
+            $tags = $this->tagRepository
+                ->orderBy('tag', 'asc')
+                ->all();
+        }elseif ($request->sort == 'tag_desc') {
+            $tags = $this->tagRepository
+                ->orderBy('tag', 'desc')
+                ->all();
+        }elseif($request->sort == 'count_posts_asc') {
+            $tags = $this->tagRepository
+                ->withCount('posts')
+                ->orderBy('posts_count', 'asc')
+                ->orderBy('tag', 'asc')
+                ->get();
+        }elseif($request->sort == 'count_posts_desc') {
+            $tags = $this->tagRepository
+                ->withCount('posts')
+                ->orderBy('posts_count', 'desc')
+                ->orderBy('tag', 'desc')
+                ->get();
+        }else {
+            $tags = $this->tagRepository
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('tags'));
     }
 

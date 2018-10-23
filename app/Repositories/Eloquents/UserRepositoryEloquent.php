@@ -55,7 +55,17 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
     {
         return $this->scopeQuery(function ($query) {
             return $query
-                ->orderBy('active', 'desc');
+                ->orderBy('created_at', 'desc');
+        });
+    }
+
+    public function searchWithActive($status)
+    {
+        return $this->scopeQuery(function ($query) use ($status) {
+            return $query
+                ->where(function ($query) use ($status) {
+                    $query->orWhere('active','LIKE' , "%$status%");
+                });
         });
     }
 }
