@@ -68,8 +68,12 @@ class PostController extends BaseController
     public function show(Request $request, $uri_category, $uri_post)
     {
         $post         = $this->post->with('tags')->findByUri($uri_post);
+        $category = $this->category->findByUri($uri_category);
 
-        $relationPost = $this->post->filterByRelationPost($uri_post)->get();
+        $relationPost = $this->post
+            ->filterByRelationPost($uri_post)
+            ->findByField('category_id', $category->id);
+            // ->get();
         Event::fire('posts.view', $post['data']['id']);
 
         return response()->json(compact('post','relationPost'), Response::HTTP_OK);
