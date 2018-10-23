@@ -25,8 +25,6 @@ class TagController extends BaseController
      * the number of elements in a page.
      * @var int
      */
-    protected $paginate = 10;
-
     public function __construct(TagRepository $tagRepository)
     {
         $this->tagRepository = $tagRepository;
@@ -41,7 +39,7 @@ class TagController extends BaseController
     public function index(Request $request)
     {
         $tags = $this->tagRepository
-            ->paginate($this->paginate);
+            ->all();
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('tags'));
     }
 

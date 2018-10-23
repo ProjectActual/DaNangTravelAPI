@@ -21,8 +21,7 @@ class TagRepositoryEloquent extends BaseRepository implements TagRepository
      * @return string
      */
     protected $fieldSearchable = [
-        'tag'     => 'like',
-        'uri_tag' => 'like',
+        'tag'     => 'like'
     ];
 
     public function model()
