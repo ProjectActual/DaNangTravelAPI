@@ -30,7 +30,7 @@ class PostController extends BaseController
      *the number of elements in a page
      * @var int
     */
-    protected $paginate = 15;
+    protected $paginate = 5;
 
     /** @var instance */
     protected $tagRepository;
@@ -57,7 +57,37 @@ class PostController extends BaseController
      */
     public function index(Request $request)
     {
-        $posts = $this->postRepository->order()->paginate($this->paginate);
+        //sort
+        if($request->sort == 'title_asc') {
+            $posts = $this->postRepository
+                ->order('title', 'asc');
+        }elseif ($request->sort == 'title_desc') {
+                        $posts = $this->postRepository
+                ->order('title', 'desc');
+        }elseif ($request->sort == 'created_asc') {
+            $posts = $this->postRepository
+                ->order('created_at', 'asc');
+        }elseif ($request->sort == 'created_desc') {
+            $posts = $this->postRepository
+                ->order('created_at', 'desc');
+        }elseif ($request->sort == 'slider') {
+            $posts = $this->postRepository
+                ->order('is_slider', 'desc');
+        }elseif ($request->sort == 'hot') {
+            $posts = $this->postRepository
+                ->order('is_hot', 'desc');
+        }else {
+            $posts = $this->postRepository
+                ->order();
+        }
+
+        //searchCategory
+        if(empty($request->search_category)) {
+            $posts = $posts->paginate($this->paginate);
+        }else {
+            $posts = $posts->filterByCategory($request->search_category)
+                ->paginate($this->paginate);
+        }
 
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('posts'));
     }

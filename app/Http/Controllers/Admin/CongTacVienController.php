@@ -38,7 +38,10 @@ class CongTacVienController extends BaseController
      */
     public function index(Request $request)
     {
-        $congTacVien = $this->congTacVienRepository->sortByCTV()->paginate($this->paginate);
+        $congTacVien = $this->congTacVienRepository
+            ->sortByCTV()
+            ->searchWithActive($request->status)
+            ->paginate($this->paginate);
         return $this->responses(trans('notication.load.success'), 200, compact('congTacVien'));
     }
 
