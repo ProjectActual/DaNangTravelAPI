@@ -62,7 +62,7 @@ class PostController extends BaseController
             $posts = $this->postRepository
                 ->order('title', 'asc');
         }elseif ($request->sort == 'title_desc') {
-                        $posts = $this->postRepository
+            $posts = $this->postRepository
                 ->order('title', 'desc');
         }elseif ($request->sort == 'created_asc') {
             $posts = $this->postRepository
@@ -76,9 +76,16 @@ class PostController extends BaseController
         }elseif ($request->sort == 'hot') {
             $posts = $this->postRepository
                 ->order('is_hot', 'desc');
+        }elseif ($request->sort == 'status_active') {
+            $posts = $this->postRepository
+                ->order('status', 'asc');
+        }elseif($request->sort == 'status_inactive') {
+            $posts = $this->postRepository
+                ->order('status', 'desc');
         }else {
             $posts = $this->postRepository
-                ->order();
+                ->orderBy('is_slider', 'desc')
+                ->orderBy('is_hot', 'desc');
         }
 
         //searchCategory
