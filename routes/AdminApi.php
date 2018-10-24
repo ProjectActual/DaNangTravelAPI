@@ -53,6 +53,7 @@ Route::group(['middleware' => ['authentication', 'auth:api', 'credential']], fun
 
         Route::get('/edit/{id}', 'CategoryController@edit')->name('edit');
         Route::put('/{id}', 'CategoryController@update')->name('update');
+        Route::put('/approval/{id}', 'CategoryController@approval')->name('approval');
 
         Route::delete('/{id}', 'CategoryController@destroy')->name('destroy');
     });

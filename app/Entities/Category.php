@@ -25,8 +25,21 @@ class Category extends Model implements Transformable
      */
     protected $table     = 'categories';
 
+    CONST STATUS = [
+        1 => 'ACTIVE',
+        2 => 'INACTIVE'
+    ];
+
     protected $fillable  = [
-        'name_category', 'description', 'uri_category', 'type_category'
+        'name_category', 'description', 'uri_category', 'type_category', 'status',
+    ];
+
+    CONST CODE_CATEGORY = [
+        'DU_LICH'     => 1,
+        'DIEM_DEN'    => 2,
+        'SU_KIEN'     => 3,
+        'AM_THUC'     => 4,
+        'CAM_NANG'    => 5,
     ];
 
     public function posts()

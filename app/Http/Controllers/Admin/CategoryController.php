@@ -8,10 +8,12 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 
+use App\Entities\Category;
 use App\Entities\Role;
 use App\Http\Controllers\BaseController;
 use App\Repositories\Contracts\UrlRepository;
 use App\Repositories\Contracts\CategoryRepository;
+use App\Http\Requests\Category\CategoryStatusRequest;
 use App\Http\Requests\Admin\Category\CreateCategoryRequest;
 use App\Http\Requests\Admin\Category\UpdateCategoryRequest;
 
@@ -131,6 +133,7 @@ class CategoryController extends BaseController
      */
     public function destroy($id)
     {
+        $this->checkStatus($id);
         //delete category and url vie uri_category
         DB::beginTransaction();
         try {
@@ -142,6 +145,32 @@ class CategoryController extends BaseController
         }catch(\Exception $e) {
             DB::rollBack();
             throw $e;
+        }
+    }
+
+    public function approval(CategoryStatusRequest $request, $id)
+    {
+        $this->checkStatus($id);
+        $this->categoryRepository->skipPresenter();
+        if($this->categoryRepository->findByActive()->count() >= 6 && $request->status == Category::STATUS[1]) {
+            $this->responseErrors('categories', 'Chỉ được active tối đa 6 danh mục');
+        }
+        $credential = [
+            'status' => $request->status,
+        ];
+        $category = $this->categoryRepository->update($credential, $id);
+        return $this->responses(trans('notication.edit.success'), Response::HTTP_OK);
+    }
+
+    public function checkStatus($key)
+    {
+        $prohibitedList = [
+           2 => Category::CODE_CATEGORY['DIEM_DEN'],
+           3 => Category::CODE_CATEGORY['SU_KIEN'],
+           4 => Category::CODE_CATEGORY['AM_THUC'],
+        ];
+        if(array_key_exists($key, $prohibitedList)) {
+            return $this->responseErrors('Prohibited list', 'Điểm đến, Sự kiện, Ẩm thực là 3 danh sách mặc định, vì vậy bạn không thể hủy, xóa nó');
         }
     }
 }

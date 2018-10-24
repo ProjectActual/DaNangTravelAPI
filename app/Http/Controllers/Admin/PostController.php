@@ -30,7 +30,7 @@ class PostController extends BaseController
      *the number of elements in a page
      * @var int
     */
-    protected $paginate = 5;
+    protected $paginate = 10;
 
     /** @var instance */
     protected $tagRepository;

@@ -46,6 +46,6 @@ class FeedbackRepositoryEloquent extends BaseRepository implements FeedbackRepos
     public function latest()
     {
         return $this
-            ->orderBy('updated_at', 'desc');
+            ->orderBy('created_at', 'desc');
     }
 }

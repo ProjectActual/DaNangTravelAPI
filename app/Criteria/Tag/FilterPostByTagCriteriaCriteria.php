@@ -5,6 +5,8 @@ namespace App\Criteria\Tag;
 use Prettus\Repository\Contracts\CriteriaInterface;
 use Prettus\Repository\Contracts\RepositoryInterface;
 
+use App\Entities\Category;
+
 /**
  * Class FilterPostByTagCriteriaCriteria.
  *
@@ -33,6 +35,8 @@ class FilterPostByTagCriteriaCriteria implements CriteriaInterface
         return $model
             ->selectRaw('posts.*, tags.tag')
             ->join('post_tag', 'posts.id', '=', 'post_tag.post_id')
+            ->join('categories', 'posts.category_id', '=', 'categories.id')
+            ->where('categories.status', Category::STATUS[1])
             ->join('tags', 'tags.id', '=', 'post_tag.tag_id')
             ->where('post_tag.tag_id', $this->tag->id);
     }
