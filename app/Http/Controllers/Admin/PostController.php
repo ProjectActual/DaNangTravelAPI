@@ -20,6 +20,7 @@ use App\Repositories\Contracts\TagRepository;
 use App\Repositories\Contracts\PostRepository;
 use App\Criteria\Post\FilterPostWithCTVCriteria;
 use App\Http\Requests\Admin\Post\CheckHotRequest;
+use App\Http\Requests\Admin\Post\FilterDataRequest;
 use App\Http\Requests\Admin\Post\CreatePostRequest;
 use App\Http\Requests\Admin\Post\UpdatePostRequest;
 use App\Http\Requests\Admin\Post\CheckSliderRequest;
@@ -55,47 +56,27 @@ class PostController extends BaseController
      *
      * @return Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(FilterDataRequest $request)
     {
-        //sort
-        if($request->sort == 'title_asc') {
+        if(empty($request->sort)) {
             $posts = $this->postRepository
-                ->order('title', 'asc');
-        }elseif ($request->sort == 'title_desc') {
-            $posts = $this->postRepository
-                ->order('title', 'desc');
-        }elseif ($request->sort == 'created_asc') {
-            $posts = $this->postRepository
-                ->order('created_at', 'asc');
-        }elseif ($request->sort == 'created_desc') {
-            $posts = $this->postRepository
-                ->order('created_at', 'desc');
-        }elseif ($request->sort == 'slider') {
-            $posts = $this->postRepository
-                ->order('is_slider', 'desc');
-        }elseif ($request->sort == 'hot') {
-            $posts = $this->postRepository
-                ->order('is_hot', 'desc');
-        }elseif ($request->sort == 'status_active') {
-            $posts = $this->postRepository
-                ->order('status', 'asc');
-        }elseif($request->sort == 'status_inactive') {
-            $posts = $this->postRepository
-                ->order('status', 'desc');
-        }else {
-            $posts = $this->postRepository
+                ->with('tags')
                 ->orderBy('is_slider', 'desc')
                 ->orderBy('is_hot', 'desc');
+        }else {
+            //convert string to array and get value to sort
+            $sort = explode("-", $request->sort);
+            $posts = $this->postRepository
+                ->order($sort[0], $sort[1]);
         }
-
-        //searchCategory
+        //search Category
         if(empty($request->search_category)) {
             $posts = $posts->paginate($this->paginate);
         }else {
             $posts = $posts->filterByCategory($request->search_category)
                 ->paginate($this->paginate);
         }
-
+        return response()->json(compact('posts'));
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('posts'));
     }
 
