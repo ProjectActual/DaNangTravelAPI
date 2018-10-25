@@ -76,7 +76,6 @@ class PostController extends BaseController
             $posts = $posts->filterByCategory($request->search_category)
                 ->paginate($this->paginate);
         }
-        return response()->json(compact('posts'));
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('posts'));
     }
 
