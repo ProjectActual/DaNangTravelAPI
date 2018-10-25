@@ -48,4 +48,11 @@ class CategoryRepositoryEloquent extends BaseRepository implements CategoryRepos
     {
         return $this->findByField('uri_category', $uri_category)->first();
     }
+
+    public function findByActive()
+    {
+        return $this->scopeQuery(function ($query) {
+            return $query->where('status', Category::STATUS[1]);
+        })->get();
+    }
 }

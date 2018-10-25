@@ -31,7 +31,7 @@ class PostController extends BaseController
      *the number of elements in a page
      * @var int
     */
-    protected $paginate = 5;
+    protected $paginate = 10;
 
     /** @var instance */
     protected $tagRepository;
@@ -60,6 +60,7 @@ class PostController extends BaseController
     {
         if(empty($request->sort)) {
             $posts = $this->postRepository
+                ->with('tags')
                 ->orderBy('is_slider', 'desc')
                 ->orderBy('is_hot', 'desc');
         }else {
@@ -75,6 +76,7 @@ class PostController extends BaseController
             $posts = $posts->filterByCategory($request->search_category)
                 ->paginate($this->paginate);
         }
+        return response()->json(compact('posts'));
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('posts'));
     }
 

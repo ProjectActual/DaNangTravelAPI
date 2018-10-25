@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Criteria\Post;
+namespace App\Criteria\Category;
 
 use Prettus\Repository\Contracts\CriteriaInterface;
 use Prettus\Repository\Contracts\RepositoryInterface;
 
-use App\Entities\Post;
+use App\Entities\Category;
 
 /**
- * Class FilterByPostActiveCriteria.
+ * Class FilterByCategoryActiveCriteria.
  *
- * @package namespace App\Criteria\Post;
+ * @package namespace App\Criteria\Category;
  */
-class FilterByPostActiveCriteria implements CriteriaInterface
+class FilterByCategoryActiveCriteria implements CriteriaInterface
 {
     /**
      * Apply criteria in query repository
@@ -24,6 +24,6 @@ class FilterByPostActiveCriteria implements CriteriaInterface
      */
     public function apply($model, RepositoryInterface $repository)
     {
-        return $model->where('posts.status', Post::STATUS['ACTIVE']);
+        return $model->where('status', Category::STATUS[1]);
     }
 }

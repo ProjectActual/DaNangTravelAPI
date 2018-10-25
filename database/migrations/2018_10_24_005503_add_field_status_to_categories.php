@@ -4,7 +4,9 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class DelelteUserIdInFeedBack extends Migration
+use App\Entities\Category;
+
+class AddFieldStatusToCategories extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +15,8 @@ class DelelteUserIdInFeedBack extends Migration
      */
     public function up()
     {
-        Schema::table('feedback', function (Blueprint $table) {
-            $table->dropColumn('user_id');
+        Schema::table('categories', function (Blueprint $table) {
+            $table->string('status')->default(Category::STATUS[2]);
         });
     }
 
@@ -25,7 +27,7 @@ class DelelteUserIdInFeedBack extends Migration
      */
     public function down()
     {
-        Schema::table('feedback', function (Blueprint $table) {
+        Schema::table('categories', function (Blueprint $table) {
             //
         });
     }

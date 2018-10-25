@@ -5,12 +5,13 @@ namespace App\Repositories\Eloquents;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
 use App\Repositories\Contracts\PostRepository;
-use App\Entities\Post;
 use App\Validators\PostValidator;
+use Carbon\Carbon;
+
+use App\Entities\Category;
+use App\Entities\Post;
 use App\Entities\Role;
 use Entrust;
-
-use Carbon\Carbon;
 
 /**
  * Class PostRepositoryEloquent.
@@ -53,7 +54,7 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
     public function latest()
     {
         return $this
-            ->orderBy('updated_at', 'desc');
+            ->orderBy('created_at', 'desc');
     }
 
     public function order($sort='created_at', $status='desc')
@@ -129,6 +130,8 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
             ->limit(5);
         })->get();
 
+
+
         if(empty($repository['data'])) {
             $repository = $this->scopeQuery(function ($query) use($category_id) {
                 return $query
@@ -137,7 +140,6 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
                 ->limit(5);
             })->get();
         }
-
         return $repository;
     }
 
@@ -284,5 +286,15 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
             });
         }
         return $repository->get();
+    }
+
+    public function getNewPost()
+    {
+        return $this->scopeQuery(function ($query) {
+                    return $query
+                        ->join('categories', 'posts.category_id', 'categories.id')
+                        ->where('categories.status', Category::STATUS[1])
+                        ->limit(10);
+            })->get();
     }
 }

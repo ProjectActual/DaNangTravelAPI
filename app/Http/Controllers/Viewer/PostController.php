@@ -12,6 +12,7 @@ use App\Http\Requests\SearchRequest;
 use App\Repositories\Contracts\PostRepository;
 use App\Criteria\Post\FilterByPostActiveCriteria;
 use App\Repositories\Contracts\CategoryRepository;
+use App\Criteria\Category\FilterByCategoryActiveCriteria;
 
 class PostController extends BaseController
 {
@@ -38,6 +39,7 @@ class PostController extends BaseController
         $this->post->setPresenter(PostPresenter::class);
         $this->post->pushCriteria(FilterByPostActiveCriteria::class);
         $this->category->skipPresenter();
+        $this->category->pushCriteria(FilterByCategoryActiveCriteria::class);
     }
 
     /**

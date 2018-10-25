@@ -13,6 +13,7 @@ use App\Repositories\Contracts\TagRepository;
 use App\Repositories\Contracts\PostRepository;
 use App\Criteria\Post\FilterByPostActiveCriteria;
 use App\Repositories\Contracts\CategoryRepository;
+use App\Criteria\Category\FilterByCategoryActiveCriteria;
 
 class HomeController extends BaseController
 {
@@ -29,8 +30,9 @@ class HomeController extends BaseController
         $this->category = $category;
 
         $this->post->setPresenter(PostPresenter::class);
-        $this->category->setPresenter(CategoryPresenter::class);
         $this->post->pushCriteria(FilterByPostActiveCriteria::class);
+        $this->category->setPresenter(CategoryPresenter::class);
+        $this->category->pushCriteria(FilterByCategoryActiveCriteria::class);
     }
 
     /**
@@ -42,7 +44,7 @@ class HomeController extends BaseController
     {
         $composerFoods      = $this->post->latest()->findInMonth(Post::CODE_CATEGORY['AM_THUC']);
 
-        $composerTravels    = $this->post->latest()->findInMonth(Post::CODE_CATEGORY['DU_LICH']);
+        $composerTravels    = $this->post->latest()->findInMonth(Post::CODE_CATEGORY['DIEM_DEN']);
 
         $composerEvents     = $this->post->latest()->findInMonth(Post::CODE_CATEGORY['SU_KIEN']);
 
@@ -68,10 +70,7 @@ class HomeController extends BaseController
 
         $hots    = $this->post->latest()->findByIsHot();
 
-        $posts    = $this->post
-            ->scopeQuery(function ($query) {
-                    return $query->limit(10);
-            })->get();
+        $posts    = $this->post->getNewPost();
 
         $foods   = $this->post->findByCategory(Post::CODE_CATEGORY['AM_THUC']);
 
