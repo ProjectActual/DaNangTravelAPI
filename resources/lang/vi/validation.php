@@ -160,7 +160,8 @@ return [
         'password_confirmation' => 'xác nhận lại mật khẩu',
         'birthday'              => 'ngày sinh',
         'now'                   => 'hiện tại',
-        'fileUpload'            => 'ảnh'
+        'fileUpload'            => 'ảnh',
+        'sort'                  => 'sắp xếp'
     ],
 
 ];

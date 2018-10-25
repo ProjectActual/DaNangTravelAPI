@@ -12,6 +12,7 @@ use Uuid;
 use App\Entities\Role;
 use App\Http\Requests\Admin\Tag\TagRequest;
 use App\Repositories\Contracts\TagRepository;
+use App\Http\Requests\Admin\Tag\FilterDataRequest;
 
 class TagController extends BaseController
 {
@@ -36,32 +37,19 @@ class TagController extends BaseController
      * @param  Request $request
      * @return Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(FilterDataRequest $request)
     {
-        if ($request->sort == 'tag_asc') {
-            $tags = $this->tagRepository
-                ->orderBy('tag', 'asc')
-                ->all();
-        }elseif ($request->sort == 'tag_desc') {
-            $tags = $this->tagRepository
-                ->orderBy('tag', 'desc')
-                ->all();
-        }elseif($request->sort == 'count_posts_asc') {
-            $tags = $this->tagRepository
-                ->withCount('posts')
-                ->orderBy('posts_count', 'asc')
-                ->orderBy('tag', 'asc')
-                ->get();
-        }elseif($request->sort == 'count_posts_desc') {
-            $tags = $this->tagRepository
-                ->withCount('posts')
-                ->orderBy('posts_count', 'desc')
-                ->orderBy('tag', 'desc')
-                ->get();
-        }else {
+        if(empty($request->sort)) {
             $tags = $this->tagRepository
                 ->orderBy('created_at', 'desc')
-                ->get();
+                ->withCount('posts')
+                ->all();
+        }else {
+            $sort = explode('-', $request->sort);
+            $tags = $this->tagRepository
+                ->withCount('posts')
+                ->orderBy($sort[0], $sort[1])
+                ->all();
         }
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('tags'));
     }
