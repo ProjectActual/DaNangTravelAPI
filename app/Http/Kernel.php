@@ -21,6 +21,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrustProxies::class,
         \Barryvdh\Cors\HandleCors::class,
         \App\Http\Middleware\LocaleSwitcherMiddleware::class,
+        \App\Http\Middleware\DebugbarJsonResponse::class,
     ];
 
     /**

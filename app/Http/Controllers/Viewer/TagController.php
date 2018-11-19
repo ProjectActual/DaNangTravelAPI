@@ -30,7 +30,7 @@ class TagController extends BaseController
     {
         $tag = $this->tag->findWithUri($uri_tag);
         $this->post->pushCriteria(new FilterPostByTagCriteriaCriteria($tag));
-        $posts = $this->post->with('category')->paginate($this->paginate);
+        $posts = $this->post->with(['category', 'tags'])->paginate($this->paginate);
 
         return response()->json(compact('posts', 'tag'), 200);
     }

@@ -29,7 +29,7 @@ class CategoryTransformer extends TransformerAbstract
             'uri_category'  => $model->uri_category,
             'description'   => $model->description,
 
-            'count_posts'   => $model->posts->count(),
+            'count_posts'   => $model->posts_count,
         ];
     }
 }

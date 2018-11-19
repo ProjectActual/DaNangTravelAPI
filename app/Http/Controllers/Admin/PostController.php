@@ -60,13 +60,14 @@ class PostController extends BaseController
     {
         if(empty($request->sort)) {
             $posts = $this->postRepository
-                ->with('tags')
+                ->with(['category', 'tags'])
                 ->orderBy('is_slider', 'desc')
                 ->orderBy('is_hot', 'desc');
         }else {
             //convert string to array and get value to sort
             $sort = explode("-", $request->sort);
             $posts = $this->postRepository
+                ->with(['category', 'tags'])
                 ->order($sort[0], $sort[1]);
         }
         //search Category
@@ -88,7 +89,7 @@ class PostController extends BaseController
      */
     public function show(Request $request, $id)
     {
-        $post = $this->postRepository->find($id);
+        $post = $this->postRepository->with(['category', 'tags'])->find($id);
 
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('post'));
     }

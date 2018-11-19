@@ -67,16 +67,28 @@ class Handler extends ExceptionHandler
             if($e instanceof \Illuminate\Http\Exceptions\PostTooLargeException) {
                 return $this->errorsException('File size too large, can not upload file', Response::HTTP_REQUEST_ENTITY_TOO_LARGE);
             }
+
+            if($e instanceof \Illuminate\Validation\ValidationException) {
+                $errors = $e->validator->errors()->getMessages();
+                return $this->errorsException('Validation Error.', Response::HTTP_BAD_REQUEST, $errors);
+            }
         }
 
         return parent::render($request, $e);
     }
 
-    public function errorsException($message, $status)
+    public function errorsException($message, $status, $errors = [])
     {
+        if(empty($errors)) {
+            return response()->json([
+                'message'     => $message,
+                'status'      => $status
+            ], $status);
+        }
         return response()->json([
-            'message'     => $message,
-            'status'      => $status
-        ], $status);
+                'message'     => $message,
+                'status'      => $status,
+                'errors'      => $errors
+            ], $status);
     }
 }

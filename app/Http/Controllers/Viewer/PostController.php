@@ -53,6 +53,7 @@ class PostController extends BaseController
         $category = $this->category->findByUri($uri_category);
 
         $posts    = $this->post
+            ->with(['category', 'tags'])
             ->filterByCategory($category->id)
             ->latest()
             ->paginate($this->paginate);
@@ -69,13 +70,13 @@ class PostController extends BaseController
      */
     public function show(Request $request, $uri_category, $uri_post)
     {
-        $post         = $this->post->with('tags')->findByUri($uri_post);
+        $post     = $this->post->with(['category', 'tags'])->findByUri($uri_post);
         $category = $this->category->findByUri($uri_category);
 
         $relationPost = $this->post
+            ->with(['category', 'tags'])
             ->filterByRelationPost($uri_post)
             ->findByField('category_id', $category->id);
-            // ->get();
         Event::fire('posts.view', $post['data']['id']);
 
         return response()->json(compact('post','relationPost'), Response::HTTP_OK);
@@ -88,7 +89,9 @@ class PostController extends BaseController
  */
     public function search(Request $request)
     {
-        $posts = $this->post->paginate($this->paginate);
+        $posts = $this->post
+            ->with(['category', 'tags'])
+            ->paginate($this->paginate);
 
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('posts'));
     }
