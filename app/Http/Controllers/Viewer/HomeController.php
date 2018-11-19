@@ -42,15 +42,15 @@ class HomeController extends BaseController
      */
     public function master(Request $request)
     {
-        $composerFoods      = $this->post->latest()->findInMonth(Post::CODE_CATEGORY['AM_THUC']);
+        $composerFoods      = $this->post->with(['category', 'tags'])->latest()->findInMonth(Post::CODE_CATEGORY['AM_THUC']);
 
-        $composerTravels    = $this->post->latest()->findInMonth(Post::CODE_CATEGORY['DIEM_DEN']);
+        $composerTravels    = $this->post->with(['category', 'tags'])->latest()->findInMonth(Post::CODE_CATEGORY['DIEM_DEN']);
 
-        $composerEvents     = $this->post->latest()->findInMonth(Post::CODE_CATEGORY['SU_KIEN']);
+        $composerEvents     = $this->post->with(['category', 'tags'])->latest()->findInMonth(Post::CODE_CATEGORY['SU_KIEN']);
 
-        $composerTags       = $this->tag->get();
+        $composerTags       = $this->tag->withCount(['posts'])->get();
 
-        $composerCategories = $this->category->get();
+        $composerCategories = $this->category->withCount(['posts'])->get();
 
         return $this->responses(
             trans('notication.load.success'),
@@ -66,13 +66,13 @@ class HomeController extends BaseController
      */
     public function index(Request $request)
     {
-        $sliders = $this->post->latest()->findByIsSlider();
+        $sliders = $this->post->with(['category', 'tags'])->latest()->findByIsSlider();
 
-        $hots    = $this->post->latest()->findByIsHot();
+        $hots    = $this->post->with(['category', 'tags'])->latest()->findByIsHot();
 
-        $posts    = $this->post->getNewPost();
+        $posts    = $this->post->with(['category', 'tags'])->getNewPost();
 
-        $foods   = $this->post->findByCategory(Post::CODE_CATEGORY['AM_THUC']);
+        $foods   = $this->post->with(['category', 'tags'])->findByCategory(Post::CODE_CATEGORY['AM_THUC']);
 
         return $this->responses(
             trans('notication.load.success'),

@@ -133,6 +133,7 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
 
 
         if(empty($repository['data'])) {
+            $this->resetScope();
             $repository = $this->scopeQuery(function ($query) use($category_id) {
                 return $query
                 ->where('category_id', $category_id)

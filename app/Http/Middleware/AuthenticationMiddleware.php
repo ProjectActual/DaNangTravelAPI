@@ -21,7 +21,7 @@ class AuthenticationMiddleware
     {
         $user = Auth::guard('api')->user();
 
-        if($user->hasRole(Role::NAME[1]) || $user->hasRole(Role::NAME[2])) {
+        if(!$user->hasRole(Role::NAME[3])) {
             return $next($request);
         }
 

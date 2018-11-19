@@ -39,6 +39,7 @@ class CongTacVienController extends BaseController
     public function index(Request $request)
     {
         $congTacVien = $this->congTacVienRepository
+            ->with(['roles', 'posts'])
             ->sortByCTV()
             ->searchWithActive($request->status)
             ->paginate($this->paginate);
@@ -53,7 +54,7 @@ class CongTacVienController extends BaseController
      */
     public function show(Request $request, $id)
     {
-        $congTacVien = $this->congTacVienRepository->find($id);
+        $congTacVien = $this->congTacVienRepository->with(['roles', 'posts'])->find($id);
         return $this->responses(trans('notication.load.success'), 200, compact('congTacVien'));
     }
 
