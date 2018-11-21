@@ -1,0 +1,29 @@
+version: '2'
+services:
+  # container for API
+  api:
+    image: toancong/phpup:2
+    container_name: danangtravel_api
+    ports:
+      - 5075:80
+    depends_on:
+      - db
+    volumes:
+      - .:/var/www/app
+    environment:
+      - PHP_MEM_LIMIT=2014
+      - PHP_UPLOAD_MAX_FILESIZE=500
+      - PHP_POST_MAX_SIZE=500
+      - PHP_MAX_EXECUTION_TIME=300
+
+  db:
+    image: mysql:5.7
+    container_name: danangtravel_db
+    ports:
+      - 5076:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: user123
+
