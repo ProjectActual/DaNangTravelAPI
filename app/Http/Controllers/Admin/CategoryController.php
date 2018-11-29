@@ -44,7 +44,7 @@ class CategoryController extends BaseController
     public function index(Request $request)
     {
         $categories = $this->categoryRepository->withCount('posts')->all();
-        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('categories'));
+        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, $categories);
     }
 
     /**
@@ -123,7 +123,7 @@ class CategoryController extends BaseController
     public function edit($id)
     {
         $category = $this->categoryRepository->withCount('posts')->find($id);
-        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('category'));
+        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, $category);
     }
 
     /**

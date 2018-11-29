@@ -22,13 +22,16 @@ class BaseController extends Controller
      * @param  array  $data    Dữ liệu được truyền vào để đưa xuống Client, nullable
      * @return Illuminate\Http\Response
      */
-    public function responses($message, $status, $data = [])
+    public function responses($message, $status = 200, $data = [])
     {
-        if($status > 102  && $status <= 202) {
-            return response()->json(compact('message', 'status', 'data'), $status);
+        $response = [
+            'status'  => $status,
+            'message' => $message
+        ];
+        if(!empty($data)) {
+            return response()->json(array_merge($response, $data), $status);
         } else {
-            $error = true;
-            return response()->json(compact('message', 'status'), $status);
+            return response()->json($response, $status);
         }
     }
 

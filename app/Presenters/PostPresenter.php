@@ -12,8 +12,8 @@ use Prettus\Repository\Presenter\FractalPresenter;
  */
 class PostPresenter extends FractalPresenter
 {
-    protected $resourceKeyCollection = 'posts';
-    protected $resourceKeyItem       = 'posts';
+    protected $resourceKeyCollection = 'post';
+    protected $resourceKeyItem       = 'post';
     /**
      * Transformer
      *

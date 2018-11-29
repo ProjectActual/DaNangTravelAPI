@@ -34,7 +34,7 @@ class FeedbackController extends BaseController
         $feedbacks = $this->feedbackRepository
             ->latest()
             ->paginate($this->paginate);
-        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('feedbacks'));
+        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, $feedbacks);
     }
 
     /**
@@ -46,7 +46,7 @@ class FeedbackController extends BaseController
     {
         $feedback = $this->feedbackRepository
             ->find($id);
-        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('feedback'));
+        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, $feedbacks);
     }
 
     /**

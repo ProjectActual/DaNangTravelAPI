@@ -51,7 +51,7 @@ class TagController extends BaseController
                 ->orderBy($sort[0], $sort[1])
                 ->all();
         }
-        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('tags'));
+        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, $tags);
     }
 
     /**

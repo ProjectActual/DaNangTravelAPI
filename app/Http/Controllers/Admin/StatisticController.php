@@ -29,8 +29,8 @@ class StatisticController extends BaseController
     {
         $date = Carbon::parse($request->date)->startOfMonth();
         $this->userRepository->pushCriteria(new StatictisWithPostCriteria($date));
-        $userStatistics = $this->userRepository->get();
+        $userStatistics = $this->userRepository->withCount(['posts'])->get();
 
-        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('userStatistics'));
+        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, $userStatistics);
     }
 }

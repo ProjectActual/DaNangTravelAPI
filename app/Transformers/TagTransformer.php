@@ -25,7 +25,7 @@ class TagTransformer extends TransformerAbstract
             'id'          => (int) $model->id,
             'tag'         => $model->tag,
             'uri_tag'     => $model->uri_tag,
-            'created_at'  => $model->created_at,
+            'created_at'  => $model->created_at->toDateTimeString(),
             'count_posts' => $model->posts_count,
         ];
     }

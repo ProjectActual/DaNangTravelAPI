@@ -21,10 +21,9 @@ class AuthenticationMiddleware
     {
         $user = Auth::guard('api')->user();
 
-        if(!$user->hasRole(Role::NAME[3])) {
+        if($user->hasRole(Role::NAME[1]) || $user->hasRole(Role::NAME[2])) {
             return $next($request);
         }
-
         return response()->json([
             'message'     => 'Bạn không có quyền truy cập',
             'status'      => Response::HTTP_UNAUTHORIZED

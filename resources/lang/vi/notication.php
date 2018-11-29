@@ -15,7 +15,8 @@ return [
     'load' => [
         'success' => 'Load thành công.',
     ],
-    'email' => [
+    'logout' => 'Đăng xuất thành công.',
+    'email'  => [
         'credential' => [
             'register' => 'Xác nhận đăng ký cộng tác viên DaNangTravel.',
             'status'   => 'Vấn đề về thông tin cộng tác viên DaNangTravel',

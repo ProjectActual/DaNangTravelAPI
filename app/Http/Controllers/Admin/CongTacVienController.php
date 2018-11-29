@@ -43,7 +43,7 @@ class CongTacVienController extends BaseController
             ->sortByCTV()
             ->searchWithActive($request->status)
             ->paginate($this->paginate);
-        return $this->responses(trans('notication.load.success'), 200, compact('congTacVien'));
+        return $this->responses(trans('notication.load.success'), 200, $congTacVien);
     }
 
     /**
@@ -55,7 +55,7 @@ class CongTacVienController extends BaseController
     public function show(Request $request, $id)
     {
         $congTacVien = $this->congTacVienRepository->with(['roles', 'posts'])->find($id);
-        return $this->responses(trans('notication.load.success'), 200, compact('congTacVien'));
+        return $this->responses(trans('notication.load.success'), 200, $congTacVien);
     }
 
     /**

@@ -39,9 +39,12 @@ class DashboardController extends BaseController
         }
 
         $dashboard = [
-            'postMonth' => $this->postRepository->countPostInMonthCurrent(),
-            'postAll'   => $this->postRepository->countPostWithRole(),
-            'statistic' => $statistic,
+            'data' => [
+                'type'      => 'statistic',
+                'postMonth' => $this->postRepository->countPostInMonthCurrent(),
+                'postAll'   => $this->postRepository->countPostWithRole(),
+                'statistic' => $statistic,
+            ]
         ];
 
         return $this->responses(trans('notication.load.success'), Response::HTTP_OK, $dashboard);
