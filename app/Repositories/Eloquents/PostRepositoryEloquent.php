@@ -125,13 +125,10 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
             return $query
             ->where('category_id', $category_id)
             ->orderBy('count_view', 'desc')
-            ->WhereMonth('created_at', $now->month)
+            ->WhereMonth('created_at', 8)
             ->WhereYear('created_at',  $now->year)
             ->limit(5);
         })->get();
-
-
-
         if(empty($repository['data'])) {
             $this->resetScope();
             $repository = $this->scopeQuery(function ($query) use($category_id) {
@@ -296,6 +293,6 @@ class PostRepositoryEloquent extends BaseRepository implements PostRepository
                         ->join('categories', 'posts.category_id', 'categories.id')
                         ->where('categories.status', Category::STATUS[1])
                         ->limit(10);
-            })->get();
+            })->get(['posts.*', 'posts.created_at']);
     }
 }

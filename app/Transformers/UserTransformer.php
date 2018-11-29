@@ -21,6 +21,9 @@ class UserTransformer extends TransformerAbstract
      */
     public function transform(User $model)
     {
+        $roles = $model->roles->map(function ($role) {
+            return $role->only(['name', 'display_name']);;
+        });
         return [
             'id'                 => (int) $model->id,
             'email'              => $model->email,
@@ -32,11 +35,11 @@ class UserTransformer extends TransformerAbstract
             'gender'             => $model->gender,
             'birthday'           => $model->birthday,
             'active'             => $model->active,
-            'count_posts'        => $model->count_posts ? $model->count_posts : $model->posts->count(),
+            'count_posts'        => $model->posts_count,
             'viewer_interactive' => $model->viewer_interactive,
-            'roles'              => $model->roles,
-            'created_at'         => $model->created_at,
-            'updated_at'         => $model->updated_at
+            'roles'              => $roles,
+            'created_at'         => $model->created_at->toDateTimeString(),
+            'updated_at'         => $model->updated_at->toDateTimeString()
         ];
     }
 }

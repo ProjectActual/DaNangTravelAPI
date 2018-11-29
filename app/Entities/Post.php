@@ -57,7 +57,7 @@ class Post extends Model implements Transformable, Presentable
     protected $fillable  = [
         'title', 'uri_post', 'content', 'display', 'count_view',
         'avatar_post', 'user_id', 'category_id', 'status', 'is_hot', 'is_slider',
-        'summary',
+        'summary', 'created_at'
     ];
 
     public function comments()

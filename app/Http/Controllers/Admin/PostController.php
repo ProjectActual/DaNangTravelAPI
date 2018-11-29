@@ -65,7 +65,7 @@ class PostController extends BaseController
                 ->orderBy('is_hot', 'desc');
         }else {
             //convert string to array and get value to sort
-            $sort = explode("-", $request->sort);
+            $sort  = explode("-", $request->sort);
             $posts = $this->postRepository
                 ->with(['category', 'tags'])
                 ->order($sort[0], $sort[1]);
@@ -77,8 +77,7 @@ class PostController extends BaseController
             $posts = $posts->filterByCategory($request->search_category)
                 ->paginate($this->paginate);
         }
-        return response()->json(compact('posts'));
-        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('posts'));
+        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, $posts);
     }
 
     /**
@@ -91,7 +90,7 @@ class PostController extends BaseController
     {
         $post = $this->postRepository->with(['category', 'tags'])->find($id);
 
-        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('post'));
+        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, $post);
     }
 
     /**
@@ -102,7 +101,7 @@ class PostController extends BaseController
      */
     public function store(CreatePostRequest $request)
     {
-        $request->tag     = json_decode($request->tag);
+        $request->tag = json_decode($request->tag);
         //the number of tags in a post only 10 values
         if (count($request->tag) > 10) {
             return $this->responseErrors('tag', trans('validation.max.numeric', ['attribute' => 'tag', 'max' => 10]));

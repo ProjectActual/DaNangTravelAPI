@@ -35,7 +35,7 @@ class AuthController extends BaseController
     public function logout(Request $request)
     {
         $request->user()->token()->revoke();
-        return $this->responses('Successfully logged out', Response::HTTP_OK);
+        return $this->responses(trans('notication.logout'), Response::HTTP_OK);
     }
 
     /**
@@ -48,7 +48,7 @@ class AuthController extends BaseController
         $profile = $this->userRepository->with(['roles'])
         ->withCount('posts')
         ->find($request->user()->id);
-        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('profile'));
+        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, $profile);
     }
 
     /**
@@ -77,7 +77,7 @@ class AuthController extends BaseController
      */
     public function changePassword(ChangePasswordRequest $request)
     {
-        $user = $request->user();
+        $user         = $request->user();
         $old_password = $user->password;
         //compare $request->password and old password is not match
         if(!Hash::check($request->old_password, $old_password)) {
@@ -93,13 +93,14 @@ class AuthController extends BaseController
             //generate new token
             $tokenResult       = $user->createToken('newToken');
             $token             = $tokenResult->token;
-            //update expires_at is 1 week for token;
-            $token->expires_at = Carbon::now()->addWeeks(2);
+            //update expires_at is 4 week for token;
+            $token->expires_at = Carbon::now()->addWeeks(4);
             $token->save();
             $expires_at        = Carbon::parse($token->expires_at)->toDateTimeString();
             $this->userRepository->update($credential, $user->id);
-            $data               = [
-                "token_type"   => "Bearer",
+            $data = [
+                'type'         => 'token',
+                'token_type'   => 'Bearer',
                 'access_token' => $tokenResult->accessToken,
                 'expires_at'   => $expires_at
             ];

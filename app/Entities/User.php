@@ -53,7 +53,8 @@ class User extends Authenticatable implements Transformable
     protected $fillable  = [
         'email', 'password', 'first_name', 'last_name',
         'phone', 'avatar', 'gender', 'birthday',
-        'active', 'activation_token',
+        'active', 'activation_token', 'created_at',
+        'updated_at',
     ];
 
     public function posts()

@@ -12,8 +12,8 @@ use Prettus\Repository\Presenter\FractalPresenter;
  */
 class CategoryPresenter extends FractalPresenter
 {
-    protected $resourceKeyCollection = 'categories';
-    protected $resourceKeyItem       = 'categories';
+    protected $resourceKeyCollection = 'category';
+    protected $resourceKeyItem       = 'category';
     /**
      * Transformer
      *

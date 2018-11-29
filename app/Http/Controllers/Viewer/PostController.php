@@ -51,14 +51,12 @@ class PostController extends BaseController
     public function index(Request $request, $uri_category)
     {
         $category = $this->category->findByUri($uri_category);
-
         $posts    = $this->post
             ->with(['category', 'tags'])
             ->filterByCategory($category->id)
             ->latest()
             ->paginate($this->paginate);
-
-        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('posts'));
+        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, $posts);
     }
 
 /**
@@ -93,6 +91,6 @@ class PostController extends BaseController
             ->with(['category', 'tags'])
             ->paginate($this->paginate);
 
-        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, compact('posts'));
+        return $this->responses(trans('notication.load.success'), Response::HTTP_OK, $posts);
     }
 }

@@ -21,6 +21,9 @@ class PostTransformer extends TransformerAbstract
      */
     public function transform(Post $model)
     {
+        $tags = $model->tags->map(function ($tag) {
+            return $tag->only(['id', 'tag', 'uri_tag']);
+        });
         return [
             'id'            => (int) $model->id,
             'title'         => $model->title,
@@ -37,9 +40,9 @@ class PostTransformer extends TransformerAbstract
             'uri_category'  => $model->category->uri_category,
             'type_category' => $model->category->type_category,
 
-            'tag'           => $model->tags,
-            'created_at'    => $model->created_at,
-            'updated_at'    => $model->updated_at
+            'tag'           => $tags,
+            'created_at'    => $model->created_at->toDateTimeString(),
+            'updated_at'    => $model->updated_at->toDateTimeString()
         ];
     }
 }
