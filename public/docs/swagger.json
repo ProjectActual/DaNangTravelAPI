@@ -1,0 +1,220 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0",
+    "title": "DaNangTravel API"
+  },
+  "host": "",
+  "basePath": "/",
+  "schemes": ["http", "https"],
+  "produces": [
+    "application/json"
+  ],
+  "securityDefinitions" : {
+    "JWT" : {
+      "type" : "apiKey",
+      "name" : "Authorization",
+      "in" : "header",
+      "description": "Enter your token..."
+    }
+  },
+  "tags": [
+    {
+      "name": "User",
+      "description": "Operations about user"
+    },
+    {
+      "name": "Authenticate",
+      "description": "Operations about authentication"
+    }
+  ],
+  "paths": {
+    "/oauth/token": {
+      "post": {
+        "tags": ["Authenticate"],
+        "summary": "Login",
+        "description": "Login",
+        "operationId": "AuthLogin",
+        "parameters": [{
+          "name": "payload",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/PayloadLogin"
+          }
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "Login Success",
+            "schema" : {
+              "$ref" : "#/definitions/TokenPassport"
+            }
+          },
+          "400": {
+            "description": "Error Validation",
+            "schema": {
+              "$ref": "#/definitions/ErrorPassport"
+            }
+          },
+          "404" : {
+            "description" : "Error Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/user": {
+      "get": {
+        "tag": ["User"],
+        "summary": "Get profile",
+        "description": "Get profile",
+        "operationId": "AuthMe",
+        "responses" : {
+          "200" : {
+            "description" : "Login Success",
+            "schema" : {
+              "$ref" : "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "Error Validation",
+            "schema": {
+              "$ref": "#/definitions/ErrorPassport"
+            }
+          },
+          "404" : {
+            "description" : "Error Not Found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "security" : [{
+          "JWT" : [ ]
+        }]
+      }
+    }
+  },
+  "definitions": {
+    "PayloadLogin": {
+      "type": "object",
+      "required": [
+        "username",
+        "password",
+        "grant_type",
+        "client_id",
+        "client_secret"
+      ],
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "grant_type": {
+          "type": "string"
+        },
+        "client_id": {
+          "type": "integer"
+        },
+        "client_secret": {
+          "type": "string"
+        }
+      }
+    },
+
+
+    "TokenPassport": {
+      "type": "object",
+      "properties": {
+        "token_type": {
+          "type": "string"
+        },
+        "expires_in": {
+          "type": "integer"
+        },
+        "access_token": {
+          "type": "string"
+        },
+        "refresh_token": {
+          "type": "string"
+        }
+      }
+    },
+    "ErrorPassport": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "message": {
+          "type": "integer"
+        },
+        "hint": {
+          "type": "string"
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "status": {
+          "type": "number"
+        },
+        "errors": {
+          "type": "string"
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "number",
+        },
+        "message": {
+          "type": "string",
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "id": {
+              "type": "number"
+            },
+            "attributes": "#/definitions/UserAttributes"
+          }
+        }
+      }
+    },
+    // viet dang do attributes
+    "UserAttributes": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
