@@ -38,7 +38,7 @@
                               <td colspan="2">
                                 <div style="line-height:1.6">
                                   <div style="font-size:16px; display:block;">
-                                    <p style="text-align: justify;">Bạn nhận được email này vì chúng tôi đã nhận được yêu cầu đăng ký tài khoản của bạn <a href="{{ env('APP_URL_FE') . "/admin/register/{$info['activation_token']}" }}"  style="font-size: 25px"><b>BẤM VÀO ĐÂY</b></a> để hoàn tất quá trình đăng ký</p>
+                                    <p style="text-align: justify;">Bạn nhận được email này vì chúng tôi đã nhận được yêu cầu đăng ký tài khoản của bạn <a href="{{ env('APP_URL_FE', 'http://danangtravel.ddns.net') . "/admin/register/{$info['activation_token']}" }}"  style="font-size: 25px"><b>BẤM VÀO ĐÂY</b></a> để hoàn tất quá trình đăng ký</p>
                                   </div>
                                 </div>
                               </td>
