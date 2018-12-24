@@ -19,3 +19,5 @@ use Illuminate\Http\Request;
 
 
 Route::post('/uploadFile', 'FileController@uploadFile')->name('upload_file');
+
+Route::post('/convertAvatarPost', 'FileController@convertAvatarPost')->middleware(['auth:api', 'admin']);
